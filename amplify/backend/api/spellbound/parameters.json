@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "spellbound",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authspellbound155c16ab",
+      "Outputs.UserPoolId"
+    ]
+  }
+}
