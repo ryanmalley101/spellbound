@@ -1,0 +1,26 @@
+
+.TabMenu {
+    /*display: inline-block;*/
+
+    flex-basis: 20%;
+    /*overflow-y: hidden;*/
+}
+
+.ReactTabs {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.ReactTabsPanel {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ReactTabsList {
+    border-color: black;
+    border-style: solid;
+}
