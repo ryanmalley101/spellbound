@@ -1,6 +1,6 @@
 import styles from "@/styles/CharacterSheet.module.css"
 
-const CharacterSheet = () => {
+const CharacterSheet = ({name, id}) => {
 
   // <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
   // <link rel="stylesheet" href="./style.css">
@@ -42,7 +42,6 @@ const CharacterSheet = () => {
   }
 
   return (
-
     <form className={styles.charsheet} id="charsheet">
       <header>
         <section>

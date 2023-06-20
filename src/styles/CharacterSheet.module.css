@@ -57,9 +57,7 @@ div.box {
     width: 800px;
     right: 0;
     left: 0;
-    margin-right: auto;
-    margin-left: auto;
-    margin-top: 10px;
+    background-color: white;
 }
 
 .charsheet div.textblock {

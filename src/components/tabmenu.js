@@ -1,24 +1,34 @@
-import React, { useState } from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import React, {useState} from 'react';
+import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import ChatRoom from "@/components/chatroom";
 import styles from "@/styles/TabMenu.module.css"
 import {BsBook, BsChatLeftDots, BsCodeSlash, BsGear, BsMusicNoteList} from 'react-icons/bs'
 import {AiOutlinePicture} from 'react-icons/ai'
 import {SiDungeonsanddragons} from "react-icons/si";
+import AudioPlayer from "@/components/audioplayer";
+import ArtLibrary from "@/components/artlibrary";
+import artDirectory from '../../public/art_directory.json';
+import JournalList from "@/components/journallist";
 
-const TabMenu = ( {user} ) => {
+const TabMenu = ({user}) => {
   const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTabSelect = (index) => {
     setSelectedTab(index);
   };
 
+  const song = {
+    "url": "music/test.mp3",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen"
+  }
+
   return (
     <div className={styles.TabMenu}>
       <Tabs selectedIndex={selectedTab} onSelect={handleTabSelect} className={styles.ReactTabs}>
         <TabList className={styles.ReactTabsList}>
-          <Tab><BsChatLeftDots size={24} /></Tab>
+          <Tab><BsChatLeftDots size={24}/></Tab>
           <Tab><AiOutlinePicture size={24}/></Tab>
           <Tab><BsBook size={24}/></Tab>
           <Tab><SiDungeonsanddragons size={24}/></Tab>
@@ -27,19 +37,18 @@ const TabMenu = ( {user} ) => {
           <Tab><BsGear size={24}/></Tab>
         </TabList>
 
-        <TabPanel className={styles.ReactTabsPanel}>
+        <TabPanel name={"Chatroom"} className={styles.ReactTabsPanel}>
           <ChatRoom user={user}/>
         </TabPanel>
 
-        <TabPanel >
-          {/* Content for the Art Library */}
-          <h2>Art Library Content</h2>
-          {/* Add your art library component here */}
+        <TabPanel name={"Art Library"} className={styles.ReactTabsPanel}>
+          <ArtLibrary artDirectory={artDirectory}/>
         </TabPanel>
 
         <TabPanel>
           {/* Content for the Journal */}
           <h2>Journal Content</h2>
+          <JournalList/>
           {/* Add your journal component here */}
         </TabPanel>
 
@@ -52,6 +61,7 @@ const TabMenu = ( {user} ) => {
         <TabPanel>
           {/* Content for the Music */}
           <h2>Music Content</h2>
+          <AudioPlayer song={song}/>
           {/* Add your music component here */}
         </TabPanel>
 
