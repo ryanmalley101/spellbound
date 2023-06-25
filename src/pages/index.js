@@ -5,18 +5,16 @@ import {API, Auth, withSSRContext, graphqlOperation} from "aws-amplify";
 import TabMenu from "@/components/tabmenu";
 import BattleMap from "@/components/battlemap";
 import CharacterSheet from "@/components/charactersheet";
-import DraggableWindow from "@/components/draggablewindow";
+import DraggableWindow, {DraggableCharacterWindow, DraggableMonsterWindow} from "@/components/draggablewindow";
 import useBattlemapStore from "@/stores/battlemapStore";
+import MonsterSheet from "@/components/monstersheet";
 
 function Home() {
-  const addCharacterSheet = useBattlemapStore((state) => state.addCharacterSheet);
-  const characterSheets = useBattlemapStore((state) => state.characterSheets)
+  // const addCharacterSheetWindow = useBattlemapStore((state) => state.addCharacterSheetWindow);
+  const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows)
+  const monsterBlocks = useBattlemapStore((state) => state.monsterBlocks)
   const [user, setUser] = useState(null);
   useEffect(() => {
-
-    // Add character sheets
-    addCharacterSheet(1, 'Character Sheet 1');
-    addCharacterSheet(2, 'Character Sheet 2');
     const fetchUser = async () => {
       try {
         const amplifyUser = await Auth.currentAuthenticatedUser();
@@ -36,18 +34,20 @@ function Home() {
         <div className={"appContainer"}>
           <BattleMap/>
           <TabMenu user={user}/>
-          {/*<CharacterSheet/>*/}
+          {/*<MonsterSheet slug={'aboleth'}/>*/}
         </div>
-        {characterSheets.map((sheet) => (
-          <DraggableWindow key={sheet.id} content={sheet}/>
+        {characterSheetWindows.map((sheet) => (
+          <DraggableCharacterWindow key={sheet.id} characterSheet={sheet}/>
+        ))}
+        {monsterBlocks.map((monster) => (
+          <DraggableMonsterWindow key={monster.slug} slug={monster.slug}/>
         ))}
       </div>
     );
   } else {
-    console.log('No user')
     return <p>Loading...</p>;
   }
 }
 
-export default Home;
-// export default withAuthenticator(Home);
+// export default Home;
+export default withAuthenticator(Home);

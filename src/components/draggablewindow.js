@@ -5,13 +5,13 @@ import {Rnd} from "react-rnd";
 import CharacterSheet from "@/components/charactersheet";
 import {BsX} from "react-icons/bs";
 import useBattlemapStore from "@/stores/battlemapStore";
+import MonsterSheet from "@/components/monstersheet";
 
-const DraggableWindow = ({initialPosition, content}) => {
+const DraggableWindow = ({initialPosition, content, onClose}) => {
   const [windowPosition, setWindowPosition] = useState({x: 0, y: 0});
   const [width, setWidth] = useState(820);
   const [height, setHeight] = useState(800);
   const dragStartRef = useRef(null); // Define the dragStartRef using useRef
-  const toggleVisibility = useBattlemapStore(state => state.toggleSheetVisibility)
 
   const handleResize = (e, direction, ref) => {
     const {width, height} = ref.style;
@@ -38,75 +38,95 @@ const DraggableWindow = ({initialPosition, content}) => {
     dragStartRef.current = null;
   };
 
-  const onClose = () => {
-    toggleVisibility(content.id)
-    console.log('close')
-  }
-
   useEffect(() => {
     if (initialPosition) {
       setWindowPosition({x: initialPosition.x, y: initialPosition.y})
     }
   }, []); // Empty dependency array to run the effect only once
 
-  if (content.isOpen) {
-    return (
-      <Rnd
-        size={{width: width, height: height}}
-        position={{x: windowPosition.x, y: windowPosition.y}} // Set the initial position of the component
-        onDragStart={handleDragStart}
-        onDragStop={handleDragStop}
-        style={{
-          zIndex: 20,
-          backgroundColor: 'white'
-        }}
-        onResizeStop={(e, direction, ref, delta, position) => {
-          setWindowPosition({
-            x: parseFloat((position.x).toFixed(1)),
-            y: parseFloat((position.y).toFixed(1)),
-          });
-        }}
-        onResize={handleResize}
-        bounds="parent"
-        enableResizing={{
-          top: true,
-          right: true,
-          bottom: true,
-          left: true,
-          topRight: true,
-          bottomRight: true,
-          bottomLeft: true,
-          topLeft: true,
-        }}
-        resizeHandleStyles={{
-          top: {cursor: 'n-resize'},
-          right: {cursor: 'e-resize'},
-          bottom: {cursor: 's-resize'},
-          left: {cursor: 'w-resize'},
-          topRight: {cursor: 'ne-resize'},
-          bottomRight: {cursor: 'se-resize'},
-          bottomLeft: {cursor: 'sw-resize'},
-          topLeft: {cursor: 'nw-resize'},
-        }}
-        resizeHandleWrapperClass="resize-handle-wrapper"
-        dragHandleClassName={styles.header}
-      >
-        <div className={styles.windowContainer}>
-          <div className={styles.header}>
-            <button className={styles.closeButton} onClick={onClose}>
-              <BsX className={styles.closeIcon}/>
-            </button>
-          </div>
-          <div className={styles.subContainer}>
-            <CharacterSheet name={content.name} id={content.id}/>
-          </div>
-        </div>
-      </Rnd>
-    );
-  } else {
-    return null
+  const closeWindow = () => {
+    console.log('Closing Window')
+    onClose()
   }
 
+  return (
+    <Rnd
+      size={{width: width, height: height}}
+      position={{x: windowPosition.x, y: windowPosition.y}} // Set the initial position of the component
+      onDragStart={handleDragStart}
+      onDragStop={handleDragStop}
+      style={{
+        zIndex: 20,
+        backgroundColor: 'white'
+      }}
+      onResizeStop={(e, direction, ref, delta, position) => {
+        setWindowPosition({
+          x: parseFloat((position.x).toFixed(1)),
+          y: parseFloat((position.y).toFixed(1)),
+        });
+      }}
+      onResize={handleResize}
+      bounds="parent"
+      enableResizing={{
+        top: true,
+        right: true,
+        bottom: true,
+        left: true,
+        topRight: true,
+        bottomRight: true,
+        bottomLeft: true,
+        topLeft: true,
+      }}
+      resizeHandleStyles={{
+        top: {cursor: 'n-resize'},
+        right: {cursor: 'e-resize'},
+        bottom: {cursor: 's-resize'},
+        left: {cursor: 'w-resize'},
+        topRight: {cursor: 'ne-resize'},
+        bottomRight: {cursor: 'se-resize'},
+        bottomLeft: {cursor: 'sw-resize'},
+        topLeft: {cursor: 'nw-resize'},
+      }}
+      resizeHandleWrapperClass="resize-handle-wrapper"
+      dragHandleClassName={styles.header}
+    >
+      <div className={styles.windowContainer}>
+        <div className={styles.header}>
+          <button className={styles.closeButton} onClick={closeWindow}>
+            <BsX className={styles.closeIcon}/>
+          </button>
+        </div>
+        <div className={styles.subContainer}>
+          {content}
+        </div>
+      </div>
+    </Rnd>
+  );
+}
+
+const DraggableCharacterWindow = ({characterSheet}) => {
+  const removeCharacterSheetWindow = useBattlemapStore(state => state.removeCharacterSheetWindow)
+  const characterSheets = useBattlemapStore((state) => state.characterSheetWindows)
+
+  const onClose = () => {
+    console.log(`Closing character sheet window ${characterSheet.id}`)
+    console.log(characterSheets)
+    removeCharacterSheetWindow(characterSheet)
+  }
+
+  return <DraggableWindow content={<CharacterSheet characterSheet={characterSheet}/>} onClose={onClose}/>
+}
+
+const DraggableMonsterWindow = ({initialPosition, slug}) => {
+  const removeMonsterBlock = useBattlemapStore(state => state.removeMonsterBlock)
+
+  const onClose = () => {
+    console.log(`Closing monster window ${slug}`)
+    removeMonsterBlock(slug)
+  }
+
+  return <DraggableWindow content={<MonsterSheet slug={slug}/>} onClose={onClose}/>
 }
 
 export default DraggableWindow
+export {DraggableCharacterWindow, DraggableMonsterWindow}

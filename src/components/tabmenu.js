@@ -10,6 +10,7 @@ import AudioPlayer from "@/components/audioplayer";
 import ArtLibrary from "@/components/artlibrary";
 import artDirectory from '../../public/art_directory.json';
 import JournalList from "@/components/journallist";
+import SRDList from "@/components/srdlist";
 
 const TabMenu = ({user}) => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -54,7 +55,7 @@ const TabMenu = ({user}) => {
 
         <TabPanel>
           {/* Content for the Compendium */}
-          <h2>Compendium Content</h2>
+          <SRDList/>
           {/* Add your compendium component here */}
         </TabPanel>
 
