@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import ChatRoom from "@/components/chatroom";
+import ChatRoom from "@/components/gameComponents/chatroom";
 import styles from "@/styles/TabMenu.module.css"
 import {BsBook, BsChatLeftDots, BsCodeSlash, BsGear, BsMusicNoteList} from 'react-icons/bs'
 import {AiOutlinePicture} from 'react-icons/ai'
 import {SiDungeonsanddragons} from "react-icons/si";
-import AudioPlayer from "@/components/audioplayer";
-import ArtLibrary from "@/components/artlibrary";
-import artDirectory from '../../public/art_directory.json';
-import JournalList from "@/components/journallist";
-import SRDList from "@/components/srdlist";
+import AudioPlayer from "@/components/gameComponents/audioplayer";
+import ArtLibrary from "@/components/gameComponents/artlibrary";
+import artDirectory from '../../../public/art_directory.json';
+import JournalList from "@/components/gameComponents/journallist";
+import SRDList from "@/components/gameComponents/srdlist";
 
 const TabMenu = ({user}) => {
   const [selectedTab, setSelectedTab] = useState(0);

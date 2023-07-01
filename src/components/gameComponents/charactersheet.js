@@ -1,10 +1,211 @@
 import styles from "@/styles/CharacterSheet.module.css"
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {getExampleCharacter} from "@/5eRefence/characterSheetGenerators";
-import {scoreToMod} from "@/5eRefence/converters";
+import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
+import {scoreToMod} from "@/5eReference/converters";
+
 
 const CharacterSheet = ({characterSheet}) => {
+  const AttackRow = ({attack, index}) => {
+    return (
+      <tr>
+        <td>
+          <input
+            type="text"
+            name={`attacks[${index}].name`}
+            value={attack.name}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            name={`attacks[${index}].attack_bonus`}
+            value={attack.attack_bonus}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            name={`attacks[${index}].damage_dice`}
+            value={attack.damage_dice}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td colSpan={2}>
+          <input
+            type="text"
+            name={`attacks[${index}].notes`}
+            value={attack.notes}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+      </tr>
+    )
+  }
+
+  const SpellRow = ({spell, index}) => {
+
+    return (
+      <tr key={index}>
+        <td>
+          <input
+            name={`spells[${index}].prepared`}
+            type="checkbox"
+            onChange={handleCheckboxClick}
+            checked={spell.prepared}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].name`}
+            type="text"
+            value={spell.name}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].level`}
+            type="text"
+            value={spell.level}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].source`}
+            type="text"
+            value={spell.source}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].attack_save`}
+            type="text"
+            value={spell.attack_save}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].cast_time`}
+            type="text"
+            value={spell.cast_time}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].range_shape`}
+            type="text"
+            value={spell.range_shape}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].duration`}
+            type="text"
+            value={spell.duration}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].components`}
+            type="text"
+            value={spell.components}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`spells[${index}].notes`}
+            type="text"
+            value={spell.notes}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+      </tr>
+    )
+  }
+
+  const InventoryRow = ({item, index}) => {
+    return (
+      <tr key={index}>
+        <td>
+          <input
+            name={`inventory[${index}].equipped`}
+            type="checkbox"
+            onChange={handleCheckboxClick}
+            checked={item.equipped}
+          />
+        </td>
+        <td>
+          <input
+            name={`inventory[${index}].name`}
+            type="text"
+            value={item.name}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`inventory[${index}].count`}
+            type="text"
+            value={item.count}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`inventory[${index}].weight`}
+            type="text"
+            value={item.weight}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`inventory[${index}].value`}
+            type="text"
+            value={item.value}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+        <td>
+          <input
+            name={`inventory[${index}].notes`}
+            type="text"
+            value={item.notes}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+          />
+        </td>
+      </tr>
+    )
+  }
+
   const [character, setCharacter] = useState(characterSheet);
 
   const {register, setValue, handleSubmit} = useForm();
@@ -25,11 +226,13 @@ const CharacterSheet = ({characterSheet}) => {
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
+    console.log(name, value)
     setCharacter((prevEditableCharacterSheet) => ({
       ...prevEditableCharacterSheet,
       [name]: value
     }));
   };
+
 
   const handleInputBlur = () => {
     // Perform backend update here
@@ -37,19 +240,29 @@ const CharacterSheet = ({characterSheet}) => {
     console.log('Sending update to the backend:', character);
   };
 
-  const calcCarryWeight = () => {
-    return null
+  const handleCheckboxClick = (e) => {
+    const newCharacter = {...character}
+    newCharacter[e.target.name] = !newCharacter[e.target.name]
+    setCharacter(newCharacter)
+    handleInputBlur()
+    console.log(e.target.name)
   }
 
   const addInventory = () => {
-    return null
+    setCharacter({
+      ...character,
+      inventory: character.inventory.concat({
+        equipped: false,
+        name: "",
+        count: 0,
+        weight: 0,
+        value: "",
+        notes: ""
+      })
+    })
   }
 
   const removeInventory = () => {
-    return null
-  }
-
-  const saveCharacter = () => {
     return null
   }
 
@@ -58,7 +271,21 @@ const CharacterSheet = ({characterSheet}) => {
   }
 
   const addSpell = () => {
-    return null
+    setCharacter({
+      ...character,
+      spells: character.spells.concat({
+        prepared: false,
+        name: "",
+        level: 0,
+        source: "",
+        attack_save: "",
+        cast_time: "",
+        range_shape: "",
+        duration: "",
+        components: "",
+        notes: ""
+      })
+    })
   }
 
   const addAttunement = () => {
@@ -66,7 +293,10 @@ const CharacterSheet = ({characterSheet}) => {
   }
 
   const addAttack = () => {
-    return null
+    setCharacter({
+      ...character,
+      attacks: character.attacks.concat({name: "", notes: "", attack_bonus: 0, damage_dice: ""})
+    })
   }
 
   const longRest = () => {
@@ -236,18 +466,19 @@ const CharacterSheet = ({characterSheet}) => {
                     <label form="strength_save">Strength</label><input name="strength_save_mod" placeholder={"+0"}
                                                                        type="text" value={character.strength_save_mod}
                                                                        onChange={handleInputChange}
-                                                                       onBlur={handleInputBlur}/><input
-                    name="strength_save_prof"
-                    type="checkbox"/>
+                                                                       onBlur={handleInputBlur}/>
+                    <input name="strength_save_prof" type="checkbox" onChange={handleCheckboxClick}
+                           checked={character.strength_save_prof}/>
                   </li>
                   <li>
                     <label form="dexterity_save">Dexterity</label><input name="dexterity_save_mod" placeholder={"+0"}
                                                                          type="text"
                                                                          value={character.dexterity_save_mod}
                                                                          onChange={handleInputChange}
-                                                                         onBlur={handleInputBlur}/><input
-                    name="dexterity_save_prof"
-                    type="checkbox"/>
+                                                                         onBlur={handleInputBlur}/>
+                    <input
+                      name="dexterity_save_prof"
+                      type="checkbox" onChange={handleCheckboxClick} checked={character.dexterity_save_prof}/>
                   </li>
                   <li>
                     <label form="constitution_save">Constitution</label><input name="constitution_save_mod"
@@ -256,8 +487,8 @@ const CharacterSheet = ({characterSheet}) => {
                                                                                value={character.constitution_save_mod}
                                                                                onChange={handleInputChange}
                                                                                onBlur={handleInputBlur}/><input
-                    name="constitution_save_prof" type="checkbox" value={character.constitution_save_prof}
-                    onChange={handleInputChange} onBlur={handleInputBlur}/>
+                    name="constitution_save_prof" type="checkbox" onChange={handleCheckboxClick}
+                    checked={character.constitution_save_prof}/>
                   </li>
                   <li>
                     <label form="intelligence_save">Intelligence</label><input name="intelligence_save_mod"
@@ -266,24 +497,24 @@ const CharacterSheet = ({characterSheet}) => {
                                                                                value={character.intelligence_save_mod}
                                                                                onChange={handleInputChange}
                                                                                onBlur={handleInputBlur}/><input
-                    name="intelligence_save_prof" type="checkbox" value={character.intelligence_save_mod}
-                    onChange={handleInputChange} onBlur={handleInputBlur}/>
+                    name="intelligence_save_prof" type="checkbox" onChange={handleCheckboxClick}
+                    checked={character.intelligence_save_prof}/>
                   </li>
                   <li>
                     <label form="wisdom_save">Wisdom</label><input name="wisdom_save_mod" placeholder={"+0"}
                                                                    type="text" value={character.wisdom_save_mod}
                                                                    onChange={handleInputChange}
-                                                                   onBlur={handleInputBlur}/><input
-                    name="wisdom_save_prof"
-                    type="checkbox"/>
+                                                                   onBlur={handleInputBlur}/>
+                    <input name="wisdom_save_prof" type="checkbox" onChange={handleCheckboxClick}
+                           checked={character.wisdom_save_prof}/>
                   </li>
                   <li>
                     <label form="charisma_save">Charisma</label><input name="charisma_save_mod" placeholder={"+0"}
                                                                        type="text" value={character.charisma_save_mod}
                                                                        onChange={handleInputChange}
-                                                                       onBlur={handleInputBlur}/><input
-                    name="charisma_save_prof"
-                    type="checkbox"/>
+                                                                       onBlur={handleInputBlur}/>
+                    <input name="charisma_save_prof" type="checkbox" onChange={handleCheckboxClick}
+                           checked={character.charisma_save_prof}/>
                   </li>
                 </ul>
                 <div className={styles.label}>
@@ -296,16 +527,17 @@ const CharacterSheet = ({characterSheet}) => {
                     <label form="acrobatics">Acrobatics <span className={styles.skill}>(Dex)</span></label><input
                     name="acrobatics_mod" placeholder={"+0"} type="text" value={character.acrobatics_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="acrobatics_prof" type="checkbox"
-                                                                                  value={character.acrobatics_prof}
-                                                                                  onChange={handleInputChange}
-                                                                                  onBlur={handleInputBlur}/>
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.acrobatics_prof}/>
                   </li>
                   <li>
                     <label form="animal handling">Animal Handling <span
                       className={styles.skill}>(Wis)</span></label><input
                     name="animal_handling_mod" placeholder={"+0"} type="text" value={character.animal_handling_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="animal_handling_prof"
-                                                                                  type="checkbox"/>
+                                                                                  type="checkbox"
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.animal_handling_prof}/>
                   </li>
                   <li>
                     <label form="arcana">Arcana <span className={styles.skill}>(Int)</span></label>
@@ -317,25 +549,22 @@ const CharacterSheet = ({characterSheet}) => {
                       onChange={handleInputChange} onBlur={handleInputBlur}
                     />
                     <input
-                      name="arcana_prof" type="checkbox" value={character.arcana_prof} onChange={handleInputChange}
-                      onBlur={handleInputBlur}
+                      name="arcana_prof" type="checkbox" onChange={handleCheckboxClick} checked={character.arcana_prof}
                     />
                   </li>
                   <li>
                     <label form="athletics">Athletics <span className={styles.skill}>(Str)</span></label><input
                     name="athletics_mod" placeholder={"+0"} type="text" value={character.athletics_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="athletics_prof" type="checkbox"
-                                                                                  value={character.athletics_prof}
-                                                                                  onChange={handleInputChange}
-                                                                                  onBlur={handleInputBlur}/>
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.athletics_prof}/>
                   </li>
                   <li>
                     <label form="deception">Deception <span className={styles.skill}>(Cha)</span></label><input
                     name="deception_mod" placeholder={"+0"} type="text" value={character.deception_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="deception_prof" type="checkbox"
-                                                                                  value={character.deception_prof}
-                                                                                  onChange={handleInputChange}
-                                                                                  onBlur={handleInputBlur}/>
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.deception_prof}/>
                   </li>
                   <li>
                     <label form="history">History <span className={styles.skill}>(Int)</span></label>
@@ -347,8 +576,8 @@ const CharacterSheet = ({characterSheet}) => {
                       onChange={handleInputChange} onBlur={handleInputBlur}
                     />
                     <input
-                      name="history_prof" type="checkbox" value={character.history_prof} onChange={handleInputChange}
-                      onBlur={handleInputBlur}/>
+                      name="history_prof" type="checkbox" onChange={handleCheckboxClick}
+                      checked={character.history_prof}/>
                   </li>
                   <li>
                     <label form="insight">Insight <span className={styles.skill}>(Wis)</span></label>
@@ -360,20 +589,24 @@ const CharacterSheet = ({characterSheet}) => {
                       onChange={handleInputChange} onBlur={handleInputBlur}
                     />
                     <input
-                      name="insight_prof" type="checkbox" value={character.insight_prof} onChange={handleInputChange}
-                      onBlur={handleInputBlur}/>
+                      name="insight_prof" type="checkbox" onChange={handleCheckboxClick}
+                      checked={character.insight_prof}/>
                   </li>
                   <li>
                     <label form="intimidation">Intimidation <span className={styles.skill}>(Cha)</span></label><input
                     name="intimidation_mod" placeholder={"+0"} type="text" value={character.intimidation_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="intimidation_prof"
-                                                                                  type="checkbox"/>
+                                                                                  type="checkbox"
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.intimidation_prof}/>
                   </li>
                   <li>
                     <label form="investigation">Investigation <span className={styles.skill}>(Int)</span></label><input
                     name="investigation_mod" placeholder={"+0"} type="text" value={character.investigation_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="investigation_prof"
-                                                                                  type="checkbox"/>
+                                                                                  type="checkbox"
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.investigation_prof}/>
                   </li>
                   <li>
                     <label form="medicine">Medicine <span className={styles.skill}>(Wis)</span></label><input
@@ -383,8 +616,8 @@ const CharacterSheet = ({characterSheet}) => {
                     value={character.medicine_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}
                   /><input
-                    name="medicine_prof" type="checkbox" value={character.medicine_prof} onChange={handleInputChange}
-                    onBlur={handleInputBlur}/>
+                    name="medicine_prof" type="checkbox" onChange={handleCheckboxClick}
+                    checked={character.medicine_prof}/>
                   </li>
                   <li>
                     <label form="nature">Nature <span className={styles.skill}>(Int)</span></label>
@@ -396,26 +629,32 @@ const CharacterSheet = ({characterSheet}) => {
                       onChange={handleInputChange} onBlur={handleInputBlur}
                     />
                     <input
-                      name="nature_prof" type="checkbox" value={character.nature_prof} onChange={handleInputChange}
-                      onBlur={handleInputBlur}/>
+                      name="nature_prof" type="checkbox" onChange={handleCheckboxClick}
+                      checked={character.nature_prof}/>
                   </li>
                   <li>
                     <label form="perception">Perception <span className={styles.skill}>(Wis)</span></label><input
                     name="perception_mod" placeholder={"+0"} type="text" value={character.perception_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="perception_prof"
-                                                                                  type="checkbox"/>
+                                                                                  type="checkbox"
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.perception_prof}/>
                   </li>
                   <li>
                     <label form="performance">Performance <span className={styles.skill}>(Cha)</span></label><input
                     name="performance_mod" placeholder={"+0"} type="text" value={character.performance_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="performance_prof"
-                                                                                  type="checkbox"/>
+                                                                                  type="checkbox"
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.performance_prof}/>
                   </li>
                   <li>
                     <label form="persuasion">Persuasion <span className={styles.skill}>(Cha)</span></label><input
                     name="persuasion_mod" placeholder={"+0"} type="text" value={character.persuasion_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="persuasion_prof"
-                                                                                  type="checkbox"/>
+                                                                                  type="checkbox"
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.persuasion_prof}/>
                   </li>
                   <li>
                     <label form="religion">Religion <span className={styles.skill}>(Int)</span></label>
@@ -426,7 +665,8 @@ const CharacterSheet = ({characterSheet}) => {
                       value={character.religion_mod}
                       onChange={handleInputChange} onBlur={handleInputBlur}
                     /><input
-                    name="religion_prof" type="checkbox" value={character.religion_prof} onChange={handleInputChange}
+                    name="religion_prof" type="checkbox" onChange={handleCheckboxClick}
+                    checked={character.religion_prof}
                     onBlur={handleInputBlur}/>
                   </li>
                   <li>
@@ -434,7 +674,9 @@ const CharacterSheet = ({characterSheet}) => {
                       className={styles.skill}>(Dex)</span></label><input
                     name="sleight_of_hand_mod" placeholder={"+0"} type="text" value={character.sleight_of_hand_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}/><input name="sleight_of_hand_prof"
-                                                                                  type="checkbox"/>
+                                                                                  type="checkbox"
+                                                                                  onChange={handleCheckboxClick}
+                                                                                  checked={character.sleight_of_hand_prof}/>
                   </li>
                   <li>
                     <label form="stealth">Stealth <span className={styles.skill}>(Dex)</span></label><input
@@ -445,8 +687,8 @@ const CharacterSheet = ({characterSheet}) => {
                     onChange={handleInputChange} onBlur={handleInputBlur}
                   />
                     <input
-                      name="stealth_prof" type="checkbox" value={character.stealth_prof} onChange={handleInputChange}
-                      onBlur={handleInputBlur}/>
+                      name="stealth_prof" type="checkbox" onChange={handleCheckboxClick}
+                      checked={character.stealth_prof}/>
                   </li>
                   <li>
                     <label form="survival">Survival <span className={styles.skill}>(Wis)</span></label><input
@@ -456,8 +698,8 @@ const CharacterSheet = ({characterSheet}) => {
                     value={character.survival_mod}
                     onChange={handleInputChange} onBlur={handleInputBlur}
                   /><input
-                    name="survival_prof" type="checkbox" value={character.survival_prof} onChange={handleInputChange}
-                    onBlur={handleInputBlur}/>
+                    name="survival_prof" type="checkbox" onChange={handleCheckboxClick}
+                    checked={character.survival_prof}/>
                   </li>
                 </ul>
                 <div className={styles.label}>
@@ -539,23 +781,23 @@ const CharacterSheet = ({characterSheet}) => {
                   <div className={styles.deathsuccesses}>
                     <label>Successes</label>
                     <div className={styles.bubbles}>
-                      <input name="death_success_1" type="checkbox" value={character.death_success_1}
-                             onChange={handleInputChange} onBlur={handleInputBlur}/>
-                      <input name="death_success_2" type="checkbox" value={character.death_success_2}
-                             onChange={handleInputChange} onBlur={handleInputBlur}/>
-                      <input name="death_success_3" type="checkbox" value={character.death_success_3}
-                             onChange={handleInputChange} onBlur={handleInputBlur}/>
+                      <input name="death_success_1" type="checkbox" onChange={handleCheckboxClick}
+                             checked={character.death_success_1}/>
+                      <input name="death_success_2" type="checkbox" onChange={handleCheckboxClick}
+                             checked={character.death_success_2}/>
+                      <input name="death_success_3" type="checkbox" onChange={handleCheckboxClick}
+                             checked={character.death_success_3}/>
                     </div>
                   </div>
                   <div className={styles.deathfails}>
                     <label>Failures</label>
                     <div className={styles.bubbles}>
-                      <input name="death_fail_1" type="checkbox" value={character.death_fail_1}
-                             onChange={handleInputChange} onBlur={handleInputBlur}/>
-                      <input name="death_fail_2" type="checkbox" value={character.death_fail_2}
-                             onChange={handleInputChange} onBlur={handleInputBlur}/>
-                      <input name="death_fail_3" type="checkbox" value={character.death_fail_3}
-                             onChange={handleInputChange} onBlur={handleInputBlur}/>
+                      <input name="death_fail_1" type="checkbox" onChange={handleCheckboxClick}
+                             checked={character.death_fail_1}/>
+                      <input name="death_fail_2" type="checkbox" onChange={handleCheckboxClick}
+                             checked={character.death_fail_2}/>
+                      <input name="death_fail_3" type="checkbox" onChange={handleCheckboxClick}
+                             checked={character.death_fail_3}/>
                     </div>
                   </div>
                 </div>
@@ -575,40 +817,37 @@ const CharacterSheet = ({characterSheet}) => {
             <div className={styles.personality}>
               <label form="defenses">Defenses &amp; Active Conditions</label><textarea className={styles.textarea}
                                                                                        name="defenses"
-                                                                                       defaultValue={""}
                                                                                        value={character.defenses}
                                                                                        onChange={handleInputChange}
                                                                                        onBlur={handleInputBlur}/>
             </div>
             <div className={styles.ideals}>
               <label form="save_notes">Saving Throw Notes</label><textarea className={styles.textarea} name="save_notes"
-                                                                           defaultValue={""}
                                                                            value={character.save_notes}
                                                                            onChange={handleInputChange}
                                                                            onBlur={handleInputBlur}/>
             </div>
             <div className={styles.bonds}>
               <label form="movement">Movement Speeds</label><textarea className={styles.textarea} name="movement"
-                                                                      defaultValue={""}
                                                                       value={character.movement}
                                                                       onChange={handleInputChange}
                                                                       onBlur={handleInputBlur}/>
             </div>
             <div className={styles.flaws}>
-              <label form="senses">Senses</label><textarea className={styles.textarea} name="senses" defaultValue={""}
+              <label form="senses">Senses</label><textarea className={styles.textarea} name="senses"
                                                            value={character.senses} onChange={handleInputChange}
                                                            onBlur={handleInputBlur}/>
             </div>
           </section>
           <div className={styles.passivePerception + " " + styles.box}>
-            <div className="label-container">
+            <div className={styles.labelContainer}>
               <label form="passive_perception">Passive Wisdom (Perception)</label>
             </div>
             <input name="passive_perception" placeholder={"10"} value={character.passive_perception}
                    onChange={handleInputChange} onBlur={handleInputBlur}/>
           </div>
           <div className={styles.passivePerception + " " + styles.box}>
-            <div className="label-container">
+            <div className={styles.labelContainer}>
               <label form="passive_insight">Passive Wisdom (Insight)</label>
             </div>
             <input name="passive_insight" placeholder={"10"} value={character.passive_insight}
@@ -645,42 +884,9 @@ const CharacterSheet = ({characterSheet}) => {
               </tr>
               </thead>
               <tbody id="attacktable">
-              <tr>
-                <td>
-                  <input name="atkname0" type="text" value={character.atkname0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="atkbonus0" type="text" value={character.atkbonus0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="atkdamage0" type="text" value={character.atkdamage0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td colSpan={2}>
-                  <input name="atknotes0" type="text" value={character.atknotes0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input name="atkname1" type="text" value={character.atkname1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="atkbonus1" type="text" value={character.atkbonus1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="atkdamage1" type="text" value={character.atkdamage1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td colSpan={2}>
-                  <input name="atknotes1" type="text" value={character.atknotes1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-              </tr>
+              {character.attacks.map((attack, index) => (
+                <AttackRow key={index} attack={attack} index={index}/>
+              ))}
               </tbody>
             </table>
             <span>
@@ -690,7 +896,7 @@ const CharacterSheet = ({characterSheet}) => {
                   onClick={removeLastRow('attacktable')}
                   style={{width: '20%'}}>Remove Attack</button>
         </span>
-            <textarea className={styles.textarea} name="attacksnotes" defaultValue={""} value={character.attacksnotes}
+            <textarea className={styles.textarea} name="attacksnotes" value={character.attack_notes}
                       onChange={handleInputChange} onBlur={handleInputBlur}/>
           </div>
         </section>
@@ -829,90 +1035,9 @@ const CharacterSheet = ({characterSheet}) => {
               </tr>
               </thead>
               <tbody id="spelltable">
-              <tr>
-                <td>
-                  <input name="spellprep1" type="checkbox" value={character.spellprep1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellname0" type="text" value={character.spellname0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spelllevel0" type="text" value={character.spelllevel0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellsource0" type="text" value={character.spellsource0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellattacksave0" type="text" value={character.spellattacksave0}
-                         onChange={handleInputChange} onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spelltime0" type="text" value={character.spelltime0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellrange0" type="text" value={character.spellrange0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellduration0" type="text" value={character.spellduration0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellcomponents0" type="text" value={character.spellcomponents0}
-                         onChange={handleInputChange} onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellnotes0" type="text" value={character.spellnotes0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input name="spellprep1" type="checkbox" value={character.spellprep1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellname1" type="text" value={character.spellname1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spelllevel1" type="text" value={character.spelllevel1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellsource1" type="text" value={character.spellsource1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellattacksave1" type="text" value={character.spellattacksave1}
-                         onChange={handleInputChange} onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spelltime1" type="text" value={character.spelltime1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellrange1" type="text" value={character.spellrange1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellduration1" type="text" value={character.spellduration1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellcomponents1" type="text" value={character.spellcomponents1}
-                         onChange={handleInputChange} onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="spellnotes1" type="text" value={character.spellnotes1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-              </tr>
+              {character.spells.map((attack, index) => (
+                <SpellRow key={index} spell={attack} index={index}/>
+              ))}
               </tbody>
             </table>
             <span>
@@ -922,8 +1047,10 @@ const CharacterSheet = ({characterSheet}) => {
                   onClick={removeLastRow('spelltable')}
                   style={{width: '20%'}}>Remove Spell</button>
         </span>
-            <textarea className={styles.textarea} name="spellsnotes" placeholder="Additional spell notes"
-                      defaultValue={""}/>
+            <textarea className={styles.textarea} name="spells_notes" placeholder="Additional spell notes"
+                      value={character.spells_notes}
+                      onChange={handleInputChange} onBlur={handleInputBlur}/>
+
           </div>
         </section>
       </header>
@@ -954,8 +1081,9 @@ const CharacterSheet = ({characterSheet}) => {
               </table>
               <textarea className={styles.textarea} name="encumberance_notes"
                         placeholder="Additional encumberance notes"
-                        style={{height: '12em'}}
-                        defaultValue={""}/>
+                        style={{height: '12em'}} value={character.encumberance_notes}
+                        onChange={handleInputChange} onBlur={handleInputBlur}
+              />
             </div>
           </div>
         </section>
@@ -1019,8 +1147,10 @@ const CharacterSheet = ({characterSheet}) => {
                   onClick={removeLastRow('attunementtable')}
                   style={{width: '45%'}}>Remove Attunement Slot</button>
         </span>
-            <textarea className={styles.textarea} name="attunement_snotes" placeholder="Additional attunement notes"
-                      defaultValue={""}/>
+            <textarea className={styles.textarea} name="attunement_notes" placeholder="Additional attunement notes"
+                      value={character.attunement_notes}
+                      onChange={handleInputChange} onBlur={handleInputBlur}
+            />
           </div>
         </section>
       </header>
@@ -1052,58 +1182,9 @@ const CharacterSheet = ({characterSheet}) => {
               </tr>
               </thead>
               <tbody id="inventorytable">
-              <tr>
-                <td>
-                  <input name="itemequipped0" type="checkbox" value={character.itemequipped0}
-                         onChange={handleInputChange} onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemname0" type="text" value={character.itemname0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemcount0" type="text" value={character.itemcount0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemweight0" type="text" value={character.itemweight0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemvalue0" type="text" value={character.itemvalue0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemnotes0" type="text" value={character.itemnotes0} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input name="itemequipped1" type="checkbox" value={character.itemequipped1}
-                         onChange={handleInputChange} onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemname1" type="text" value={character.itemname1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemcount1" type="text" value={character.itemcount1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemweight1" type="text" value={character.itemweight1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemvalue1" type="text" value={character.itemvalue1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-                <td>
-                  <input name="itemnotes1" type="text" value={character.itemnotes1} onChange={handleInputChange}
-                         onBlur={handleInputBlur}/>
-                </td>
-              </tr>
+              {character.inventory.map((item, index) => (
+                <InventoryRow key={index} item={item} index={index}/>
+              ))}
               </tbody>
             </table>
             <span>
@@ -1113,7 +1194,9 @@ const CharacterSheet = ({characterSheet}) => {
                   style={{width: '20%'}}>Remove Item</button>
         </span>
             <textarea className={styles.textarea} name="inventory_notes" placeholder="Additional inventory notes"
-                      defaultValue={""}/>
+                      value={character.inventory_notes}
+                      onChange={handleInputChange} onBlur={handleInputBlur}
+            />
           </div>
         </section>
       </header>
@@ -1123,21 +1206,30 @@ const CharacterSheet = ({characterSheet}) => {
           <div>
             <label form="features-l">Features, Traits, &amp; Feats</label><textarea className={styles.textarea}
                                                                                     name="features_left"
-                                                                                    defaultValue={""}/>
+                                                                                    value={character.features_left}
+                                                                                    onChange={handleInputChange}
+                                                                                    onBlur={handleInputBlur}
+          />
           </div>
         </section>
         <section className={styles.features} id="features_center">
           <div>
             <label form="features-c">Features, Traits, &amp; Feats</label><textarea className={styles.textarea}
                                                                                     name="features_center"
-                                                                                    defaultValue={""}/>
+                                                                                    value={character.features_center}
+                                                                                    onChange={handleInputChange}
+                                                                                    onBlur={handleInputBlur}
+          />
           </div>
         </section>
         <section className={styles.features} id="features_right">
           <div>
             <label form="features-r">Features, Traits, &amp; Feats</label><textarea className={styles.textarea}
                                                                                     name="features_right"
-                                                                                    defaultValue={""}/>
+                                                                                    value={character.features_right}
+                                                                                    onChange={handleInputChange}
+                                                                                    onBlur={handleInputBlur}
+          />
           </div>
         </section>
       </main>
@@ -1185,34 +1277,41 @@ const CharacterSheet = ({characterSheet}) => {
           <div>
             <label form="organizations">Allies, Organizations, &amp; Enemies</label><textarea
             className={styles.textarea}
-            name="organizations"
-            defaultValue={""}/>
+            name="organizations" value={character.organizations}
+            onChange={handleInputChange} onBlur={handleInputBlur}
+          />
           </div>
         </section>
         <section className={styles.features} id="backstory">
           <div>
             <label form="backstory">Character Backstory</label><textarea className={styles.textarea} name="backstory"
-                                                                         defaultValue={""}/>
+                                                                         value={character.backstory}
+                                                                         onChange={handleInputChange}
+                                                                         onBlur={handleInputBlur}
+          />
           </div>
         </section>
         <section>
           <section className={styles.flavor}>
             <div className={styles.personality}>
               <label form="personality">Personality</label><textarea className={styles.textarea} name="personality"
-                                                                     defaultValue={""}/>
+                                                                     value={character.personality}
+                                                                     onChange={handleInputChange}
+                                                                     onBlur={handleInputBlur}
+            />
             </div>
             <div className={styles.ideals}>
-              <label form="ideals">Ideals</label><textarea className={styles.textarea} name="ideals" defaultValue={""}
+              <label form="ideals">Ideals</label><textarea className={styles.textarea} name="ideals"
                                                            value={character.ideals} onChange={handleInputChange}
                                                            onBlur={handleInputBlur}/>
             </div>
             <div className={styles.bonds}>
-              <label form="bonds">Bonds</label><textarea className={styles.textarea} name="bonds" defaultValue={""}
+              <label form="bonds">Bonds</label><textarea className={styles.textarea} name="bonds"
                                                          value={character.bonds} onChange={handleInputChange}
                                                          onBlur={handleInputBlur}/>
             </div>
             <div className={styles.flaws}>
-              <label form="flaws">Flaws</label><textarea className={styles.textarea} name="flaws" defaultValue={""}
+              <label form="flaws">Flaws</label><textarea className={styles.textarea} name="flaws"
                                                          value={character.flaws} onChange={handleInputChange}
                                                          onBlur={handleInputBlur}/>
             </div>
@@ -1224,19 +1323,28 @@ const CharacterSheet = ({characterSheet}) => {
         <section className={styles.features} id="notes-left">
           <div>
             <label form="notes-l">Additional Notes</label><textarea className={styles.textarea} name="notes_left"
-                                                                    defaultValue={""}/>
+                                                                    value={character.notes_left}
+                                                                    onChange={handleInputChange}
+                                                                    onBlur={handleInputBlur}
+          />
           </div>
         </section>
         <section className={styles.features} id="notes-center">
           <div>
             <label form="notes-c">Additional Notes</label><textarea className={styles.textarea} name="notes_center"
-                                                                    defaultValue={""}/>
+                                                                    value={character.notes_center}
+                                                                    onChange={handleInputChange}
+                                                                    onBlur={handleInputBlur}
+          />
           </div>
         </section>
         <section className={styles.features} id="notes-right">
           <div>
             <label form="notes-r">Additional Notes</label><textarea className={styles.textarea} name="notes_right"
-                                                                    defaultValue={""}/>
+                                                                    value={character.notes_right}
+                                                                    onChange={handleInputChange}
+                                                                    onBlur={handleInputBlur}
+          />
           </div>
         </section>
       </main>

@@ -1,19 +1,17 @@
-import React, {useEffect, useState} from "react";
-import styles from "../styles/Home.module.css";
-import {withAuthenticator} from "@aws-amplify/ui-react";
-import {API, Auth, withSSRContext, graphqlOperation} from "aws-amplify";
-import TabMenu from "@/components/tabmenu";
-import BattleMap from "@/components/battlemap";
-import CharacterSheet from "@/components/charactersheet";
-import DraggableWindow, {DraggableCharacterWindow, DraggableMonsterWindow} from "@/components/draggablewindow";
-import useBattlemapStore from "@/stores/battlemapStore";
-import MonsterSheet from "@/components/monstersheet";
+import React, {useState, useEffect} from 'react';
+import GameList from '@/components/landingComponents/gamelist';
+import CreateGame from '@/components/landingComponents/creategame';
+import {Auth} from "aws-amplify";
+import {ThemeProvider} from "@mui/material";
+import themeOptions from "@/themes/muitheme";
+import LandingMenuBar from "@/components/landingComponents/landingmenubar";
+import '@aws-amplify/ui-react/styles.css';
 
-function Home() {
-  // const addCharacterSheetWindow = useBattlemapStore((state) => state.addCharacterSheetWindow);
-  const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows)
-  const monsterBlocks = useBattlemapStore((state) => state.monsterBlocks)
+
+const App = () => {
   const [user, setUser] = useState(null);
+  const [games, setGames] = useState([]);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -23,31 +21,30 @@ function Home() {
         setUser(null);
       }
     };
+    // Simulated API call to fetch games for the signed-in user
+    // Replace this with your actual API call to fetch the games
+    const fetchGames = async () => {
+      // Simulated response data (Replace with your API response)
+      const response = [
+        {id: 'game1', name: 'Game 1'},
+        {id: 'game2', name: 'Game 2'},
+      ];
+      setGames(response);
+    };
 
+    // Fetch games for the signed-in user
+    fetchGames();
     fetchUser();
   }, [])
 
-  if (user) {
-    console.log('User', user)
-    return (
-      <div className="app">
-        <div className={"appContainer"}>
-          <BattleMap/>
-          <TabMenu user={user}/>
-          {/*<MonsterSheet slug={'aboleth'}/>*/}
-        </div>
-        {characterSheetWindows.map((sheet) => (
-          <DraggableCharacterWindow key={sheet.id} characterSheet={sheet}/>
-        ))}
-        {monsterBlocks.map((monster) => (
-          <DraggableMonsterWindow key={monster.slug} slug={monster.slug}/>
-        ))}
-      </div>
-    );
-  } else {
-    return <p>Loading...</p>;
-  }
-}
+  return (
+    <ThemeProvider theme={themeOptions}>
+      <LandingMenuBar user={user} setUser={setUser}/>
+      <h1>Welcome, {user ? user.username : 'Guest'}!</h1>
+      <CreateGame/>
+      <GameList games={games}/>
+    </ThemeProvider>
+  );
+};
 
-// export default Home;
-export default withAuthenticator(Home);
+export default App;

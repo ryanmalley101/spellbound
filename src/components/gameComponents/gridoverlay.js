@@ -1,4 +1,4 @@
-import styles from '../styles/Battlemap.module.css'
+import styles from '../../styles/Battlemap.module.css'
 
 const GridOverlay = ({gridSize}) => {
   // Adjust the grid size and color as per your requirements

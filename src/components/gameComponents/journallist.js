@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import styles from "@/styles/JournalList.module.css";
 import {List, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import useBattlemapStore from "@/stores/battlemapStore";
-import {getExampleCharacter} from "@/5eRefence/characterSheetGenerators";
+import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
 
 const JournalList = () => {
   const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows);

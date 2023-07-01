@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import DraggableIcon from "@/components/draggableicon";
+import DraggableIcon from "@/components/gameComponents/draggableicon";
 import {HTML5Backend} from "react-dnd-html5-backend";
-import styles from "../styles/Battlemap.module.css";
-import GridOverlay from "@/components/gridoverlay";
-import ZoomSlider from "@/components/zoomslider";
+import styles from "../../styles/Battlemap.module.css";
+import GridOverlay from "@/components/gameComponents/gridoverlay";
+import ZoomSlider from "@/components/gameComponents/zoomslider";
 import useBattlemapStore from "@/stores/battlemapStore";
 
 const GRID_SIZE = 25

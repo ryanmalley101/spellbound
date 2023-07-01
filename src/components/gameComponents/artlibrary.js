@@ -12,7 +12,7 @@ import {BsFillCaretDownFill, BsFillCaretRightFill, BsFillFilePlusFill} from 'rea
 import Image from 'next/image';
 import styles from "@/styles/ArtLibrary.module.css"
 import useBattlemapStore from "@/stores/battlemapStore";
-import DraggableIcon from "@/components/draggableicon";
+import DraggableIcon from "@/components/gameComponents/draggableicon";
 import {v4 as uuidv4} from 'uuid';
 
 const DirectoryMenu = ({directory, parentPath = '', filter}) => {

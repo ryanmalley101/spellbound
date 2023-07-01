@@ -1,13 +1,12 @@
-
-import styles from "src/styles/Chatroom.module.css";
-import React, { useState, useEffect } from 'react';
+import styles from "@/styles/Chatroom.module.css";
+import React, {useState, useEffect} from 'react';
 import {API, graphqlOperation} from 'aws-amplify';
 import {listMessages} from "@/graphql/queries";
 import {onCreateMessage} from "@/graphql/subscriptions";
-import Message from "@/components/message";
+import Message from "@/components/gameComponents/message";
 import {createMessage} from "@/graphql/mutations";
 
-const ChatRoom = ( {user} ) => {
+const ChatRoom = ({user}) => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
 
@@ -29,7 +28,7 @@ const ChatRoom = ( {user} ) => {
 
 
   useEffect(() => {
-    const getMessages = async() => {
+    const getMessages = async () => {
       try {
         const messagesReq = await API.graphql({
           query: listMessages,
@@ -70,40 +69,40 @@ const ChatRoom = ( {user} ) => {
     }
   }
 
-  const callbackfn=(message) => (
+  const callbackfn = (message) => (
     <Message
       message={message}
       user={user}
       isMe={user.username === message.owner}
       key={message.id} onSubmit={handleSubmit} value={messageText} onChange={(e) => setMessageText(e.target.value)}/>
   )
-    // Call the fetchMessages function when the component mounts
+  // Call the fetchMessages function when the component mounts
 
-  const compareFn=(a, b) => b.createdAt.localeCompare(a.createdAt)
+  const compareFn = (a, b) => b.createdAt.localeCompare(a.createdAt)
 
   return (
     <div className={styles.container}>
-    {/*<h1 className={styles.title}> Spellbound Live Chat </h1>*/}
-    <div className={styles.chatbox}>
+      {/*<h1 className={styles.title}> Spellbound Live Chat </h1>*/}
+      <div className={styles.chatbox}>
         {messages.sort(compareFn).map(callbackfn)}
+      </div>
+      <div className={styles.formContainer}>
+        <form onSubmit={handleSubmit} className={styles.formBase}>
+          <input
+            type="text"
+            id="message"
+            name="message"
+            autoFocus
+            required
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            placeholder="💬 Send a message to the world 🌎"
+            className={styles.textBox}
+          />
+          <button style={{marginLeft: "8px"}}>Send</button>
+        </form>
+      </div>
     </div>
-    <div className={styles.formContainer}>
-      <form onSubmit={handleSubmit} className={styles.formBase}>
-        <input
-          type="text"
-          id="message"
-          name="message"
-          autoFocus
-          required
-          value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
-          placeholder="💬 Send a message to the world 🌎"
-          className={styles.textBox}
-        />
-        <button style={{marginLeft: "8px"}}>Send</button>
-      </form>
-    </div>
-  </div>
   )
 }
 

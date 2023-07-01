@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
-import styles from '../styles/DraggableWindow.module.css'
+import styles from '../../styles/DraggableWindow.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
-import CharacterSheet from "@/components/charactersheet";
+import CharacterSheet from "@/components/gameComponents/charactersheet";
 import {BsX} from "react-icons/bs";
 import useBattlemapStore from "@/stores/battlemapStore";
-import MonsterSheet from "@/components/monstersheet";
+import MonsterSheet from "@/components/gameComponents/monstersheet";
 
 const DraggableWindow = ({initialPosition, content, onClose}) => {
   const [windowPosition, setWindowPosition] = useState({x: 0, y: 0});

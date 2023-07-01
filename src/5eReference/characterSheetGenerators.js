@@ -8,7 +8,7 @@ const getExampleCharacter = () => {
     race: "Aasimar",
     alignment: "chaotic good",
     xp: 100,
-    inspiration: true,
+    inspiration: 1,
     proficiency_bonus: 2,
     ac: 15,
     armor_desc: "natural armor",
@@ -47,7 +47,7 @@ const getExampleCharacter = () => {
     passive_insight: 9,
     acrobatics_prof: true,
     animal_handling_prof: false,
-    arcane_prof: true,
+    arcana_prof: true,
     athletics_prof: false,
     deception_prof: true,
     history_prof: false,
@@ -96,11 +96,12 @@ const getExampleCharacter = () => {
       },
       {
         name: "Sword",
-        notes: null,
+        notes: "",
         attack_bonus: 13,
         damage_dice: "1d10+4 piercing",
       }
     ],
+    attack_notes: "My attack notes",
     spell_slots_1: 1,
     spell_slots_2: 2,
     spell_slots_3: 3,
@@ -139,7 +140,7 @@ const getExampleCharacter = () => {
         name: "Alarm",
         level: 1,
         source: "Warlock",
-        attack_save: null,
+        attack_save: "",
         cast_time: "1 minute",
         range_shape: "30 feet",
         duration: "8 hours",
@@ -151,8 +152,8 @@ const getExampleCharacter = () => {
           "An audible alarm produces the sound of a hand bell for 10 seconds within 60 feet."
       }
     ],
-    additional_spell_notes: "Zathror is the greatest spellcaster in the world.",
-    weight_carred: 12,
+    spells_notes: "Zathror is the greatest spellcaster in the world.",
+    weight_carried: 12,
     weight_capacity: 13,
     encumberance_notes: "Encumberance Notes here",
     pp: 1,
@@ -184,7 +185,7 @@ const getExampleCharacter = () => {
         notes: null
       }
     ],
-    inventory_notes: "Inventory isnt a concern",
+    inventory_notes: "Inventory isn't a concern",
     features_left: "Features 1",
     features_center: "Features 2",
     features_right: "Features 3",

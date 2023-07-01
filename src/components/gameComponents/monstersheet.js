@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/styles/MonsterSheet.module.css"
-import {crToXP, scoreToMod} from "@/5eRefence/converters";
+import {crToXP, scoreToMod} from "@/5eReference/converters";
 
 const MonsterSheet = ({slug}) => {
   const [monsterData, setMonsterData] = useState(null);
