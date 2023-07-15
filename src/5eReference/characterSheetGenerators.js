@@ -182,7 +182,7 @@ const getExampleCharacter = () => {
         count: 10,
         weight: .5,
         value: "1 cp",
-        notes: null
+        notes: ""
       }
     ],
     inventory_notes: "Inventory isn't a concern",

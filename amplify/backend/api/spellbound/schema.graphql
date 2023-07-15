@@ -1,127 +1,140 @@
 type Game
 @model
-@auth(
-    rules: [
-        # Allow signed in users to perform all actions
-        { allow: private }
-    ]
-) {
-    # Owner is a user ID within cognito
-    owner: Player! @hasOne
+@auth(rules: [{ allow: private, provider: iam}, { allow: private }])
+{
+    id: ID!
     name: String!
-    # Message List
+    owner: User! @belongsTo
     messageList: [Message]! @hasMany
-    dms: [Player]! @hasMany
+    dms: [ID]
     players: [Player]! @hasMany
     maps: [Map]! @hasMany
-    # The ID of the map the players see
-    activeMap: Map @hasOne
+    activeMap: ID
     characterSheets: [CharacterSheet]! @hasMany
 }
 
-type UserPlayer
-@model
-@auth(
-    rules: [
-        # Allow signed in users to perform all actions
-        { allow: private }
-    ]
-) {
-    id: ID!
-    user: User! @belongsTo
-    player: Player! @belongsTo
-}
-
-
-type Player
-@model
-@auth(
-    rules: [
-        # Allow the owner of the player to perform all actions
-        { allow: owner },
-        # Allow the player to query and update their association with the game
-        { allow: owner, operations: [read, update], ownerField: "playerID" },
-        # Allow the game owner to update the association of the player with the game
-        { allow: owner, operations: [update], ownerField: "gameID" }
-    ]
-) {
-    game: Game @hasOne
-    userPlayers: [UserPlayer] @hasMany
+input GameInput {
+    name: String
+    userGamesId: ID
 }
 
 type User
 @model
-@auth(
-    rules: [
-        # Allow signed-in users to perform all actions
-        { allow: private }
-    ]
-) {
+@auth(rules: [{ allow: private }])
+{
     id: ID!
     email: String!
     username: String!
-    players: [Player] @hasMany
-    userPlayers: [UserPlayer] @hasMany
+    players: [Player]! @hasMany
+    games: [Game] @hasMany
 }
 
-type Message @model
-@auth(
-    rules: [
-        # Allow signed in users to perform all actions
-        { allow: private }
-    ]
-)
+input UserInput {
+    id: ID
+    email: String
+    username: String
+}
+
+type CreateGameResponse {
+    id: ID!
+}
+
+input CreateNewGameInput {
+    gameName: String!
+    ownerId: ID!
+    username: String!
+}
+
+type Mutation {
+    createNewGame(input: CreateNewGameInput!): CreateGameResponse!
+    @function(name: "createNewGame-dev")
+}
+
+type Message
+@model
+@auth(rules: [{ allow: private }])
 {
-    id: ID! @primaryKey(sortKeyFields: ["timestamp"])
-    owner: String!
+    id: ID! @primaryKey(sortKeyFields: ["createdAt"])
+    game: Game @belongsTo
+    owner: ID!
     message: String!
-    timestamp: AWSTimestamp!
-}
-
-
-type Map @model
-@auth(
-    rules: [
-        # Allow signed in users to perform all actions
-        { allow: private }
-    ]
-)
-{
-    id: ID!  @primaryKey(sortKeyFields: ["createdAt"])
+    diceString: String
     createdAt: AWSDateTime!
-    tokens: [Token]! @hasMany
-    backgroundTokens: [Token]! @hasMany
-    gmTokens: [Token]! @hasMany
+}
+
+input MessageInput {
+    gameMessageListId: ID
+    owner: ID
+    message: String
+    diceString: String
+}
+
+type Player
+@model
+@auth(rules: [{ allow: private }])
+{
+    id: ID!
     name: String!
+    user: User! @belongsTo
+}
+
+input PlayerInput {
+    name: String
+    userPlayersId: ID
+    gamePlayersId: ID
+}
+
+type Map
+@model
+@auth(rules: [{ allow: private }])
+{
+    tokens: [Token]! @hasMany
+    sizeX: Int!
+    sizeY: Int!
+    name: String!
+    game: Game! @belongsTo
 }
 
 
-type Token @model
-@auth(
-    rules: [
-        # Allow signed in users to perform all actions
-        { allow: private }
-    ]
-)
+input MapInput {
+    gameMapsId: ID
+    sizeX: Int
+    sizeY: Int
+    name: String
+}
+
+type Token
+@model
+@auth(rules: [{ allow: private }])
 {
+    map: Map! @belongsTo
+    character: CharacterSheet @belongsTo
     imageURL: String!
-    scaleX: Int!
-    scaleY: Int!
-    rotation: Int!
-    positionX: Int!
-    positionY: Int!
+    scaleX: Float!
+    scaleY: Float!
+    rotation: Float!
+    positionX: Float!
+    positionY: Float!
+}
+
+
+input TokenInput {
+    mapTokensId: ID
+    imageURL: String
+    width: Float
+    height: Float
+    rotation: Float
+    positionX: Float
+    positionY: Float
 }
 
 type CharacterSheet
 @model
-@auth(
-    rules: [
-        # Allow signed in users to perform all actions
-        { allow: private }
-    ]
-)
+@auth(rules: [{ allow: private }])
 {
-    # Owner is a user ID within cognito
+    player: ID!
+    game: Game! @belongsTo
+    token: Token @hasOne
     name: String!
     class_level: String!
     background: String!
@@ -208,7 +221,7 @@ type CharacterSheet
     save_notes: String!
     movement: String!
     other_profs: String!
-    attacks: [AWSJSON]!
+    attacks: [Attack]!
     attack_notes: String!
     spell_slots_1: Int!
     spell_slots_2: Int!
@@ -231,7 +244,7 @@ type CharacterSheet
     pact_level: Int!
     pact_available: Int!
     pact_maximum: Int!
-    spells: [AWSJSON]!
+    spells: [Spell]!
     spells_notes: String!
     weight_carried: Int!
     weight_capacity: Int!
@@ -241,9 +254,9 @@ type CharacterSheet
     ep: Int!
     sp: Int!
     cp: Int!
-    attuned_magic_items: [String]!,
+    attuned_magic_items: [String]!
     attunement_notes: String!
-    inventory: [AWSJSON]!
+    inventory: [Item]!
     inventory_notes: String!
     features_left: String!
     features_center: String!
@@ -266,7 +279,213 @@ type CharacterSheet
     notes_center: String!
     notes_right: String!
     players: [String]!
-    gameID: ID!
-    token: Token! @hasOne
 }
 
+#
+#input CharacterSheetInput {
+#    name: String
+#    player: ID
+#    class_level: String
+#    background: String
+#    player_name: String
+#    race: String
+#    alignment: String
+#    xp: Int
+#    inspiration: Int
+#    proficiency_bonus: Int
+#    ac: Int
+#    armor_desc: String
+#    max_hp: Int
+#    death_success_1: Boolean
+#    death_success_2: Boolean
+#    death_success_3: Boolean
+#    death_fail_1: Boolean
+#    death_fail_2: Boolean
+#    death_fail_3: Boolean
+#    current_hp: Int
+#    total_hd: String
+#    current_hd: Int
+#    temp_hp: Int
+#    speed: String
+#    strength_score: Int
+#    dexterity_score: Int
+#    constitution_score: Int
+#    intelligence_score: Int
+#    wisdom_score: Int
+#    charisma_score: Int
+#    strength_save_mod: Int
+#    dexterity_save_mod: Int
+#    constitution_save_mod: Int
+#    intelligence_save_mod: Int
+#    wisdom_save_mod: Int
+#    charisma_save_mod: Int
+#    strength_save_prof: Boolean
+#    dexterity_save_prof: Boolean
+#    constitution_save_prof: Boolean
+#    intelligence_save_prof: Boolean
+#    wisdom_save_prof: Boolean
+#    charisma_save_prof: Boolean
+#    passive_perception: Int
+#    passive_investigation: Int
+#    passive_insight: Int
+#    acrobatics_prof: Boolean
+#    animal_handling_prof: Boolean
+#    arcana_prof: Boolean
+#    athletics_prof: Boolean
+#    deception_prof: Boolean
+#    history_prof: Boolean
+#    insight_prof: Boolean
+#    intimidation_prof: Boolean
+#    investigation_prof: Boolean
+#    medicine_prof: Boolean
+#    nature_prof: Boolean
+#    perception_prof: Boolean
+#    performance_prof: Boolean
+#    persuasion_prof: Boolean
+#    religion_prof: Boolean
+#    sleight_of_hand_prof: Boolean
+#    stealth_prof: Boolean
+#    survival_prof: Boolean
+#    acrobatics_mod: Int
+#    animal_handling_mod: Int
+#    arcana_mod: Int
+#    athletics_mod: Int
+#    deception_mod: Int
+#    history_mod: Int
+#    insight_mod: Int
+#    intimidation_mod: Int
+#    investigation_mod: Int
+#    medicine_mod: Int
+#    nature_mod: Int
+#    perception_mod: Int
+#    performance_mod: Int
+#    persuasion_mod: Int
+#    religion_mod: Int
+#    sleight_of_hand_mod: Int
+#    stealth_mod: Int
+#    survival_mod: Int
+#    initiative: Int
+#    defenses: String
+#    senses: String
+#    save_notes: String
+#    movement: String
+#    other_profs: String
+#    attacks: [AttackInput]
+#    attack_notes: String
+#    spell_slots_1: Int
+#    spell_slots_2: Int
+#    spell_slots_3: Int
+#    spell_slots_4: Int
+#    spell_slots_5: Int
+#    spell_slots_6: Int
+#    spell_slots_7: Int
+#    spell_slots_8: Int
+#    spell_slots_9: Int
+#    spell_slots_max_1: Int
+#    spell_slots_max_2: Int
+#    spell_slots_max_3: Int
+#    spell_slots_max_4: Int
+#    spell_slots_max_5: Int
+#    spell_slots_max_6: Int
+#    spell_slots_max_7: Int
+#    spell_slots_max_8: Int
+#    spell_slots_max_9: Int
+#    pact_level: Int
+#    pact_available: Int
+#    pact_maximum: Int
+#    spells: [SpellInput]
+#    spells_notes: String
+#    weight_carried: Int
+#    weight_capacity: Int
+#    encumberance_notes: String
+#    pp: Int
+#    gp: Int
+#    ep: Int
+#    sp: Int
+#    cp: Int
+#    attuned_magic_items: [String]
+#    attunement_notes: String
+#    inventory: [AWSJSON]
+#    inventory_notes: String
+#    features_left: String
+#    features_center: String
+#    features_right: String
+#    gender: String
+#    age: String
+#    height: String
+#    weight: String
+#    faith: String
+#    skin: String
+#    eyes: String
+#    hair: String
+#    organizations: String
+#    backstory: String
+#    personality: String
+#    ideals: String
+#    bonds: String
+#    flaws: String
+#    notes_left: String
+#    notes_center: String
+#    notes_right: String
+#    players: [String]
+#    gameID: ID
+#    token: TokenInput
+#}
+
+type Attack {
+    name: String!
+    notes: String!
+    attack_bonus: Int!
+    damage_dice: String!
+}
+
+input AttackInput {
+    name: String
+    notes: String
+    attack_bonus: Int
+    damage_dice: String
+}
+
+type Spell {
+    prepared: Boolean!
+    name: String!
+    level: Int!
+    source: String!
+    attack_save: String!
+    cast_time: String!
+    range_shape: String!
+    duration: String!
+    components: String!
+    notes: String!
+}
+
+input SpellInput {
+    prepared: Boolean
+    name: String
+    level: Int
+    source: String
+    attack_save: String
+    cast_time: String
+    range_shape: String
+    duration: String
+    components: String
+    notes: String
+}
+
+type Item {
+    equipped: Boolean!
+    name: String!
+    count: Int!
+    weight: Float!
+    value: String!
+    notes: String!
+}
+
+input ItemInput {
+    equipped: Boolean
+    name: String
+    count: Int
+    weight: Float
+    value: String
+    notes: String
+}

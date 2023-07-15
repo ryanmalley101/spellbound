@@ -2,52 +2,48 @@ import React, {useState} from 'react';
 import {createGame} from '@/graphql/mutations';
 import {API, Auth, withSSRContext, graphqlOperation} from "aws-amplify";
 import {createPlayer} from '@/graphql/mutations';
+import {useRouter} from "next/router";
+import {v4 as uuidv4} from 'uuid';
 
-const CreateGame = () => {
+const CreateGame = ({user}) => {
   const [gameName, setGameName] = useState('');
+  const router = useRouter();
 
-
-  const createPlayerForCurrentUser = async () => {
-    try {
-      // Get the current authenticated user
-      const currentUser = await Auth.currentAuthenticatedUser();
-
-      // Get the user ID of the current authenticated user
-      const userId = currentUser.attributes.sub;
-      console.log(`User Id ${userId}`)
-      // Create the GamePlayer input object with the user ID
-      const gamePlayerInput = {
-        playerID: userId,
-      };
-
-      // Call the API to create the GamePlayer
-      const newGamePlayer = await API.graphql(
-        graphqlOperation(createGamePlayer, {input: gamePlayerInput})
-      );
-
-      console.log('New GamePlayer created:', newGamePlayer.data.createGamePlayer);
-      return newGamePlayer.data.createGamePlayer;
-    } catch (error) {
-      console.error('Error creating the GamePlayer:', error);
-      throw error;
-    }
-  };
 
   const handleCreateGame = async () => {
+    const playerID = uuidv4()
+
     try {
+      console.log(user.attributes)
+      const userID = user.attributes.sub;
+      const username = user.username
       console.log(gameName)
-      const newGamePlayer = createGamePlayerForCurrentUser()
+      console.log(userID)
+      const input = {
+        gameName: gameName,
+        ownerId: userID,
+        username: username
+      };
 
-      const newGame = await API.graphql(
-        graphqlOperation(createGame, {
-          input: {
-            name: gameName,
-          },
-        })
-      );
+      // Call the createNewGame mutation
+      const response = await API.graphql({
+        query: `
+          mutation CreateNewGame($input: CreateNewGameInput!) {
+            createNewGame(input: $input) {
+              id
+            }
+          }
+        `,
+        variables: {
+          input
+        },
+      });
 
-      console.log('New game created:', newGame.data.createGame);
-      return newGame.data.createGame;
+      // The response will contain the created game data
+      console.log('New game created:', response.data.createNewGame);
+      await router.push(`/game/${response.data.createNewGame.id}`); // Redirect to the dashboard page after successful login
+
+      return response.data.createGame;
     } catch (error) {
       console.error('Error creating the game:', error);
       throw error;

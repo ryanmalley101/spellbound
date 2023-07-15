@@ -14,11 +14,15 @@ import styles from "@/styles/ArtLibrary.module.css"
 import useBattlemapStore from "@/stores/battlemapStore";
 import DraggableIcon from "@/components/gameComponents/draggableicon";
 import {v4 as uuidv4} from 'uuid';
+import {API} from "aws-amplify";
+import * as mutations from "@/graphql/mutations";
 
 const DirectoryMenu = ({directory, parentPath = '', filter}) => {
 
   const [open, setOpen] = useState(false);
   const insertToken = useBattlemapStore(state => state.addToken)
+  const {activeMap} = useBattlemapStore()
+
 
   const handleClick = () => {
     setOpen(!open);
@@ -30,10 +34,27 @@ const DirectoryMenu = ({directory, parentPath = '', filter}) => {
     }).join(' ');
   }
 
-  const addToken = (path) => {
+  const addToken = async (path) => {
+    const input = {
+      imageURL: path,
+      mapTokensId: activeMap,
+      positionX: 0,
+      positionY: 0,
+      rotation: 0,
+      scaleX: 1,
+      scaleY: 1
+    };
+
     console.log(path)
-    const newToken = <DraggableIcon key={uuidv4()} imgsrc={path}/>
-    insertToken(newToken)
+    // Call the createNewGame mutation
+    const newToken = await API.graphql({
+      query: mutations.createToken,
+      variables: {input: input}
+    });
+
+    console.log("Creating a new token")
+    console.log(newToken)
+    return newToken.data.createToken.id
   }
 
   if (directory.type === 'file') {

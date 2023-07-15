@@ -2,45 +2,80 @@ import styles from "@/styles/Chatroom.module.css";
 import React, {useState, useEffect} from 'react';
 import {API, graphqlOperation} from 'aws-amplify';
 import {listMessages} from "@/graphql/queries";
-import {onCreateMessage} from "@/graphql/subscriptions";
+import {onCreateMessage, onUpdateGame} from "@/graphql/subscriptions";
 import Message from "@/components/gameComponents/message";
-import {createMessage} from "@/graphql/mutations";
+import {createMessage, updateGame} from "@/graphql/mutations";
+import useBattlemapStore from "@/stores/battlemapStore";
 
 const ChatRoom = ({user}) => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
+  const gameID = useBattlemapStore((state) => state.gameID)
+  const playerID = useBattlemapStore((state) => state.playerID)
 
   useEffect(() => {
+    const getMessages = async () => {
+      const response = await API.graphql({
+        query: `
+        query GetGameMessageList($id: ID!) {
+          getGame(id: $id) {
+            messageList {
+              items {
+                message
+                createdAt
+                owner
+              }
+              # Include any other fields you need from the messageList object
+            }
+          }
+        }
+      `,
+        variables: {
+          id: gameID,
+        },
+      });
+      console.log(response)
+      setMessages(response.data.getGame.messageList.items)
+    }
+    getMessages()
 
-    // Subscribe to creation of message
+    // Define the subscription handler
+    const subscriptionHandler = (data) => {
+      const updatedGame = data.value.data.onUpdateGame.messageList;
+      console.log('Updated Game:', updatedGame);
+
+      // Handle the new message in the updated game
+      setMessages(updatedGame)
+      // console.log('New Message:', newMessage);
+      // Update your chatroom UI with the new message
+    };
+
     const subscription = API.graphql(
-      graphqlOperation(onCreateMessage)
+      graphqlOperation(onUpdateGame, {id: gameID}),
+      {
+        filter: {
+          mutationType: {
+            eq: 'update',
+          },
+          updatedFields: {
+            contains: 'messageList',
+          },
+        },
+      }
     ).subscribe({
-      next: ({provider, value}) => {
-        setMessages((messages) => [
-          ...messages,
-          value.data.onCreateMessage,
-        ]);
+      next: (data) => {
+        subscriptionHandler(data);
       },
-      error: (error) => console.warn(error),
+      error: (error) => {
+        console.error('Subscription Error:', error);
+      },
     });
   }, [])
 
 
-  useEffect(() => {
-    const getMessages = async () => {
-      try {
-        const messagesReq = await API.graphql({
-          query: listMessages,
-          authMode: "AMAZON_COGNITO_USER_POOLS",
-        });
-        setMessages([...messagesReq.data.listMessages.items]);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getMessages();
-  }, [])
+  // useEffect(() => {
+  //   setMessages(gameData.messageList.items);
+  // }, [gameData])
 
   const handleSubmit = async (event) => {
     // Prevent the page from reloading
@@ -48,43 +83,42 @@ const ChatRoom = ({user}) => {
 
     // clear the textbox
     setMessageText("");
-
+    console.log(messages)
     const input = {
-      // id is auto populated by AWS Amplify
-      message: messageText, // the message content the user submitted (from state)
-      owner: user.username, // this is the username of the current user
+      id: gameID,
+      messageList: [...messages,
+        {
+          message: messageText,
+          createdAt: Date.now(),
+          owner: playerID
+        },
+      ],
     };
 
-    // Try make the mutation to graphql API
-    try {
-      await API.graphql({
-        authMode: "AMAZON_COGNITO_USER_POOLS",
-        query: createMessage,
-        variables: {
-          input: input,
-        },
+// Call the updateGame mutation
+    API.graphql(graphqlOperation(updateGame, {input}))
+      .then((response) => {
+        const updatedGame = response.data.updateGame;
+        console.log('Updated Game:', updatedGame);
+      })
+      .catch((error) => {
+        console.error('Error updating game:', error);
       });
-    } catch (err) {
-      console.error(err);
-    }
   }
 
-  const callbackfn = (message) => (
-    <Message
-      message={message}
-      user={user}
-      isMe={user.username === message.owner}
-      key={message.id} onSubmit={handleSubmit} value={messageText} onChange={(e) => setMessageText(e.target.value)}/>
-  )
-  // Call the fetchMessages function when the component mounts
-
-  const compareFn = (a, b) => b.createdAt.localeCompare(a.createdAt)
+  const compareFn = (a, b) => b.createdAt - a.createdAt
 
   return (
     <div className={styles.container}>
       {/*<h1 className={styles.title}> Spellbound Live Chat </h1>*/}
       <div className={styles.chatbox}>
-        {messages.sort(compareFn).map(callbackfn)}
+        {messages.sort(compareFn).map((message) => (
+          <Message
+            message={message}
+            user={user}
+            isMe={user.attributes.sub === message.owner}
+            key={message.createdAt} onSubmit={handleSubmit} value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}/>))}
       </div>
       <div className={styles.formContainer}>
         <form onSubmit={handleSubmit} className={styles.formBase}>

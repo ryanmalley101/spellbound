@@ -3,6 +3,8 @@ import styles from '../../styles/Battlemap.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
 import useBattlemapStore from "@/stores/battlemapStore";
+import {API} from "aws-amplify";
+import * as mutations from "@/graphql/mutations";
 
 const CustomHandle = ({position}) => (
   <div
@@ -21,11 +23,12 @@ const CustomHandle = ({position}) => (
   />
 );
 
-const DraggableIcon = ({imgsrc, initialPosition}) => {
+const DraggableIcon = ({token}) => {
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
   const [iconPosition, setIconPosition] = useState({x: 0, y: 0});
   const [width, setWidth] = useState(100);
   const [height, setHeight] = useState(100);
+  const [imgsrc, setImgsrc] = useState(null);
   const dragStartRef = useRef(null); // Define the dragStartRef using useRef
 
   const handleIconPosition = (position) => {
@@ -33,10 +36,20 @@ const DraggableIcon = ({imgsrc, initialPosition}) => {
     setIconPosition(position);
   };
 
-  const handleResize = (e, direction, ref, delta, position) => {
+  const handleResize = async (e, direction, ref, delta, position) => {
     const {width, height} = ref.style;
     setWidth(parseInt(width));
     setHeight(parseInt(height));
+    const resizedTokenDetails = {
+      id: token.id,
+      width: parseInt(width),
+      height: parseInt(width)
+    };
+
+    const updatedToken = await API.graphql({
+      query: mutations.updateToken,
+      variables: {input: resizedTokenDetails}
+    });
   };
 
   const handleDragStart = () => {
@@ -44,24 +57,38 @@ const DraggableIcon = ({imgsrc, initialPosition}) => {
     console.log('Handling drag start')
   };
 
-  const handleDragStop = (e, d) => {
+  const handleDragStop = async (e, d) => {
     console.log('Handling drag stop')
     const {x, y} = d;
     const dragStart = dragStartRef.current;
 
     if (dragStart && (Math.abs(x - dragStart.x) > 2 || Math.abs(y - dragStart.y) > 2)) {
-      const adjustedX = (x).toFixed(1);
-      const adjustedY = (y).toFixed(1);
-      setIconPosition({x: parseFloat(adjustedX), y: parseFloat(adjustedY)});
+
+      const adjustedX = parseFloat((x).toFixed(1))
+      const adjustedY = parseFloat((y).toFixed(1))
+      setIconPosition({x: adjustedX, y: adjustedY});
+      const draggedTokenDetails = {
+        id: token.id,
+        positionX: adjustedX,
+        positionY: adjustedY
+      };
+
+      const updatedToken = await API.graphql({
+        query: mutations.updateToken,
+        variables: {input: draggedTokenDetails}
+      });
     }
+
 
     dragStartRef.current = null;
   };
 
   useEffect(() => {
-    if (initialPosition) {
-      setIconPosition({x: initialPosition.x, y: initialPosition.y})
-    }
+    if (token.positionX && token.positionY) setIconPosition({x: token.positionX, y: token.positionY})
+    if (token.imageURL) {
+      setImgsrc(token.imageURL)
+    } else console.error("No URL was provided for token")
+    // if (token)
   }, []); // Empty dependency array to run the effect only once
 
 

@@ -9,6 +9,7 @@ export type AmplifyDependentResourcesAttributes = {
     "spellbound155c16ab": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
+      "CreatedSNSRole": "string",
       "IdentityPoolId": "string",
       "IdentityPoolName": "string",
       "UserPoolArn": "string",
@@ -18,6 +19,13 @@ export type AmplifyDependentResourcesAttributes = {
   },
   "function": {
     "addUserToDatabase": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "createNewGame": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",

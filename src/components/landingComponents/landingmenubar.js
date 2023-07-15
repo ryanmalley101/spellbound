@@ -60,9 +60,7 @@ export default function LandingMenuBar({user, setUser}) {
           >
             <MenuIcon/>
           </IconButton>
-          <Typography variant="h6" component="div" sx={{flexGrow: 1}} anchorOrigin={{
-            vertical: 'top',
-          }}>
+          <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
             Spellbound Tabletop
           </Typography>
           {user ? (
