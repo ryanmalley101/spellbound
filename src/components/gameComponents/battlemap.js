@@ -7,6 +7,7 @@ import ZoomSlider from "@/components/gameComponents/zoomslider";
 import useBattlemapStore from "@/stores/battlemapStore";
 import {API, graphqlOperation} from "aws-amplify";
 import {onCreateToken, onUpdateGame, onUpdateToken} from "@/graphql/subscriptions";
+import {shallow} from "zustand/shallow";
 
 const GRID_SIZE = 25
 
@@ -15,10 +16,13 @@ const BattleMap = () => {
   // Define your component logic here
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
   const setZoomLevel = useBattlemapStore(state => state.setZoomLevel)
-  const battlemapTokens = useBattlemapStore(state => state.tokens)
   const {gameID, activeMap, setActiveMap} = useBattlemapStore();
-  // const [activeMap, setActiveMap] = useState("");
-  const [mapTokens, setMapTokens] = useState([]);
+  const mapTokens = useBattlemapStore((state) => state.mapTokens, shallow)
+  const setMapTokens = useBattlemapStore((state) => state.setMapTokens, shallow)
+  const addMapToken = useBattlemapStore((state) => state.addMapToken, shallow)
+  const updateMapToken = useBattlemapStore((state) => state.updateMapToken, shallow)
+
+  // const [mapTokens, setMapTokens] = useState([]);
 
   const handleZoomChange = (event) => {
     const newZoomLevel = parseFloat(event.target.value);
@@ -36,7 +40,7 @@ const BattleMap = () => {
     const getActiveMap = async () => {
       const response = await API.graphql({
         query: `
-        query GetGameMessageList($id: ID!) {
+        query GetGameActiveMap($id: ID!) {
           getGame(id: $id) {
             activeMap
           }
@@ -70,8 +74,8 @@ const BattleMap = () => {
               items {
                 id
                 imageURL
-                scaleX
-                scaleY
+                width
+                height
                 rotation
                 positionX
                 positionY
@@ -86,7 +90,7 @@ const BattleMap = () => {
       });
 
       console.log(response)
-      const tokens = response.data?.getMap?.tokens?.items || [];
+      const tokens = response.data.getMap.tokens.items
       console.log(tokens)
       setMapTokens(tokens)
     }
@@ -102,11 +106,20 @@ const BattleMap = () => {
     const subscriptionHandler = (data) => {
       const newToken = data.value.data.onCreateToken;
       console.log('Created Token:', data);
-      setMapTokens([...mapTokens, newToken])
+      // console.log([...mapTokens, newToken])
+      // setMapTokens([...mapTokens, newToken])
+      addMapToken(newToken)
     };
 
     const subscription = API.graphql(
       graphqlOperation(onCreateToken, {mapTokensId: activeMap}),
+      {
+        filter: {
+          mutationType: {
+            eq: 'create',
+          },
+        },
+      },
     ).subscribe({
       next: (data) => {
         subscriptionHandler(data);
@@ -115,6 +128,12 @@ const BattleMap = () => {
         console.error('Subscription Error:', error);
       },
     });
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, [])
 
   useEffect(() => {
@@ -122,7 +141,10 @@ const BattleMap = () => {
     const subscriptionHandler = (data) => {
       const updatedToken = data.value.data.onUpdateToken;
       console.log('Updated Token:', updatedToken);
-      setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
+      console.log('Current Tokens:', mapTokens);
+      updateMapToken(updatedToken)
+      // console.log(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
+      // setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
     };
 
     const subscription = API.graphql(
@@ -142,10 +164,46 @@ const BattleMap = () => {
         console.error('Subscription Error:', error);
       },
     });
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, [])
 
-  console.log("Map Tokens")
-  console.log(mapTokens)
+  useEffect(() => {
+    // Define the subscription handler
+    const subscriptionHandler = (data) => {
+      console.log("got game update")
+      console.log(data)
+      const updatedActiveMap = data.value.data.onUpdateGame.activeMap;
+      console.log('Updated Active Map:', updatedActiveMap);
+      // console.log([...mapTokens, newToken])
+      // setMapTokens([...mapTokens, newToken])
+      setActiveMap(updatedActiveMap)
+    };
+
+    const subscription = API.graphql(
+      graphqlOperation(onUpdateGame, {id: gameID}),
+      {
+        filter: {
+          mutationType: {
+            eq: 'update',
+          },
+        },
+      },
+    ).subscribe({
+      next: (data) => {
+        subscriptionHandler(data);
+      },
+      error: (error) => {
+        console.error('Subscription Error:', error);
+      },
+    });
+
+
+  }, [])
 
   return (
     <div className={styles.battlemap} onWheel={handleWheel} id={"battlemap"}>

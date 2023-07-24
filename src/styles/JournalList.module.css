@@ -1,9 +1,24 @@
 
 .sheetList {
     min-width: 100%;
-    height: 100%;
+    flex: 1;
     display: flex;
-    overflow-y: auto;
     flex-direction: column;
     text-align: center;
+    overflow-y: auto; /* Add scrollbar when content overflows */
+}
+
+.listContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.filterInput {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 16px;
 }

@@ -1,6 +1,10 @@
-const getExampleCharacter = () => {
+const getExampleCharacter = (playerId, gameId) => {
   return ({
-    id: "123456789",
+    gameCharacterSheetsId: gameId,
+    // characterSheetTokenId: ID
+    owner: playerId ? playerId : "NoPlayer",
+    players: [playerId ? playerId : "NoPlayer"],
+    // game: gameId,
     name: "Zathror Wilke",
     class_level: "Warlock 1",
     background: "Gladiator",
@@ -87,20 +91,7 @@ const getExampleCharacter = () => {
     save_notes: "Advantage on wisdom saves",
     movement: "Fly 60 ft.",
     other_profs: "Land Vehicles\n Celestial",
-    attacks: [
-      {
-        name: "Gun",
-        notes: "Rooty Tooty Point and Shooty",
-        attack_bonus: 13,
-        damage_dice: "2d10+8 bludgeoning",
-      },
-      {
-        name: "Sword",
-        notes: "",
-        attack_bonus: 13,
-        damage_dice: "1d10+4 piercing",
-      }
-    ],
+    attacks: [],
     attack_notes: "My attack notes",
     spell_slots_1: 1,
     spell_slots_2: 2,
@@ -123,35 +114,7 @@ const getExampleCharacter = () => {
     pact_level: 10,
     pact_available: 2,
     pact_maximum: 3,
-    spells: [{
-      prepared: true,
-      name: "Chill Touch",
-      level: 0,
-      source: "Warlock",
-      attack_save: "+9",
-      cast_time: "1 action",
-      range_shape: "120 feet",
-      duration: "instantaneous",
-      components: "V, S",
-      notes: "You create a ghostly, skeletal hand in the space of a creature within range. Make a ranged spell attack against the creature to assail it with the chill of the grave. On a hit, the target takes 1d8 necrotic damage, and it can’t regain hit points until the start of your next turn. Until then, the hand clings to the target. If you hit an undead target, it also has disadvantage on attack rolls against you until the end of your next turn. This spell’s damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8)."
-    },
-      {
-        prepared: false,
-        name: "Alarm",
-        level: 1,
-        source: "Warlock",
-        attack_save: "",
-        cast_time: "1 minute",
-        range_shape: "30 feet",
-        duration: "8 hours",
-        components: "V,S,M(a tiny bell and a piece of fine silver wire)",
-        notes: "You set an alarm against unwanted intrusion. Choose a door, a window, or an area within range that is no larger than a 20-foot cube. Until the spell ends, an alarm alerts you whenever a Tiny or larger creature touches or enters the warded area. When you cast the spell, you can designate creatures that won't set off the alarm. You also choose whether the alarm is mental or audible.\n" +
-          "\n" +
-          "A mental alarm alerts you with a ping in your mind if you are within 1 mile of the warded area. This ping awakens you if you are sleeping.\n" +
-          "\n" +
-          "An audible alarm produces the sound of a hand bell for 10 seconds within 60 feet."
-      }
-    ],
+    spells: [],
     spells_notes: "Zathror is the greatest spellcaster in the world.",
     weight_carried: 12,
     weight_capacity: 13,
@@ -161,30 +124,9 @@ const getExampleCharacter = () => {
     ep: 3,
     sp: 4,
     cp: 12,
-    attuned_magic_items: [
-      "Staff of Frost",
-      "Pearl of Power",
-      "Hat of disguise"
-    ],
+    attuned_magic_items: [],
     attunement_notes: "I don't have any attunement notes",
-    inventory: [
-      {
-        equipped: true,
-        name: "Longsword",
-        count: 1,
-        weight: 10,
-        value: "10 gp",
-        notes: "the best sword"
-      },
-      {
-        equipped: false,
-        name: "Arrows",
-        count: 10,
-        weight: .5,
-        value: "1 cp",
-        notes: ""
-      }
-    ],
+    inventory: [],
     inventory_notes: "Inventory isn't a concern",
     features_left: "Features 1",
     features_center: "Features 2",

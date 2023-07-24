@@ -1,21 +1,17 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import {Auth} from 'aws-amplify';
-import {Button} from "@mui/material";
-import {useRouter} from 'next/router';
+// LandingMenuBar.js
+import React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import {Button, Menu, MenuItem} from "@mui/material";
+import {Auth} from "aws-amplify";
+import {useRouter} from "next/router";
 
-export default function LandingMenuBar({user, setUser}) {
+const LandingMenuBar = ({user, setUser}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const router = useRouter();
 
@@ -28,24 +24,24 @@ export default function LandingMenuBar({user, setUser}) {
   };
 
   const routeToSignIn = () => {
-    router.push('/signin');
-  }
+    router.push("/signin");
+  };
 
   const routeToSignUp = () => {
-    router.push('/signup');
-  }
+    router.push("/signup");
+  };
 
   // Function to log out the user
   const handleLogout = async () => {
     try {
       await Auth.signOut();
-      console.log('User logged out successfully.');
-      setUser(null)
+      console.log("User logged out successfully.");
+      setUser(null);
       // You can redirect the user to the login page or perform any other action after logging out.
     } catch (error) {
-      console.log('Error signing out:', error);
+      console.log("Error signing out:", error);
     }
-  }
+  };
 
   return (
     <Box sx={{flexGrow: 1}}>
@@ -60,11 +56,22 @@ export default function LandingMenuBar({user, setUser}) {
           >
             <MenuIcon/>
           </IconButton>
+          <Box
+            component="img"
+            sx={{
+              height: 60,
+              width: 60,
+              maxHeight: {xs: 233, md: 167},
+              maxWidth: {xs: 350, md: 250},
+            }}
+            alt="Spellbound Logo"
+            src="icons/spellbook.png"
+          />
           <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
             Spellbound Tabletop
           </Typography>
           {user ? (
-            <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{display: "flex", alignItems: "center"}}>
               <Typography variant="h6" sx={{flexGrow: 1}}>
                 {user.username}
               </Typography>
@@ -82,13 +89,13 @@ export default function LandingMenuBar({user, setUser}) {
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 keepMounted
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
@@ -121,5 +128,7 @@ export default function LandingMenuBar({user, setUser}) {
         </Toolbar>
       </AppBar>
     </Box>
-  )
-}
+  );
+};
+
+export default LandingMenuBar;

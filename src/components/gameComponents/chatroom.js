@@ -6,6 +6,7 @@ import {onCreateMessage, onUpdateGame} from "@/graphql/subscriptions";
 import Message from "@/components/gameComponents/message";
 import {createMessage, updateGame} from "@/graphql/mutations";
 import useBattlemapStore from "@/stores/battlemapStore";
+import {DiceRoller, exportFormats} from '@dice-roller/rpg-dice-roller';
 
 const ChatRoom = ({user}) => {
   const [messages, setMessages] = useState([]);
@@ -21,9 +22,23 @@ const ChatRoom = ({user}) => {
           getGame(id: $id) {
             messageList {
               items {
-                message
+                id
+                messageType
+                messageText
                 createdAt
                 owner
+                advantage
+                disadvantage
+                damageDice
+                damageDiceResults
+                rolls
+                abilityName
+                saveAbility
+                saveScore
+                messageText
+                diceString
+                placeholder
+                createdAt
               }
               # Include any other fields you need from the messageList object
             }
@@ -39,27 +54,23 @@ const ChatRoom = ({user}) => {
     }
     getMessages()
 
+  }, [])
+
+  useEffect(() => {
     // Define the subscription handler
     const subscriptionHandler = (data) => {
-      const updatedGame = data.value.data.onUpdateGame.messageList;
-      console.log('Updated Game:', updatedGame);
-
-      // Handle the new message in the updated game
-      setMessages(updatedGame)
-      // console.log('New Message:', newMessage);
-      // Update your chatroom UI with the new message
+      const newMessage = data.value.data.onCreateMessage;
+      console.log('New Message', newMessage);
+      setMessages((prevMessages) => [newMessage].concat(prevMessages))
     };
 
     const subscription = API.graphql(
-      graphqlOperation(onUpdateGame, {id: gameID}),
+      graphqlOperation(onCreateMessage, {gameMessageList: gameID}),
       {
         filter: {
           mutationType: {
-            eq: 'update',
-          },
-          updatedFields: {
-            contains: 'messageList',
-          },
+            eq: 'create',
+          }
         },
       }
     ).subscribe({
@@ -70,6 +81,12 @@ const ChatRoom = ({user}) => {
         console.error('Subscription Error:', error);
       },
     });
+    // Clean up the subscription when the component unmounts or the tab switches
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, [])
 
 
@@ -80,33 +97,47 @@ const ChatRoom = ({user}) => {
   const handleSubmit = async (event) => {
     // Prevent the page from reloading
     event.preventDefault();
+    let input = {}
+    if (messageText.substring(0, 3) === "/r " || messageText.substring(0, 6) === "/roll ") {
+      const dicestring = messageText.split(" ")[1]
+      const roller = new DiceRoller()
+      console.log(`Rolling dice ${dicestring}`)
+      console.log(roller.roll(dicestring))
+      input = {
+        messageType: "DICEROLL",
+        messageText: dicestring,
+        owner: playerID,
+        gameMessageListId: gameID
+      };
+    } else {
+      // clear the textbox
+      console.log(messages)
+      input = {
+        messageType: "CHAT",
+        messageText: messageText,
+        owner: playerID,
+        gameMessageListId: gameID
+      };
+    }
 
-    // clear the textbox
     setMessageText("");
-    console.log(messages)
-    const input = {
-      id: gameID,
-      messageList: [...messages,
-        {
-          message: messageText,
-          createdAt: Date.now(),
-          owner: playerID
-        },
-      ],
-    };
 
-// Call the updateGame mutation
-    API.graphql(graphqlOperation(updateGame, {input}))
-      .then((response) => {
-        const updatedGame = response.data.updateGame;
-        console.log('Updated Game:', updatedGame);
-      })
-      .catch((error) => {
-        console.error('Error updating game:', error);
-      });
+    // Call the createNewGame mutation
+    const response = await API.graphql({
+      query: `
+          mutation ParseMessage($input: ParseMessageInput!) {
+            parseMessage(input: $input) {
+              id
+            }
+          }
+        `,
+      variables: {
+        input
+      },
+    });
   }
 
-  const compareFn = (a, b) => b.createdAt - a.createdAt
+  const compareFn = (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 
   return (
     <div className={styles.container}>
@@ -115,10 +146,8 @@ const ChatRoom = ({user}) => {
         {messages.sort(compareFn).map((message) => (
           <Message
             message={message}
-            user={user}
             isMe={user.attributes.sub === message.owner}
-            key={message.createdAt} onSubmit={handleSubmit} value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}/>))}
+            key={message.id} onSubmit={handleSubmit}/>))}
       </div>
       <div className={styles.formContainer}>
         <form onSubmit={handleSubmit} className={styles.formBase}>

@@ -978,3 +978,12 @@ div.box {
     padding: 5px;
     font-weight: bold;
 }
+
+.labelButton {
+    cursor: pointer;
+    color: inherit;
+}
+
+.labelButton:hover {
+    color: blue
+}

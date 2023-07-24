@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import GameList from '@/components/landingComponents/gamelist';
-import CreateGame from '@/components/landingComponents/creategame';
+import React, {useState, useEffect} from "react";
 import {Auth} from "aws-amplify";
 import {ThemeProvider} from "@mui/material";
 import themeOptions from "@/themes/muitheme";
 import LandingMenuBar from "@/components/landingComponents/landingmenubar";
-import '@aws-amplify/ui-react/styles.css';
-import useBattlemapStore from "@/stores/battlemapStore";
-
+import GameList from "@/components/landingComponents/gamelist";
+import CreateGame from "@/components/landingComponents/creategame";
+import {Container, Typography} from "@mui/material";
+import "@aws-amplify/ui-react/styles.css";
+import SpellboundIntro from "@/components/landingComponents/spellboundIntro";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -17,20 +17,25 @@ const App = () => {
       try {
         const amplifyUser = await Auth.currentAuthenticatedUser();
         setUser(amplifyUser);
-        console.log(user)
+        console.log(user);
       } catch (err) {
         setUser(null);
       }
     };
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
   return (
     <ThemeProvider theme={themeOptions}>
       <LandingMenuBar user={user} setUser={setUser}/>
-      <h1>Welcome, {user ? user.username : 'Guest'}!</h1>
-      {user ? <CreateGame user={user}/> : null}
-      {user ? <GameList user={user}/> : null}
+      <Container
+        maxWidth="md" // Adjust the maxWidth value as per your design preference
+        sx={{padding: "20px", marginTop: "20px"}}
+      >
+        <SpellboundIntro/>
+        {user && <CreateGame user={user}/>}
+        {user && <GameList user={user}/>}
+      </Container>
     </ThemeProvider>
   );
 };

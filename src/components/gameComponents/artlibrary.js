@@ -41,8 +41,8 @@ const DirectoryMenu = ({directory, parentPath = '', filter}) => {
       positionX: 0,
       positionY: 0,
       rotation: 0,
-      scaleX: 1,
-      scaleY: 1
+      width: 50,
+      height: 50
     };
 
     console.log(path)

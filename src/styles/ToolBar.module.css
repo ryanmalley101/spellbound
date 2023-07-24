@@ -2,13 +2,11 @@
 .ToolBar {
     /*display: inline-block;*/
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    display: block;
     height: 100vh;
-    flex-basis: 3%;
     text-align: center;
     align-content: center;
-
+    width: 50px;
     align-items: center;
 }
 
@@ -21,6 +19,8 @@
     text-align: center;
     align-content: center;
     align-items: center;
-    width: 100%;
+    width: 50px;
+    padding: 5px 5px 5px 5px
+
     /*margin: 5px;*/
 }

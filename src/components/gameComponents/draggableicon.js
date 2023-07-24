@@ -26,8 +26,8 @@ const CustomHandle = ({position}) => (
 const DraggableIcon = ({token}) => {
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
   const [iconPosition, setIconPosition] = useState({x: 0, y: 0});
-  const [width, setWidth] = useState(100);
-  const [height, setHeight] = useState(100);
+  const [width, setWidth] = useState(50);
+  const [height, setHeight] = useState(50);
   const [imgsrc, setImgsrc] = useState(null);
   const dragStartRef = useRef(null); // Define the dragStartRef using useRef
 
@@ -38,6 +38,30 @@ const DraggableIcon = ({token}) => {
 
   const handleResize = async (e, direction, ref, delta, position) => {
     const {width, height} = ref.style;
+    setWidth(parseInt(width));
+    setHeight(parseInt(height));
+    // const resizedTokenDetails = {
+    //   id: token.id,
+    //   width: parseInt(width),
+    //   height: parseInt(width)
+    // };
+    //
+    // const updatedToken = await API.graphql({
+    //   query: mutations.updateToken,
+    //   variables: {input: resizedTokenDetails}
+    // });
+  };
+
+  const handleResizeStop = async (e, direction, ref, delta, position) => {
+    console.log("handling resize stop")
+    console.log(ref)
+    const {width, height} = ref.style;
+
+    setIconPosition({
+      x: parseFloat((position.x / zoomLevel).toFixed(1)),
+      y: parseFloat((position.y / zoomLevel).toFixed(1)),
+    });
+
     setWidth(parseInt(width));
     setHeight(parseInt(height));
     const resizedTokenDetails = {
@@ -88,6 +112,10 @@ const DraggableIcon = ({token}) => {
     if (token.imageURL) {
       setImgsrc(token.imageURL)
     } else console.error("No URL was provided for token")
+    if (token.width && token.height) {
+      setWidth(token.width)
+      setHeight(token.height)
+    }
     // if (token)
   }, []); // Empty dependency array to run the effect only once
 
@@ -101,12 +129,7 @@ const DraggableIcon = ({token}) => {
       onDragStart={handleDragStart}
       onDragStop={handleDragStop}
       style={{zIndex: 10}}
-      onResizeStop={(e, direction, ref, delta, position) => {
-        setIconPosition({
-          x: parseFloat((position.x / zoomLevel).toFixed(1)),
-          y: parseFloat((position.y / zoomLevel).toFixed(1)),
-        });
-      }}
+      onResizeStop={handleResizeStop}
       onResize={handleResize}
       bounds="parent"
       enableResizing={{

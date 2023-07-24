@@ -26,8 +26,18 @@ export const onCreateGame = /* GraphQL */ `
         items {
           id
           owner
-          message
+          messageType
+          advantage
+          disadvantage
+          damageDice
+          damageDiceResults
+          rolls
+          abilityName
+          saveAbility
+          saveScore
+          messageText
           diceString
+          placeholder
           createdAt
           updatedAt
           gameMessageListId
@@ -67,7 +77,8 @@ export const onCreateGame = /* GraphQL */ `
       activeMap
       characterSheets {
         items {
-          player
+          owner
+          players
           name
           class_level
           background
@@ -208,7 +219,6 @@ export const onCreateGame = /* GraphQL */ `
           notes_left
           notes_center
           notes_right
-          players
           id
           createdAt
           updatedAt
@@ -251,8 +261,18 @@ export const onUpdateGame = /* GraphQL */ `
         items {
           id
           owner
-          message
+          messageType
+          advantage
+          disadvantage
+          damageDice
+          damageDiceResults
+          rolls
+          abilityName
+          saveAbility
+          saveScore
+          messageText
           diceString
+          placeholder
           createdAt
           updatedAt
           gameMessageListId
@@ -292,7 +312,8 @@ export const onUpdateGame = /* GraphQL */ `
       activeMap
       characterSheets {
         items {
-          player
+          owner
+          players
           name
           class_level
           background
@@ -433,7 +454,6 @@ export const onUpdateGame = /* GraphQL */ `
           notes_left
           notes_center
           notes_right
-          players
           id
           createdAt
           updatedAt
@@ -476,8 +496,18 @@ export const onDeleteGame = /* GraphQL */ `
         items {
           id
           owner
-          message
+          messageType
+          advantage
+          disadvantage
+          damageDice
+          damageDiceResults
+          rolls
+          abilityName
+          saveAbility
+          saveScore
+          messageText
           diceString
+          placeholder
           createdAt
           updatedAt
           gameMessageListId
@@ -517,7 +547,8 @@ export const onDeleteGame = /* GraphQL */ `
       activeMap
       characterSheets {
         items {
-          player
+          owner
+          players
           name
           class_level
           background
@@ -658,7 +689,6 @@ export const onDeleteGame = /* GraphQL */ `
           notes_left
           notes_center
           notes_right
-          players
           id
           createdAt
           updatedAt
@@ -832,8 +862,18 @@ export const onCreateMessage = /* GraphQL */ `
         __typename
       }
       owner
-      message
+      messageType
+      advantage
+      disadvantage
+      damageDice
+      damageDiceResults
+      rolls
+      abilityName
+      saveAbility
+      saveScore
+      messageText
       diceString
+      placeholder
       createdAt
       updatedAt
       gameMessageListId
@@ -880,8 +920,18 @@ export const onUpdateMessage = /* GraphQL */ `
         __typename
       }
       owner
-      message
+      messageType
+      advantage
+      disadvantage
+      damageDice
+      damageDiceResults
+      rolls
+      abilityName
+      saveAbility
+      saveScore
+      messageText
       diceString
+      placeholder
       createdAt
       updatedAt
       gameMessageListId
@@ -928,8 +978,18 @@ export const onDeleteMessage = /* GraphQL */ `
         __typename
       }
       owner
-      message
+      messageType
+      advantage
+      disadvantage
+      damageDice
+      damageDiceResults
+      rolls
+      abilityName
+      saveAbility
+      saveScore
+      messageText
       diceString
+      placeholder
       createdAt
       updatedAt
       gameMessageListId
@@ -1030,8 +1090,8 @@ export const onCreateMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
-          scaleX
-          scaleY
+          width
+          height
           rotation
           positionX
           positionY
@@ -1096,8 +1156,8 @@ export const onUpdateMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
-          scaleX
-          scaleY
+          width
+          height
           rotation
           positionX
           positionY
@@ -1162,8 +1222,8 @@ export const onDeleteMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
-          scaleX
-          scaleY
+          width
+          height
           rotation
           positionX
           positionY
@@ -1250,7 +1310,8 @@ export const onCreateToken = /* GraphQL */ `
         __typename
       }
       character {
-        player
+        owner
+        players
         game {
           id
           name
@@ -1263,8 +1324,8 @@ export const onCreateToken = /* GraphQL */ `
         }
         token {
           imageURL
-          scaleX
-          scaleY
+          width
+          height
           rotation
           positionX
           positionY
@@ -1366,6 +1427,7 @@ export const onCreateToken = /* GraphQL */ `
           notes
           attack_bonus
           damage_dice
+          damage_type
           __typename
         }
         attack_notes
@@ -1444,7 +1506,6 @@ export const onCreateToken = /* GraphQL */ `
         notes_left
         notes_center
         notes_right
-        players
         id
         createdAt
         updatedAt
@@ -1453,8 +1514,8 @@ export const onCreateToken = /* GraphQL */ `
         __typename
       }
       imageURL
-      scaleX
-      scaleY
+      width
+      height
       rotation
       positionX
       positionY
@@ -1495,7 +1556,8 @@ export const onUpdateToken = /* GraphQL */ `
         __typename
       }
       character {
-        player
+        owner
+        players
         game {
           id
           name
@@ -1508,8 +1570,8 @@ export const onUpdateToken = /* GraphQL */ `
         }
         token {
           imageURL
-          scaleX
-          scaleY
+          width
+          height
           rotation
           positionX
           positionY
@@ -1611,6 +1673,7 @@ export const onUpdateToken = /* GraphQL */ `
           notes
           attack_bonus
           damage_dice
+          damage_type
           __typename
         }
         attack_notes
@@ -1689,7 +1752,6 @@ export const onUpdateToken = /* GraphQL */ `
         notes_left
         notes_center
         notes_right
-        players
         id
         createdAt
         updatedAt
@@ -1698,8 +1760,8 @@ export const onUpdateToken = /* GraphQL */ `
         __typename
       }
       imageURL
-      scaleX
-      scaleY
+      width
+      height
       rotation
       positionX
       positionY
@@ -1740,7 +1802,8 @@ export const onDeleteToken = /* GraphQL */ `
         __typename
       }
       character {
-        player
+        owner
+        players
         game {
           id
           name
@@ -1753,8 +1816,8 @@ export const onDeleteToken = /* GraphQL */ `
         }
         token {
           imageURL
-          scaleX
-          scaleY
+          width
+          height
           rotation
           positionX
           positionY
@@ -1856,6 +1919,7 @@ export const onDeleteToken = /* GraphQL */ `
           notes
           attack_bonus
           damage_dice
+          damage_type
           __typename
         }
         attack_notes
@@ -1934,7 +1998,6 @@ export const onDeleteToken = /* GraphQL */ `
         notes_left
         notes_center
         notes_right
-        players
         id
         createdAt
         updatedAt
@@ -1943,8 +2006,8 @@ export const onDeleteToken = /* GraphQL */ `
         __typename
       }
       imageURL
-      scaleX
-      scaleY
+      width
+      height
       rotation
       positionX
       positionY
@@ -1962,7 +2025,8 @@ export const onCreateCharacterSheet = /* GraphQL */ `
     $filter: ModelSubscriptionCharacterSheetFilterInput
   ) {
     onCreateCharacterSheet(filter: $filter) {
-      player
+      owner
+      players
       game {
         id
         name
@@ -2009,7 +2073,8 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           __typename
         }
         character {
-          player
+          owner
+          players
           name
           class_level
           background
@@ -2150,7 +2215,6 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           notes_left
           notes_center
           notes_right
-          players
           id
           createdAt
           updatedAt
@@ -2159,8 +2223,8 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
-        scaleX
-        scaleY
+        width
+        height
         rotation
         positionX
         positionY
@@ -2262,6 +2326,7 @@ export const onCreateCharacterSheet = /* GraphQL */ `
         notes
         attack_bonus
         damage_dice
+        damage_type
         __typename
       }
       attack_notes
@@ -2340,7 +2405,6 @@ export const onCreateCharacterSheet = /* GraphQL */ `
       notes_left
       notes_center
       notes_right
-      players
       id
       createdAt
       updatedAt
@@ -2355,7 +2419,8 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
     $filter: ModelSubscriptionCharacterSheetFilterInput
   ) {
     onUpdateCharacterSheet(filter: $filter) {
-      player
+      owner
+      players
       game {
         id
         name
@@ -2402,7 +2467,8 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           __typename
         }
         character {
-          player
+          owner
+          players
           name
           class_level
           background
@@ -2543,7 +2609,6 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           notes_left
           notes_center
           notes_right
-          players
           id
           createdAt
           updatedAt
@@ -2552,8 +2617,8 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
-        scaleX
-        scaleY
+        width
+        height
         rotation
         positionX
         positionY
@@ -2655,6 +2720,7 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
         notes
         attack_bonus
         damage_dice
+        damage_type
         __typename
       }
       attack_notes
@@ -2733,7 +2799,6 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
       notes_left
       notes_center
       notes_right
-      players
       id
       createdAt
       updatedAt
@@ -2748,7 +2813,8 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
     $filter: ModelSubscriptionCharacterSheetFilterInput
   ) {
     onDeleteCharacterSheet(filter: $filter) {
-      player
+      owner
+      players
       game {
         id
         name
@@ -2795,7 +2861,8 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           __typename
         }
         character {
-          player
+          owner
+          players
           name
           class_level
           background
@@ -2936,7 +3003,6 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           notes_left
           notes_center
           notes_right
-          players
           id
           createdAt
           updatedAt
@@ -2945,8 +3011,8 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
-        scaleX
-        scaleY
+        width
+        height
         rotation
         positionX
         positionY
@@ -3048,6 +3114,7 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
         notes
         attack_bonus
         damage_dice
+        damage_type
         __typename
       }
       attack_notes
@@ -3126,7 +3193,6 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
       notes_left
       notes_center
       notes_right
-      players
       id
       createdAt
       updatedAt

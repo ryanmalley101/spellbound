@@ -1,16 +1,18 @@
 import {create} from 'zustand';
+import {shallow} from "zustand/shallow";
 
 const useBattlemapStore = create((set) => ({
   zoomLevel: 1,
   setZoomLevel: (newZoom) =>
     set((state) => ({zoomLevel: newZoom})),
 
-  tokens: [],
-  addToken: (token) =>
-    set((state) => ({tokens: [...state.tokens, token]})),
-  removeToken: (tokenId) =>
-    set((state) => ({tokens: state.tokens.filter((token) => token.id !== tokenId)})),
-
+  mapTokens: [],
+  setMapTokens: (tokens) =>
+    set((state) => ({mapTokens: tokens})),
+  updateMapToken: (updatedToken) =>
+    set((state) => ({mapTokens: state.mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token)})),
+  addMapToken: (newToken) =>
+    set((state) => ({mapTokens: [...state.mapTokens, newToken]})),
 
   characterSheetWindows: [],
   addCharacterSheetWindow: (sheet) =>

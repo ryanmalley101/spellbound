@@ -57,8 +57,18 @@
     }
   },
   "function": {
-    "addUserToDatabase": {
+    "createDatabaseUser": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "spellbound"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -76,22 +86,37 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "parseMessage": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "spellbound"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "parameters": {
-    "AMPLIFY_function_addUserToDatabase_deploymentBucketName": {
+    "AMPLIFY_function_createDatabaseUser_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "addUserToDatabase"
+          "resourceName": "createDatabaseUser"
         }
       ]
     },
-    "AMPLIFY_function_addUserToDatabase_s3Key": {
+    "AMPLIFY_function_createDatabaseUser_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "addUserToDatabase"
+          "resourceName": "createDatabaseUser"
         }
       ]
     },
@@ -108,6 +133,22 @@
         {
           "category": "function",
           "resourceName": "createNewGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_parseMessage_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "parseMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_parseMessage_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "parseMessage"
         }
       ]
     }

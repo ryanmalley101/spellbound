@@ -114,7 +114,7 @@ const DraggableCharacterWindow = ({characterSheet}) => {
     removeCharacterSheetWindow(characterSheet)
   }
 
-  return <DraggableWindow content={<CharacterSheet characterSheet={characterSheet}/>} onClose={onClose}/>
+  return <DraggableWindow content={<CharacterSheet characterSheetInput={characterSheet}/>} onClose={onClose}/>
 }
 
 const DraggableMonsterWindow = ({initialPosition, slug}) => {
