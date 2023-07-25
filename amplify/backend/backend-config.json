@@ -154,11 +154,5 @@
       ]
     }
   },
-  "storage": {
-    "DefaultTokens": {
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "S3"
-    }
-  }
+  "storage": {}
 }
