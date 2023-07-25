@@ -2,7 +2,7 @@ const aws = require('aws-sdk');
 const lambda = new aws.Lambda({region: 'us-east-1'});
 
 exports.handler = (event, context, callback) => {
-  const functionName = 'addUserToDatabase'; // Replace with your Lambda function name
+  const functionName = 'addUserToDatabase-dev'; // Replace with your Lambda function name
 
   const params = {
     FunctionName: functionName,

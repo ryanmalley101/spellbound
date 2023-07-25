@@ -14,6 +14,7 @@ const LoginPage = () => {
 
     try {
       await Auth.signIn(email, password);
+
       await router.push('/'); // Redirect to the dashboard page after successful login
     } catch (error) {
       console.log('Error signing in:', error);

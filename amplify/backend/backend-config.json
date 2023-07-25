@@ -103,6 +103,7 @@
       "service": "Lambda"
     }
   },
+  "hosting": {},
   "parameters": {
     "AMPLIFY_function_createDatabaseUser_deploymentBucketName": {
       "usedBy": [
@@ -151,6 +152,13 @@
           "resourceName": "parseMessage"
         }
       ]
+    }
+  },
+  "storage": {
+    "DefaultTokens": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }

@@ -2,7 +2,7 @@
   "version": "1",
   "cognitoConfig": {
     "identityPoolName": "spellbound155c16ab_identitypool_155c16ab",
-    "allowUnauthenticatedIdentities": true,
+    "allowUnauthenticatedIdentities": false,
     "resourceNameTruncated": "spellb155c16ab",
     "userPoolName": "spellbound155c16ab_userpool_155c16ab",
     "autoVerifiedAttributes": [

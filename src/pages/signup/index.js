@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import {useRouter} from 'next/router';
 import {Button, Container, TextField, Typography} from '@mui/material';
+import {Auth} from "aws-amplify";
 
 const SignupPage = () => {
   const router = useRouter();
@@ -21,18 +22,29 @@ const SignupPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Check if password and confirm password match
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match");
       return;
     }
+
+    const {user} = await Auth.signUp({
+      username: formData.username,
+      password: formData.password,
+      attributes: {
+        email: formData.email
+      },
+      autoSignIn: { // optional - enables auto sign in after user is confirmed
+        enabled: true,
+      }
+    });
     // Your sign-up logic here, e.g., using Amplify Auth API or other authentication libraries.
     // For simplicity, we'll just log the form data for now.
-    console.log('Form Data:', formData);
+    console.log('Confirmed User Data:', user);
     // Redirect to the home page after successful sign-up
-    router.push('/');
+    router.push(`/signup/confirm/${formData.username}`);
   };
 
   return (
