@@ -3,7 +3,7 @@ import styles from '../../styles/Battlemap.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
 import useBattlemapStore from "@/stores/battlemapStore";
-import {API} from "aws-amplify";
+import {API, Storage} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 
 const CustomHandle = ({position}) => (
@@ -40,16 +40,6 @@ const DraggableIcon = ({token}) => {
     const {width, height} = ref.style;
     setWidth(parseInt(width));
     setHeight(parseInt(height));
-    // const resizedTokenDetails = {
-    //   id: token.id,
-    //   width: parseInt(width),
-    //   height: parseInt(width)
-    // };
-    //
-    // const updatedToken = await API.graphql({
-    //   query: mutations.updateToken,
-    //   variables: {input: resizedTokenDetails}
-    // });
   };
 
   const handleResizeStop = async (e, direction, ref, delta, position) => {
@@ -108,9 +98,24 @@ const DraggableIcon = ({token}) => {
   };
 
   useEffect(() => {
+    const fetchImagePath = async (imageURL) => {
+      try {
+        Storage.configure({level: 'public'});
+        const signedUrl = await Storage.get(`${imageURL.substring(1)}`, {
+          validateObjectExistence: true
+        });
+        console.log('Got image from S3', signedUrl)
+        setImgsrc(signedUrl);
+      } catch (e) {
+        console.log(e);
+        setImgsrc(imageURL);
+      }
+    };
+
+
     if (token.positionX && token.positionY) setIconPosition({x: token.positionX, y: token.positionY})
     if (token.imageURL) {
-      setImgsrc(token.imageURL)
+      fetchImagePath(token.imageURL)
     } else console.error("No URL was provided for token")
     if (token.width && token.height) {
       setWidth(token.width)
@@ -118,7 +123,6 @@ const DraggableIcon = ({token}) => {
     }
     // if (token)
   }, []); // Empty dependency array to run the effect only once
-
 
   // Define the appearance and behavior of the draggable icon
   return (

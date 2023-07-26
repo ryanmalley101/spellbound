@@ -47,7 +47,7 @@ const TabMenu = ({user}) => {
         </TabPanel>
 
         <TabPanel name={"Art Library"} className={styles.ReactTabsPanel}>
-          <ArtLibrary artDirectory={artDirectory}/>
+          <ArtLibrary artDirectory={artDirectory} user={user}/>
         </TabPanel>
 
         <TabPanel className={styles.ReactTabsPanel}>

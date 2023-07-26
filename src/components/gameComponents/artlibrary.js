@@ -1,28 +1,63 @@
-import React, {useState} from 'react';
-import {
-  Collapse,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography
-} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import {BsFillCaretDownFill, BsFillCaretRightFill, BsFillFilePlusFill} from 'react-icons/bs';
 import Image from 'next/image';
 import styles from "@/styles/ArtLibrary.module.css"
 import useBattlemapStore from "@/stores/battlemapStore";
-import DraggableIcon from "@/components/gameComponents/draggableicon";
-import {v4 as uuidv4} from 'uuid';
-import {API} from "aws-amplify";
+import {API, Storage} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
+import * as PropTypes from "prop-types";
 
-const DirectoryMenu = ({directory, parentPath = '', filter}) => {
+function ImageButton(props) {
+  const [imagePath, setImagePath] = useState(null);
+
+  // const getImageSource = async (path) => {
+  //   console.log("Trying to get the image source", path)
+  //   try {
+  //     const signedUrl = await Storage.get(`protected/defaultTokens${path}`, {validateObjectExistence: true}).body
+  //     return await signedUrl
+  //   } catch (e) {
+  //     console.log(e)
+  //     return path
+  //   }
+  // }
+
+  useEffect(() => {
+    const fetchImagePath = async () => {
+      try {
+        console.log(`defaultTokens${props.src}`)
+        Storage.configure({level: 'public'});
+        const signedUrl = await Storage.get(`${props.src.substring(1)}`, {
+          validateObjectExistence: true
+        });
+        setImagePath(signedUrl);
+      } catch (e) {
+        console.log(e);
+        setImagePath(props.src);
+      }
+    };
+
+    fetchImagePath();
+  }, [props.src]);
+
+  return <ListItem className="menuItem">
+    <ListItemIcon>
+      <Image src={props.src} alt={props.alt} width={50} height={50}/>
+    </ListItemIcon>
+    <ListItemText primary={props.primary}/>
+    <ListItemButton sx={{flexGrow: 0, display: "block", minWidth: "auto"}} className={styles.addButton}
+                    onClick={props.onClick} edge="end">
+      <BsFillFilePlusFill size={30}/>
+    </ListItemButton>
+  </ListItem>;
+}
+
+
+const DirectoryMenu = ({directory, parentPath = '', filter, user}) => {
 
   const [open, setOpen] = useState(false);
   const insertToken = useBattlemapStore(state => state.addToken)
   const {activeMap} = useBattlemapStore()
-
 
   const handleClick = () => {
     setOpen(!open);
@@ -58,20 +93,12 @@ const DirectoryMenu = ({directory, parentPath = '', filter}) => {
   }
 
   if (directory.type === 'file') {
-    const imagePath = parentPath + directory.name; // Build the full path to the image
+    const combinedName = `${parentPath}${directory.name}`
     const display = !filter || directory.name.toLowerCase().includes(filter.toLowerCase()); // Check if the file matches the filter
     const trimmedName = titleCase(directory.name.split('.png')[0])
     return display ? (
-      <ListItem className="menuItem">
-        <ListItemIcon>
-          <Image src={imagePath} alt={directory.name} width={50} height={50}/>
-        </ListItemIcon>
-        <ListItemText primary={trimmedName}/>
-        <ListItemButton sx={{flexGrow: 0, display: 'block', minWidth: 'auto'}} className={styles.addButton}
-                        onClick={() => addToken(imagePath)} edge="end">
-          <BsFillFilePlusFill size={30}/>
-        </ListItemButton>
-      </ListItem>
+      <ImageButton src={combinedName} alt={directory.name} primary={trimmedName} onClick={() => addToken(combinedName)}
+                   user={user}/>
     ) : null;
   }
 
@@ -101,6 +128,7 @@ const DirectoryMenu = ({directory, parentPath = '', filter}) => {
                 directory={item}
                 parentPath={currentPath}
                 filter={filter}
+                user={user}
               />
             ))}
           </List>
@@ -112,7 +140,7 @@ const DirectoryMenu = ({directory, parentPath = '', filter}) => {
   return null;
 };
 
-const ArtLibrary = ({artDirectory}) => {
+const ArtLibrary = ({artDirectory, user}) => {
   console.log(artDirectory)
   const [filter, setFilter] = useState('');
 
@@ -126,8 +154,8 @@ const ArtLibrary = ({artDirectory}) => {
       <input type="text" value={filter} onChange={handleFilterChange} placeholder="Filter"/>
       <List className={styles.tokenList}>
         {artDirectory.children.map((item) => (
-          <DirectoryMenu key={item.name} directory={item} parentPath="/tokens/"
-                         filter={filter}/>
+          <DirectoryMenu key={item.name} directory={item} parentPath="/defaultTokens/"
+                         filter={filter} user={user}/>
         ))}
       </List>
     </div>

@@ -41,7 +41,7 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
-    "DefaultTokens": {
+    "s3spellboundstorage7811eef0": {
       "BucketName": "string",
       "Region": "string"
     }
