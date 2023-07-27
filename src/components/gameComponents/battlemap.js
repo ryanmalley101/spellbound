@@ -264,7 +264,11 @@ const BattleMap = () => {
   return (
     <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
       <div className={styles.mapContainer}
-           style={{transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`}}>
+           style={{
+             width: "1200px",
+             height: '800px',
+             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
+           }}>
         {mapTokens.map((token) => {
           return <DraggableIcon key={token.id} token={token}/>
         })}
