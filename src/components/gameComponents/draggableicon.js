@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import styles from '../../styles/Battlemap.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
-import useBattlemapStore from "@/stores/battlemapStore";
+import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import {API, Storage} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 
@@ -30,6 +30,8 @@ const DraggableIcon = ({token}) => {
   const [height, setHeight] = useState(50);
   const [imgsrc, setImgsrc] = useState(null);
   const dragStartRef = useRef(null); // Define the dragStartRef using useRef
+  const {selectedTokenID, setSelectedTokenID} = useBattlemapStore();
+  const selectedTool = useBattlemapStore((state) => state.selectedTool);
 
   const handleIconPosition = (position) => {
     console.log('Handling icon position')
@@ -69,6 +71,8 @@ const DraggableIcon = ({token}) => {
   const handleDragStart = () => {
     dragStartRef.current = {x: iconPosition.x / zoomLevel, y: iconPosition.y / zoomLevel};
     console.log('Handling drag start')
+
+
   };
 
   const handleDragStop = async (e, d) => {
@@ -95,6 +99,7 @@ const DraggableIcon = ({token}) => {
 
 
     dragStartRef.current = null;
+
   };
 
   useEffect(() => {
@@ -124,6 +129,13 @@ const DraggableIcon = ({token}) => {
     // if (token)
   }, []); // Empty dependency array to run the effect only once
 
+  // Click handler to select the token
+  const handleIconClick = () => {
+    if (selectedTool === TOOL_ENUM.SELECT) {
+      setSelectedTokenID(token.id);
+    }
+  };
+
   // Define the appearance and behavior of the draggable icon
   return (
     <Rnd
@@ -132,7 +144,8 @@ const DraggableIcon = ({token}) => {
       position={{x: iconPosition.x, y: iconPosition.y}} // Set the initial position of the component
       onDragStart={handleDragStart}
       onDragStop={handleDragStop}
-      style={{zIndex: 10}}
+      disableDragging={selectedTool !== TOOL_ENUM.SELECT}
+      style={{zIndex: 10, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none'}}
       onResizeStop={handleResizeStop}
       onResize={handleResize}
       bounds="parent"
@@ -157,6 +170,8 @@ const DraggableIcon = ({token}) => {
         topLeft: {cursor: 'nw-resize'},
       }}
       resizeHandleWrapperClass="resize-handle-wrapper"
+      onClick={handleIconClick} // Attach the click handler to the icon
+
     >
       <div className={styles.iconOverlay}>
         <div className={styles.draggableicon}>

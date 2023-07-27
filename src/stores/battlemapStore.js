@@ -1,6 +1,15 @@
 import {create} from 'zustand';
 import {shallow} from "zustand/shallow";
 
+export const TOOL_ENUM = {
+  SELECT: "SELECT",
+  DRAG: "DRAG",
+  DRAW: "DRAW",
+  REVEAL: "REVEAL",
+  RULER: "RULER",
+  TEXT: "TEXT"
+}
+
 const useBattlemapStore = create((set) => ({
   zoomLevel: 1,
   setZoomLevel: (newZoom) =>
@@ -38,6 +47,15 @@ const useBattlemapStore = create((set) => ({
   activeMap: "",
   setActiveMap: (map) =>
     set((state) => ({activeMap: map})),
+
+  selectedTokenID: null,
+  setSelectedTokenID: (id) =>
+    set((state) => ({selectedTokenID: id})),
+
+  selectedTool: TOOL_ENUM.SELECT,
+  setSelectedTool: (tool) =>
+    set((state) => ({selectedTool: tool})),
+
 }))
 
 export default useBattlemapStore

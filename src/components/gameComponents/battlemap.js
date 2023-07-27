@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import DraggableIcon from "@/components/gameComponents/draggableicon";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import styles from "../../styles/Battlemap.module.css";
 import GridOverlay from "@/components/gameComponents/gridoverlay";
 import ZoomSlider from "@/components/gameComponents/zoomslider";
-import useBattlemapStore from "@/stores/battlemapStore";
+import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import {API, graphqlOperation} from "aws-amplify";
 import {onCreateToken, onUpdateGame, onUpdateToken} from "@/graphql/subscriptions";
 import {shallow} from "zustand/shallow";
@@ -14,6 +14,9 @@ const GRID_SIZE = 25
 
 const BattleMap = () => {
   // Define your component logic here
+  const [panning, setPanning] = useState(false);
+  const panStartRef = useRef({x: 0, y: 0});
+  const [mapPosition, setMapPosition] = useState({x: 0, y: 0});
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
   const setZoomLevel = useBattlemapStore(state => state.setZoomLevel)
   const {gameID, activeMap, setActiveMap} = useBattlemapStore();
@@ -21,6 +24,58 @@ const BattleMap = () => {
   const setMapTokens = useBattlemapStore((state) => state.setMapTokens, shallow)
   const addMapToken = useBattlemapStore((state) => state.addMapToken, shallow)
   const updateMapToken = useBattlemapStore((state) => state.updateMapToken, shallow)
+  const selectedTool = useBattlemapStore((state) => state.selectedTool);
+
+  // const [mapTokens, setMapTokens] = useState([]);
+  const handleMouseDown = (event) => {
+    if (selectedTool === TOOL_ENUM.DRAG) {
+      console.log("Panning")
+      setPanning(true);
+      panStartRef.current = {
+        x: event.clientX / zoomLevel - mapPosition.x,
+        y: event.clientY / zoomLevel - mapPosition.y,
+      };
+    }
+  };
+
+  const handleMouseMove = (event) => {
+    if (panning) {
+      const deltaX = (event.clientX / zoomLevel - panStartRef.current.x) * (1 / zoomLevel);
+      const deltaY = (event.clientY / zoomLevel - panStartRef.current.y) * (1 / zoomLevel);
+      setMapPosition((prevPos) => ({
+        x: prevPos.x + deltaX,
+        y: prevPos.y + deltaY,
+      }));
+      panStartRef.current = {
+        x: event.clientX / zoomLevel,
+        y: event.clientY / zoomLevel,
+      };
+    }
+  };
+
+  const handleMouseUp = () => {
+    setPanning(false);
+  };
+
+  useEffect(() => {
+    if (panning) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [panning]);
+
+  // useEffect(() => {
+  // console.log("Pan Start", panStart)
+  // console.log("Map Position", mapPosition)
+  // }, [panStart, mapPosition]);
+
 
   // const [mapTokens, setMapTokens] = useState([]);
 
@@ -37,6 +92,7 @@ const BattleMap = () => {
   };
 
   useEffect(() => {
+    console.log("Zoom level", zoomLevel)
     const getActiveMap = async () => {
       const response = await API.graphql({
         query: `
@@ -206,8 +262,9 @@ const BattleMap = () => {
   }, [])
 
   return (
-    <div className={styles.battlemap} onWheel={handleWheel} id={"battlemap"}>
-      <div className={styles.mapContainer} style={{transform: `scale(${zoomLevel})`}}>
+    <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
+      <div className={styles.mapContainer}
+           style={{transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`}}>
         {mapTokens.map((token) => {
           return <DraggableIcon key={token.id} token={token}/>
         })}
