@@ -243,7 +243,7 @@ const BattleMap = () => {
       setHeightUnits(response.data.getMap.sizeY)
       const tokens = response.data.getMap.tokens.items
       console.log(tokens)
-      setMapTokens(tokens)
+      setMapTokens(tokens.reverse())
     }
 
     fetchTokens()
