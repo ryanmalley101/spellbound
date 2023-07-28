@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3spellboundstorage7811eef0",
+  "bucketName": "spellbound-storage-7811eef0",
+  "policyUUID": "47c58578",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}
