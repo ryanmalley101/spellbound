@@ -46,7 +46,8 @@ const SaveSkillComponent = ({
                               handleInputBlur,
                               handleCheckboxClick
                             }) => {
-  const modField = `${checkName.toLowerCase().replace(" ", "_")}_mod`
+
+  const modField = isSave ? `${checkName.toLowerCase().replace(" ", "_")}_save_mod` : `${checkName.toLowerCase().replace(" ", "_")}_mod`
   const profField = `${checkName.toLowerCase().replace(" ", "_")}_prof`
 
   return <li>
@@ -346,6 +347,7 @@ const CharacterSheet = ({characterSheetInput}) => {
   const gameID = useBattlemapStore((state) => state.gameID)
   const playerID = useBattlemapStore((state) => state.playerID)
 
+  // Pull inventory row out
   const InventoryRow = ({item, index}) => {
     return (
       <tr key={index}>
@@ -499,6 +501,7 @@ const CharacterSheet = ({characterSheetInput}) => {
       }
       return null;
     }
+
     const {name, value} = e.target;
     // console.log(name, value)
     const chunkString = separateString(name)
