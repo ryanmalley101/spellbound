@@ -1002,6 +1002,40 @@ export const onCreatePlayer = /* GraphQL */ `
     onCreatePlayer(filter: $filter) {
       id
       name
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
       user {
         id
         email
@@ -1031,6 +1065,40 @@ export const onUpdatePlayer = /* GraphQL */ `
     onUpdatePlayer(filter: $filter) {
       id
       name
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
       user {
         id
         email
@@ -1060,6 +1128,40 @@ export const onDeletePlayer = /* GraphQL */ `
     onDeletePlayer(filter: $filter) {
       id
       name
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
       user {
         id
         email

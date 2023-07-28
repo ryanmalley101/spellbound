@@ -9,12 +9,12 @@ const getGameIdQuery =
   `query GetGameIDsForUser($userID: ID!) {
   getUser(id: $userID) {
     id
-    username
     players {
       items {
-        id
-        name
-        gamePlayersId
+        game {
+          id
+          name
+        }
       }
     }
   }
@@ -45,7 +45,7 @@ const GameList = ({user}) => {
           });
           console.log(gamesReq)
           console.log(...gamesReq.data.getUser.players.items)
-          setGames([...gamesReq.data.getUser.players.items])
+          setGames([...gamesReq.data.getUser.players.items].map((game) => game.game))
         } catch (error) {
           console.error(error)
         }

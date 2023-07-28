@@ -10,8 +10,10 @@ import {onCreateToken, onDeleteToken, onUpdateGame, onUpdateToken} from "@/graph
 import {shallow} from "zustand/shallow";
 import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
 import * as mutations from "@/graphql/mutations";
+import {useDropzone} from 'react-dropzone';
+import {Storage} from "aws-amplify";
 
-const GRID_SIZE = 25
+const GRID_SIZE = 75
 
 
 const BattleMap = () => {
@@ -19,6 +21,8 @@ const BattleMap = () => {
   const [panning, setPanning] = useState(false);
   const panStartRef = useRef({x: 0, y: 0});
   const [mapPosition, setMapPosition] = useState({x: 0, y: 0});
+  const [widthUnits, setWidthUnits] = useState(25);
+  const [heightUnits, setHeightUnits] = useState(25);
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
   const setZoomLevel = useBattlemapStore(state => state.setZoomLevel)
   const {gameID, activeMap, setActiveMap} = useBattlemapStore();
@@ -30,8 +34,57 @@ const BattleMap = () => {
   const selectedTool = useBattlemapStore((state) => state.selectedTool);
   const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID, shallow);
   const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID, shallow);
-  const [targetID, setTargetID] = useState("");
+  const [files, setFiles] = useState(null);
 
+  const onDrop = async (acceptedFiles) => {
+    try {
+      const file = acceptedFiles[0];
+      console.log(file)
+      // Generate a unique key for the uploaded file in the S3 bucket
+      const key = `images/${Date.now()}_${file.name}`;
+
+      // Upload the file to S3 using Amplify's Storage API
+      const putFile = await Storage.put(key, file, {
+        contentType: file.type,
+        level: 'public', // Set the appropriate level based on your S3 bucket's permissions
+      });
+
+      console.log(putFile)
+
+      const addToken = async (path) => {
+        const input = {
+          imageURL: path,
+          mapTokensId: activeMap,
+          positionX: 0,
+          positionY: 0,
+          rotation: 0,
+          width: 50,
+          height: 50
+        };
+
+        console.log(path)
+        // Call the createNewGame mutation
+        const newToken = await API.graphql({
+          query: mutations.createToken,
+          variables: {input: input}
+        });
+
+        console.log("Creating a new token")
+        console.log(newToken)
+      }
+
+      addToken('/' + putFile.key)
+
+      // Optionally, you can trigger an event here to notify the parent component about the successful upload.
+    } catch (error) {
+      console.error('Error uploading the file:', error);
+      // Handle any errors that occur during the upload process.
+    }
+  };
+
+  const handleDragStart = (event) => {
+    event.dataTransfer.setData("text/plain", event.target.id)
+  }
 
   const deleteSelectedToken = async (tokenID) => {
     console.log("Deleting selected token", tokenID);
@@ -164,6 +217,8 @@ const BattleMap = () => {
         query: `
         query GetMapTokens($id: ID!) {
           getMap(id: $id) {
+            sizeX
+            sizeY
             tokens {
               items {
                 id
@@ -184,6 +239,8 @@ const BattleMap = () => {
       });
 
       console.log(response)
+      setWidthUnits(response.data.getMap.sizeX)
+      setHeightUnits(response.data.getMap.sizeY)
       const tokens = response.data.getMap.tokens.items
       console.log(tokens)
       setMapTokens(tokens)
@@ -335,22 +392,38 @@ const BattleMap = () => {
 
   }, [])
 
+  const {getRootProps, getInputProps} = useDropzone({onDrop});
+
+  const handleDialogClick = (event) => {
+    event.preventDefault()
+  }
+
   return (
     <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
-      <div className={styles.mapContainer}
+      <div {...getRootProps({onClick: event => event.stopPropagation()})}
            style={{
-             width: "1200px",
-             height: '800px',
-             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
+             width: `${widthUnits * GRID_SIZE}px`,
+             height: `${heightUnits * GRID_SIZE}x`,
+             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
+             boxShadow: '0 0 0 2px black'
            }}>
-        {mapTokens.map((token) => {
-          return <DraggableIcon key={token.id} token={token}/>
-        })}
-        <div className={styles.mapImageContainer}>
-          <img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>
+        <input {...getInputProps()} />
+        <div className={styles.mapContainer}
+             style={{
+               width: `${widthUnits * GRID_SIZE}px`,
+               height: `${heightUnits * GRID_SIZE}px`,
+               transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
+             }}>
+          {mapTokens.map((token) => {
+            return <DraggableIcon key={token.id} token={token}/>
+          })}
+          <div className={styles.mapImageContainer}>
+            {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
+          </div>
+          <GridOverlay gridSize={GRID_SIZE}/>
         </div>
-        <GridOverlay gridSize={GRID_SIZE}/>
       </div>
+
       <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
     </div>
   );

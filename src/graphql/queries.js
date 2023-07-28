@@ -464,6 +464,40 @@ export const getPlayer = /* GraphQL */ `
     getPlayer(id: $id) {
       id
       name
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
       user {
         id
         email
@@ -498,6 +532,16 @@ export const listPlayers = /* GraphQL */ `
       items {
         id
         name
+        game {
+          id
+          name
+          dms
+          activeMap
+          createdAt
+          updatedAt
+          userGamesId
+          __typename
+        }
         user {
           id
           email

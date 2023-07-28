@@ -70,7 +70,7 @@ function GameID() {
           variables: {input: activeMapDetails}
         });
         console.log(updatedGame)
-        setActiveMap(activeMapDetails.data.getGame.activeMap)
+        setActiveMap(updatedGame.data.updateGame.activeMap)
       } else {
         setActiveMap(gamesReq.data.getGame.activeMap)
       }
