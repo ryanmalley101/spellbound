@@ -106,9 +106,19 @@ function GameID() {
     return (
       <div className="app">
         <div className={"appContainer"}>
-          <ToolBar/>
-          <BattleMap/>
-          <TabMenu user={user}/>
+          <div className="ToolBarContainer">
+            <div className="ToolBar">
+              <ToolBar/>
+            </div>
+          </div>
+          <div className="BattleMapContainer">
+            <BattleMap/>
+          </div>
+          <div className="TabMenuContainer">
+            <div className="TabMenu">
+              <TabMenu user={user}/>
+            </div>
+          </div>
         </div>
         {characterSheetWindows.map((sheet) => (
           <DraggableCharacterWindow key={sheet.id} characterSheet={sheet}/>

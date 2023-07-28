@@ -6,8 +6,10 @@ import GridOverlay from "@/components/gameComponents/gridoverlay";
 import ZoomSlider from "@/components/gameComponents/zoomslider";
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import {API, graphqlOperation} from "aws-amplify";
-import {onCreateToken, onUpdateGame, onUpdateToken} from "@/graphql/subscriptions";
+import {onCreateToken, onDeleteToken, onUpdateGame, onUpdateToken} from "@/graphql/subscriptions";
 import {shallow} from "zustand/shallow";
+import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
+import * as mutations from "@/graphql/mutations";
 
 const GRID_SIZE = 25
 
@@ -23,8 +25,44 @@ const BattleMap = () => {
   const mapTokens = useBattlemapStore((state) => state.mapTokens, shallow)
   const setMapTokens = useBattlemapStore((state) => state.setMapTokens, shallow)
   const addMapToken = useBattlemapStore((state) => state.addMapToken, shallow)
+  const removeMapToken = useBattlemapStore((state) => state.removeMapToken, shallow)
   const updateMapToken = useBattlemapStore((state) => state.updateMapToken, shallow)
   const selectedTool = useBattlemapStore((state) => state.selectedTool);
+  const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID, shallow);
+  const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID, shallow);
+  const [targetID, setTargetID] = useState("");
+
+
+  const deleteSelectedToken = async (tokenID) => {
+    console.log("Deleting selected token", tokenID);
+    if (tokenID) {
+      try {
+        const deletedToken = await API.graphql({
+          query: mutations.deleteToken,
+          variables: {input: {id: tokenID}},
+        });
+        console.log("deleted token", deletedToken);
+        setSelectedTokenID(""); // Clear the selectedTokenID here if needed
+      } catch (error) {
+        console.error("Error deleting token:", error);
+      }
+    }
+  };
+
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Backspace' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
+        deleteSelectedToken(selectedTokenID); // Pass the selectedTokenID as an argument
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [deleteSelectedToken, selectedTokenID]);
 
   // const [mapTokens, setMapTokens] = useState([]);
   const handleMouseDown = (event) => {
@@ -209,6 +247,42 @@ const BattleMap = () => {
         filter: {
           mutationType: {
             eq: 'update',
+          },
+        },
+      }
+    ).subscribe({
+      next: (data) => {
+        subscriptionHandler(data);
+      },
+      error: (error) => {
+        console.error('Subscription Error:', error);
+      },
+    });
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  }, [])
+
+  useEffect(() => {
+    // Define the subscription handler
+    const subscriptionHandler = (data) => {
+      const deletedToken = data.value.data.onDeleteToken;
+      console.log('Deleted Token:', deletedToken);
+      console.log('Current Tokens:', mapTokens);
+      removeMapToken(deletedToken)
+      // console.log(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
+      // setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
+    };
+
+    const subscription = API.graphql(
+      graphqlOperation(onDeleteToken, {mapTokensId: activeMap}),
+      {
+        filter: {
+          mutationType: {
+            eq: 'delete',
           },
         },
       }

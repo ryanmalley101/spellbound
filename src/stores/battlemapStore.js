@@ -22,6 +22,8 @@ const useBattlemapStore = create((set) => ({
     set((state) => ({mapTokens: state.mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token)})),
   addMapToken: (newToken) =>
     set((state) => ({mapTokens: [...state.mapTokens, newToken]})),
+  removeMapToken: (removedToken) =>
+    set((state) => ({mapTokens: state.mapTokens.filter((token) => token.id !== removedToken.id)})),
 
   characterSheetWindows: [],
   addCharacterSheetWindow: (sheet) =>
@@ -48,7 +50,7 @@ const useBattlemapStore = create((set) => ({
   setActiveMap: (map) =>
     set((state) => ({activeMap: map})),
 
-  selectedTokenID: null,
+  selectedTokenID: "",
   setSelectedTokenID: (id) =>
     set((state) => ({selectedTokenID: id})),
 
@@ -57,5 +59,8 @@ const useBattlemapStore = create((set) => ({
     set((state) => ({selectedTool: tool})),
 
 }))
+
+useBattlemapStore.subscribe((state) => console.log('New state:', state));
+
 
 export default useBattlemapStore

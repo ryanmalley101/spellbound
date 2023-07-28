@@ -14,6 +14,14 @@ body,
 .appContainer {
     display: flex;
     flex: 1;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.BattleMapContainer {
+    flex: 1;
+    overflow: auto;
+    position: relative;
 }
 
 #__next {
@@ -21,3 +29,40 @@ body,
     width: 100vw;
 }
 
+
+.ToolBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    background-color: #f0f0f0; /* Adjust background color as needed */
+    z-index: 2; /* Ensure the toolbar is above other content */
+    overflow: hidden;
+    height: 100vh;
+    /*text-align: center;*/
+    /*align-content: center;*/
+}
+
+.ToolBarContainer,
+.TabMenuContainer {
+    height: 100%;
+    overflow: hidden;
+}
+
+.ToolBarContainer {
+    flex: 0 0 50px;
+}
+
+.BattleMapContainer {
+    flex: 1;
+    overflow: auto;
+}
+
+.TabMenuContainer {
+    flex: 0 0 100px;
+}

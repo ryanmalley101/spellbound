@@ -30,8 +30,9 @@ const DraggableIcon = ({token}) => {
   const [height, setHeight] = useState(50);
   const [imgsrc, setImgsrc] = useState(null);
   const dragStartRef = useRef(null); // Define the dragStartRef using useRef
-  const {selectedTokenID, setSelectedTokenID} = useBattlemapStore();
   const selectedTool = useBattlemapStore((state) => state.selectedTool);
+  const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID);
+  const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID);
 
   const handleIconPosition = (position) => {
     console.log('Handling icon position')
@@ -131,8 +132,11 @@ const DraggableIcon = ({token}) => {
 
   // Click handler to select the token
   const handleIconClick = () => {
+    console.log("Checking select tool")
     if (selectedTool === TOOL_ENUM.SELECT) {
+      console.log(`Selecting token ${token.id}`)
       setSelectedTokenID(token.id);
+      console.log(selectedTokenID)
     }
   };
 
