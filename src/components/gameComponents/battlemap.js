@@ -399,30 +399,31 @@ const BattleMap = () => {
   }
 
   return (
-    <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
-      <div {...getRootProps({onClick: event => event.stopPropagation()})}
+    // <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
+    <div {...getRootProps({onClick: event => event.stopPropagation()})}
+         style={{
+           width: `${widthUnits * GRID_SIZE}px`,
+           height: `${heightUnits * GRID_SIZE}x`,
+           transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
+           boxShadow: '0 0 0 2px black'
+         }}>
+      <input {...getInputProps()} />
+      <div className={styles.mapContainer}
            style={{
              width: `${widthUnits * GRID_SIZE}px`,
-             height: `${heightUnits * GRID_SIZE}x`,
-             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
-             boxShadow: '0 0 0 2px black'
-           }}>
-        <input {...getInputProps()} />
-        <div className={styles.mapContainer}
-             style={{
-               width: `${widthUnits * GRID_SIZE}px`,
-               height: `${heightUnits * GRID_SIZE}px`,
-               transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
-             }}>
-          {mapTokens.map((token) => {
-            return <DraggableIcon key={token.id} token={token}/>
-          })}
-          <div className={styles.mapImageContainer}>
-            {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
-          </div>
-          <GridOverlay gridSize={GRID_SIZE}/>
+             height: `${heightUnits * GRID_SIZE}px`,
+             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
+           }}
+           onWheel={handleWheel} onMouseDown={handleMouseDown}>
+        {mapTokens.map((token) => {
+          return <DraggableIcon key={token.id} token={token}/>
+        })}
+        <div className={styles.mapImageContainer}>
+          {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
         </div>
+        <GridOverlay gridSize={GRID_SIZE}/>
       </div>
+      {/*</div>*/}
 
       <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
     </div>
