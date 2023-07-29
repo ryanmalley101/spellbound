@@ -1,18 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import DraggableIcon from "@/components/gameComponents/draggableicon";
-import {HTML5Backend} from "react-dnd-html5-backend";
 import styles from "../../styles/Battlemap.module.css";
 import GridOverlay from "@/components/gameComponents/gridoverlay";
 import ZoomSlider from "@/components/gameComponents/zoomslider";
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
-import {API, graphqlOperation} from "aws-amplify";
-import {onCreateToken, onDeleteToken, onUpdateGame, onUpdateToken} from "@/graphql/subscriptions";
-import {shallow} from "zustand/shallow";
-import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
+import {API, graphqlOperation, Storage} from "aws-amplify";
+import {onCreateToken, onDeleteToken, onUpdateGame} from "@/graphql/subscriptions";
 import * as mutations from "@/graphql/mutations";
 import {useDropzone} from 'react-dropzone';
-import {Storage} from "aws-amplify";
-import {updateMap} from "@/graphql/mutations";
 import {Rnd} from "react-rnd";
 import {throttle} from "lodash";
 
@@ -27,6 +22,8 @@ const BattleMap = () => {
   const [widthUnits, setWidthUnits] = useState(25);
   const [heightUnits, setHeightUnits] = useState(25);
   const [mapTokens, setMapTokens] = useState([])
+  const mapPositionRef = useRef({x: 0, y: 0});
+
   const {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
     mapLayer, setMapLayer, gameID, activeMap, setActiveMap
@@ -492,9 +489,9 @@ const BattleMap = () => {
   };
 
   const handleDragStart = () => {
-    dragStartRef.current = {x: mapPosition.x / zoomLevel, y: mapPosition.y / zoomLevel};
-    prevDragRef.current = dragStartRef.current;
-    console.log("Handle Drag Start")
+    const {x, y} = mapPositionRef.current;
+    dragStartRef.current = {x, y};
+    prevDragRef.current = {x, y};
   };
 
   const handleDragStop = async (e, d) => {
@@ -514,18 +511,16 @@ const BattleMap = () => {
 
   const handleMouseMoveThrottled =
     throttle((event) => {
-      console.log("Handling mouse move throttled")
-      console.log(event)
+      // console.log("Handling mouse move throttled")
+      // console.log(event)
       const deltaX = (event.clientX / zoomLevel - dragStartRef.current.x) * (1 / zoomLevel);
       const deltaY = (event.clientY / zoomLevel - dragStartRef.current.y) * (1 / zoomLevel);
 
-      const newPos = {
+      // setMapPosition(newPos);
+      prevDragRef.current = {
         x: prevDragRef.current.x + deltaX,
         y: prevDragRef.current.y + deltaY,
       };
-
-      setMapPosition(newPos);
-      prevDragRef.current = newPos;
     }, 16) // 60 FPS (1000ms / 60 = 16.67ms)
 
 
@@ -534,11 +529,12 @@ const BattleMap = () => {
       // <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
       <Rnd
         ref={draggableRef}
-        size={{width: GRID_SIZE * widthUnits, height: GRID_SIZE * heightUnits}}
+        size={{width: (GRID_SIZE * widthUnits) * zoomLevel, height: (GRID_SIZE * heightUnits) * zoomLevel}}
         scale={zoomLevel}// Set the initial size of the draggable and resizable component
         position={{x: mapPosition.x, y: mapPosition.y}} // Set the initial position of the component
         onDragStart={handleDragStart}
-        onDragStop={handleMouseMoveThrottled}
+        // onMouseMove={handleMouseMoveThrottled}
+        onDragStop={handleDragStop}
         disableDragging={selectedTool !== TOOL_ENUM.DRAG}
         style={{zIndex: 10000}}
         bounds="parent"
@@ -548,7 +544,7 @@ const BattleMap = () => {
              style={{
                width: `${widthUnits * GRID_SIZE}px`,
                height: `${heightUnits * GRID_SIZE}px`,
-               transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
+               transform: `scale(${zoomLevel})`,
                boxShadow: '0 0 0 2px black'
              }}
              onWheel={handleWheel}
