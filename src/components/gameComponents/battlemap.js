@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import DraggableIcon from "@/components/gameComponents/draggableicon";
+import DraggableIcon, {MemoizedDraggableIcon} from "@/components/gameComponents/draggableicon";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import styles from "../../styles/Battlemap.module.css";
 import GridOverlay from "@/components/gameComponents/gridoverlay";
@@ -26,15 +26,42 @@ const BattleMap = () => {
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
   const setZoomLevel = useBattlemapStore(state => state.setZoomLevel)
   const {gameID, activeMap, setActiveMap} = useBattlemapStore();
-  const mapTokens = useBattlemapStore((state) => state.mapTokens, shallow)
-  const setMapTokens = useBattlemapStore((state) => state.setMapTokens, shallow)
-  const addMapToken = useBattlemapStore((state) => state.addMapToken, shallow)
-  const removeMapToken = useBattlemapStore((state) => state.removeMapToken, shallow)
-  const updateMapToken = useBattlemapStore((state) => state.updateMapToken, shallow)
+  const [mapTokens, setMapTokens] = useState([])
   const selectedTool = useBattlemapStore((state) => state.selectedTool);
   const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID, shallow);
   const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID, shallow);
   const [files, setFiles] = useState(null);
+  const mapTokensRef = useRef([])
+  const [tokenKey, setTokenKey] = useState(0);
+  const [tokenCount, setTokenCount] = useState(0);
+
+  const removeMapToken = (deletedToken) => {
+    console.log("removing map token")
+    setMapTokens(mapTokens.filter((token) => token.id !== deletedToken.id))
+  }
+
+  const addMapToken = (newToken) => {
+    console.log("adding map token")
+    setMapTokens([...mapTokens, newToken])
+  }
+
+  const updateMapToken = (updatedToken) => {
+    console.log("Updating map tokens");
+    console.log(mapTokens);
+
+    setMapTokens((prevTokens) =>
+      prevTokens.map((token) => {
+          if (token.id === updatedToken.id) {
+            return {...updatedToken, key: `${updatedToken.id}_${Date.now()}`}
+          }
+          return token
+        }
+      )
+    );
+
+    // You can access the updated mapTokens directly here:
+    console.log("Updated Map Tokens", mapTokens);
+  };
 
   const onDrop = async (acceptedFiles) => {
     try {
@@ -242,8 +269,10 @@ const BattleMap = () => {
       setWidthUnits(response.data.getMap.sizeX)
       setHeightUnits(response.data.getMap.sizeY)
       const tokens = response.data.getMap.tokens.items
+      tokens.map((token) => token.key = token.id)
       console.log(tokens)
       setMapTokens(tokens.reverse())
+      setTokenCount(tokens.length); // Set the token count here
     }
 
     fetchTokens()
@@ -257,6 +286,7 @@ const BattleMap = () => {
     const subscriptionHandler = (data) => {
       const newToken = data.value.data.onCreateToken;
       console.log('Created Token:', data);
+      setTokenCount((prevCount) => prevCount + 1);
       // console.log([...mapTokens, newToken])
       // setMapTokens([...mapTokens, newToken])
       addMapToken(newToken)
@@ -292,7 +322,7 @@ const BattleMap = () => {
     const subscriptionHandler = (data) => {
       const updatedToken = data.value.data.onUpdateToken;
       console.log('Updated Token:', updatedToken);
-      console.log('Current Tokens:', mapTokens);
+      console.log('Current Tokens:', mapTokens); // Use the mutable ref here
       updateMapToken(updatedToken)
       // console.log(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
       // setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
@@ -398,37 +428,38 @@ const BattleMap = () => {
     event.preventDefault()
   }
 
-  return (
-    // <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
-    <div {...getRootProps({onClick: event => event.stopPropagation()})}
-         style={{
-           width: `${widthUnits * GRID_SIZE}px`,
-           height: `${heightUnits * GRID_SIZE}x`,
-           transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
-           boxShadow: '0 0 0 2px black'
-         }}>
-      <input {...getInputProps()} />
-      <div className={styles.mapContainer}
+  if (mapTokens !== null) {
+    return (
+      // <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
+      <div {...getRootProps({onClick: event => event.stopPropagation()})}
            style={{
              width: `${widthUnits * GRID_SIZE}px`,
-             height: `${heightUnits * GRID_SIZE}px`,
-             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
-           }}
-           onWheel={handleWheel} onMouseDown={handleMouseDown}>
-        {mapTokens.map((token) => {
-          return <DraggableIcon key={token.id} token={token}/>
-        })}
-        <div className={styles.mapImageContainer}>
-          {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
+             height: `${heightUnits * GRID_SIZE}x`,
+             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
+             boxShadow: '0 0 0 2px black'
+           }}>
+        <input {...getInputProps()} />
+        <div className={styles.mapContainer}
+             style={{
+               width: `${widthUnits * GRID_SIZE}px`,
+               height: `${heightUnits * GRID_SIZE}px`,
+               transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
+             }}
+             onWheel={handleWheel} onMouseDown={handleMouseDown}>
+          {mapTokens.map((token, index) => {
+            // const uniqueKey = `${token.id}_${Date.now()}`; // Add the current timestamp to the key
+            return <MemoizedDraggableIcon key={`${token.key}`} token={token}/>
+          })}
+          <div className={styles.mapImageContainer}>
+            {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
+          </div>
+          <GridOverlay gridSize={GRID_SIZE}/>
         </div>
-        <GridOverlay gridSize={GRID_SIZE}/>
+        {/*</div>*/}
+        <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
       </div>
-      {/*</div>*/}
-
-      <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
-    </div>
-  );
+    );
+  }
 };
-
 
 export default BattleMap;

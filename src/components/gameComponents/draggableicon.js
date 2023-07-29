@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {memo, useEffect, useRef, useState} from 'react';
 import styles from '../../styles/Battlemap.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
@@ -186,5 +186,7 @@ const DraggableIcon = ({token}) => {
   );
 
 }
+
+export const MemoizedDraggableIcon = memo(DraggableIcon)
 
 export default DraggableIcon
