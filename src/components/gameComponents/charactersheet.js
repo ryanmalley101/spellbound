@@ -192,6 +192,8 @@ function AbilityScores(props) {
 }
 
 const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlur}) => {
+  delete attack.__typename
+
   return (
     <tr>
       <td>
