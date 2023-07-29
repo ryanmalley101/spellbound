@@ -502,7 +502,7 @@ const CharacterSheet = ({characterSheetInput}) => {
       return null;
     }
 
-    const {name, value} = e.target;
+    let {name, value} = e.target;
     // console.log(name, value)
     const chunkString = separateString(name)
     if (chunkString) {
@@ -523,6 +523,9 @@ const CharacterSheet = ({characterSheetInput}) => {
       setCharacter(updatedCharacter);
       setCharacterPreUpdate({...characterPreUpdate, [target]: updatedInnerArray});
     } else {
+      if (value.isArray()) {
+        value = value.map((item) => delete item.__typename)
+      }
       setCharacter({...character, [name]: value})
       setCharacterPreUpdate({...characterPreUpdate, [name]: value})
     }
