@@ -567,11 +567,13 @@ export const getMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -705,11 +707,13 @@ export const getToken = /* GraphQL */ `
         }
         token {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -895,11 +899,13 @@ export const getToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      layer
       width
       height
       rotation
       positionX
       positionY
+      key
       id
       createdAt
       updatedAt
@@ -1078,11 +1084,13 @@ export const listTokens = /* GraphQL */ `
           __typename
         }
         imageURL
+        layer
         width
         height
         rotation
         positionX
         positionY
+        key
         id
         createdAt
         updatedAt
@@ -1296,11 +1304,13 @@ export const getCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        layer
         width
         height
         rotation
         positionX
         positionY
+        key
         id
         createdAt
         updatedAt
@@ -1509,11 +1519,13 @@ export const listCharacterSheets = /* GraphQL */ `
         }
         token {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt

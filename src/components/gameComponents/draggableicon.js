@@ -5,6 +5,7 @@ import {Rnd} from "react-rnd";
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import {API, Storage} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
+import {Button} from "@mui/material";
 
 const CustomHandle = ({position}) => (
   <div
@@ -33,6 +34,9 @@ const DraggableIcon = ({token}) => {
   const selectedTool = useBattlemapStore((state) => state.selectedTool);
   const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID);
   const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID);
+  const mapLayer = useBattlemapStore((state) => state.mapLayer);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({x: 0, y: 0});
 
   const handleIconPosition = (position) => {
     console.log('Handling icon position')
@@ -140,6 +144,52 @@ const DraggableIcon = ({token}) => {
     }
   };
 
+
+  const handleContextMenu = (event) => {
+    console.log("Icon Context")
+    event.preventDefault(); // Prevent the default right-click context menu behavior
+    setContextMenuPosition({x: iconPosition.x, y: iconPosition.y});
+    setShowContextMenu(true);
+  };
+
+  const handleMenuClick = async (option) => {
+    // Handle the click of the menu options here based on the selected option
+    console.log('Clicked option:', option);
+    // Perform actions based on the selected option (e.g., "GM", "Token", or "Map")
+    // You can close the context menu here or do other actions as needed.
+    const updatedToken = {...token, layer: option}
+    console.log(updatedToken)
+    try {
+      const layeredToken = await API.graphql({
+        query: mutations.updateToken,
+        variables: {input: updatedToken}
+      });
+    } catch (e) {
+      console.log("error adding layer to token")
+      console.log(e)
+    }
+
+    setShowContextMenu(false);
+  };
+
+  useEffect(() => {
+    const handleDocumentClick = (event) => {
+      const menuContainer = document.getElementById('custom-context-menu');
+      if (menuContainer && !menuContainer.contains(event.target)) {
+        setShowContextMenu(false);
+      }
+    };
+
+    if (showContextMenu) {
+      document.addEventListener('click', handleDocumentClick);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, [showContextMenu]);
+
+
   // Define the appearance and behavior of the draggable icon
   return (
     <Rnd
@@ -148,7 +198,7 @@ const DraggableIcon = ({token}) => {
       position={{x: iconPosition.x, y: iconPosition.y}} // Set the initial position of the component
       onDragStart={handleDragStart}
       onDragStop={handleDragStop}
-      disableDragging={selectedTool !== TOOL_ENUM.SELECT}
+      disableDragging={selectedTool !== TOOL_ENUM.SELECT || token.layer !== mapLayer}
       style={{zIndex: 10, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none'}}
       onResizeStop={handleResizeStop}
       onResize={handleResize}
@@ -175,9 +225,39 @@ const DraggableIcon = ({token}) => {
       }}
       resizeHandleWrapperClass="resize-handle-wrapper"
       onClick={handleIconClick} // Attach the click handler to the icon
-
     >
-      <div className={styles.iconOverlay}>
+      <div onContextMenu={handleContextMenu}>
+        {/* Your component content */}
+
+        {/* Custom Context Menu */}
+        {showContextMenu && (
+          <div
+            id="custom-context-menu"
+            style={{
+              position: 'fixed',
+              left: contextMenuPosition.x,
+              top: contextMenuPosition.y,
+              backgroundColor: 'transparent', // Make the background transparent
+              boxShadow: 'none', // Remove the box shadow
+              zIndex: 9999,
+              display: 'flex',
+              flexDirection: 'column', // Stack the icons vertically
+            }}
+          >
+            {/* MUI Buttons */}
+            <Button onClick={() => handleMenuClick('GM')} variant="contained" color="primary">
+              GM
+            </Button>
+            <Button onClick={() => handleMenuClick('TOKEN')} variant="contained" color="primary">
+              Token
+            </Button>
+            <Button onClick={() => handleMenuClick('MAP')} variant="contained" color="primary">
+              Map
+            </Button>
+          </div>
+        )}
+      </div>
+      <div className={styles.iconOverlay} onContextMenu={handleContextMenu}>
         <div className={styles.draggableicon}>
           <img src={imgsrc} alt="Icon" width={width} height={height} style={{pointerEvents: 'none'}}/>
         </div>
@@ -186,7 +266,5 @@ const DraggableIcon = ({token}) => {
   );
 
 }
-
-export const MemoizedDraggableIcon = memo(DraggableIcon)
 
 export default DraggableIcon

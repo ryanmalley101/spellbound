@@ -55,9 +55,11 @@ div.box {
 
 .charsheet {
     width: 800px;
+    min-width: 800px;
     right: 0;
     left: 0;
     background-color: white;
+    margin: 10px 5px 5px 10px;
 }
 
 .charsheet div.textblock {

@@ -104,6 +104,56 @@
     }
   },
   "hosting": {},
+  "parameters": {
+    "AMPLIFY_function_createDatabaseUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createDatabaseUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createDatabaseUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createDatabaseUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createNewGame_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createNewGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_createNewGame_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createNewGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_parseMessage_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "parseMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_parseMessage_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "parseMessage"
+        }
+      ]
+    }
+  },
   "storage": {
     "s3spellboundstorage7811eef0": {
       "dependsOn": [],

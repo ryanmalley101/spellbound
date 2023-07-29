@@ -161,22 +161,26 @@ type Token
     map: Map! @belongsTo
     character: CharacterSheet @belongsTo
     imageURL: String!
+    layer: String
     width: Float!
     height: Float!
     rotation: Float!
     positionX: Float!
     positionY: Float!
+    key: String
 }
 
 
 input TokenInput {
     mapTokensId: ID
     imageURL: String
+    layer: String
     width: Float
     height: Float
     rotation: Float
     positionX: Float
     positionY: Float
+    token: String
 }
 
 type CharacterSheet

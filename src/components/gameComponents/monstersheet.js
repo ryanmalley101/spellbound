@@ -241,7 +241,7 @@ const MonsterSheet = ({slug}) => {
     return null
   } else {
     return (
-      <div>
+      <div className={styles.monsterSheetContainer}>
         <div className={styles.name}>{monsterData.name}</div>
         <div className={styles.description}>{monsterData.size} {monsterData.type}, {monsterData.alignment}</div>
 

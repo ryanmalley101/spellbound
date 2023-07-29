@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import DraggableIcon, {MemoizedDraggableIcon} from "@/components/gameComponents/draggableicon";
+import DraggableIcon from "@/components/gameComponents/draggableicon";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import styles from "../../styles/Battlemap.module.css";
 import GridOverlay from "@/components/gameComponents/gridoverlay";
@@ -12,6 +12,7 @@ import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
 import * as mutations from "@/graphql/mutations";
 import {useDropzone} from 'react-dropzone';
 import {Storage} from "aws-amplify";
+import {updateMap} from "@/graphql/mutations";
 
 const GRID_SIZE = 75
 
@@ -23,17 +24,11 @@ const BattleMap = () => {
   const [mapPosition, setMapPosition] = useState({x: 0, y: 0});
   const [widthUnits, setWidthUnits] = useState(25);
   const [heightUnits, setHeightUnits] = useState(25);
-  const zoomLevel = useBattlemapStore(state => state.zoomLevel)
-  const setZoomLevel = useBattlemapStore(state => state.setZoomLevel)
-  const {gameID, activeMap, setActiveMap} = useBattlemapStore();
   const [mapTokens, setMapTokens] = useState([])
-  const selectedTool = useBattlemapStore((state) => state.selectedTool);
-  const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID, shallow);
-  const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID, shallow);
-  const [files, setFiles] = useState(null);
-  const mapTokensRef = useRef([])
-  const [tokenKey, setTokenKey] = useState(0);
-  const [tokenCount, setTokenCount] = useState(0);
+  const {
+    zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
+    mapLayer, setMapLayer, gameID, activeMap, setActiveMap
+  } = useBattlemapStore();
 
   const removeMapToken = (deletedToken) => {
     console.log("removing map token")
@@ -82,6 +77,7 @@ const BattleMap = () => {
         const input = {
           imageURL: path,
           mapTokensId: activeMap,
+          layer: mapLayer,
           positionX: 0,
           positionY: 0,
           rotation: 0,
@@ -209,6 +205,21 @@ const BattleMap = () => {
     setZoomLevel(newZoomLevel);
   };
 
+  const addTokenLayer = async (token) => {
+    console.log(`No layer for token fetched from backend, adding layer ${mapLayer}`)
+    const updatedToken = {...token, layer: mapLayer}
+    console.log(updatedToken)
+    try {
+      const layeredToken = await API.graphql({
+        query: mutations.updateToken,
+        variables: {input: updatedToken}
+      });
+    } catch (e) {
+      console.log("error adding layer to token")
+      console.log(e)
+    }
+  }
+
   useEffect(() => {
     console.log("Zoom level", zoomLevel)
     const getActiveMap = async () => {
@@ -255,6 +266,7 @@ const BattleMap = () => {
                 rotation
                 positionX
                 positionY
+                layer
               }
             }
           }
@@ -272,7 +284,13 @@ const BattleMap = () => {
       tokens.map((token) => token.key = token.id)
       console.log(tokens)
       setMapTokens(tokens.reverse())
-      setTokenCount(tokens.length); // Set the token count here
+
+
+      tokens.map((token) => {
+        if (!token.layer) {
+          addTokenLayer(token)
+        }
+      })
     }
 
     fetchTokens()
@@ -286,7 +304,6 @@ const BattleMap = () => {
     const subscriptionHandler = (data) => {
       const newToken = data.value.data.onCreateToken;
       console.log('Created Token:', data);
-      setTokenCount((prevCount) => prevCount + 1);
       // console.log([...mapTokens, newToken])
       // setMapTokens([...mapTokens, newToken])
       addMapToken(newToken)
@@ -329,8 +346,22 @@ const BattleMap = () => {
     };
 
     const subscription = API.graphql(
-      graphqlOperation(onUpdateToken, {mapTokensId: activeMap}),
+      graphqlOperation(`
+    subscription OnMapTokenUpdate($filter: ModelSubscriptionTokenFilterInput) {
+      onUpdateToken(filter: $filter) {
+        id
+        imageURL
+        width
+        height
+        rotation
+        positionX
+        positionY
+        layer
+      }
+    }
+  `),
       {
+        // Provide the variables as the second argument
         filter: {
           mutationType: {
             eq: 'update',
@@ -345,6 +376,25 @@ const BattleMap = () => {
         console.error('Subscription Error:', error);
       },
     });
+
+
+    //     const subscription = API.graphql(
+    //   graphqlOperation(onUpdateToken, {mapTokensId: activeMap}),
+    //   {
+    //     filter: {
+    //       mutationType: {
+    //         eq: 'update',
+    //       },
+    //     },
+    //   }
+    // ).subscribe({
+    //   next: (data) => {
+    //     subscriptionHandler(data);
+    //   },
+    //   error: (error) => {
+    //     console.error('Subscription Error:', error);
+    //   },
+    // });
 
     return () => {
       if (subscription) {
@@ -424,9 +474,9 @@ const BattleMap = () => {
 
   const {getRootProps, getInputProps} = useDropzone({onDrop});
 
-  const handleDialogClick = (event) => {
-    event.preventDefault()
-  }
+  const handleContextMenu = (event) => {
+    event.preventDefault(); // Prevent the default right-click context menu behavior
+  };
 
   if (mapTokens !== null) {
     return (
@@ -437,24 +487,19 @@ const BattleMap = () => {
              height: `${heightUnits * GRID_SIZE}x`,
              transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
              boxShadow: '0 0 0 2px black'
-           }}>
+           }}
+           onWheel={handleWheel} onMouseDown={handleMouseDown}
+           onContextMenu={handleContextMenu}
+           className={styles.mapContainer}>
         <input {...getInputProps()} />
-        <div className={styles.mapContainer}
-             style={{
-               width: `${widthUnits * GRID_SIZE}px`,
-               height: `${heightUnits * GRID_SIZE}px`,
-               transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`
-             }}
-             onWheel={handleWheel} onMouseDown={handleMouseDown}>
-          {mapTokens.map((token, index) => {
-            // const uniqueKey = `${token.id}_${Date.now()}`; // Add the current timestamp to the key
-            return <MemoizedDraggableIcon key={`${token.key}`} token={token}/>
-          })}
-          <div className={styles.mapImageContainer}>
-            {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
-          </div>
-          <GridOverlay gridSize={GRID_SIZE}/>
+        {mapTokens.map((token, index) => {
+          // const uniqueKey = `${token.id}_${Date.now()}`; // Add the current timestamp to the key
+          return <DraggableIcon key={`${token.key}`} token={token}/>
+        })}
+        <div className={styles.mapImageContainer}>
+          {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
         </div>
+        <GridOverlay gridSize={GRID_SIZE}/>
         {/*</div>*/}
         <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
       </div>

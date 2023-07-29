@@ -1247,11 +1247,13 @@ export const createMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -1316,11 +1318,13 @@ export const updateMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -1385,11 +1389,13 @@ export const deleteMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -1490,11 +1496,13 @@ export const createToken = /* GraphQL */ `
         }
         token {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -1680,11 +1688,13 @@ export const createToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      layer
       width
       height
       rotation
       positionX
       positionY
+      key
       id
       createdAt
       updatedAt
@@ -1739,11 +1749,13 @@ export const updateToken = /* GraphQL */ `
         }
         token {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -1929,11 +1941,13 @@ export const updateToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      layer
       width
       height
       rotation
       positionX
       positionY
+      key
       id
       createdAt
       updatedAt
@@ -1988,11 +2002,13 @@ export const deleteToken = /* GraphQL */ `
         }
         token {
           imageURL
+          layer
           width
           height
           rotation
           positionX
           positionY
+          key
           id
           createdAt
           updatedAt
@@ -2178,11 +2194,13 @@ export const deleteToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      layer
       width
       height
       rotation
       positionX
       positionY
+      key
       id
       createdAt
       updatedAt
@@ -2396,11 +2414,13 @@ export const createCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        layer
         width
         height
         rotation
         positionX
         positionY
+        key
         id
         createdAt
         updatedAt
@@ -2791,11 +2811,13 @@ export const updateCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        layer
         width
         height
         rotation
         positionX
         positionY
+        key
         id
         createdAt
         updatedAt
@@ -3186,11 +3208,13 @@ export const deleteCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        layer
         width
         height
         rotation
         positionX
         positionY
+        key
         id
         createdAt
         updatedAt

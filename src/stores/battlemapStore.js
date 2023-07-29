@@ -58,6 +58,10 @@ const useBattlemapStore = create((set) => ({
   setSelectedTool: (tool) =>
     set((state) => ({selectedTool: tool})),
 
+  mapLayer: "TOKEN",
+  setMapLayer: (layer) =>
+    set((state) => ({mapLayer: layer}))
+
 }))
 
 useBattlemapStore.subscribe((state) => console.log('New state:', state));
