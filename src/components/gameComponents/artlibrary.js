@@ -25,15 +25,17 @@ function ImageButton(props) {
   useEffect(() => {
     const fetchImagePath = async () => {
       try {
-        console.log(`defaultTokens${props.src}`)
+        console.log(`${props.src}`)
         Storage.configure({level: 'public'});
         const signedUrl = await Storage.get(`${props.src.substring(1)}`, {
           validateObjectExistence: true
         });
+        console.log("Got image")
+        console.log(signedUrl)
         setImagePath(signedUrl);
       } catch (e) {
         console.log(e);
-        setImagePath(props.src);
+        // setImagePath(props.src);
       }
     };
 
