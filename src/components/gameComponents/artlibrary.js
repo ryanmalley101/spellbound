@@ -64,8 +64,13 @@ const DirectoryMenu = ({directory, parentPath = '', filter, user}) => {
   };
 
   const titleCase = (str) => {
-    return str.toLowerCase().split(' ').map(function (word) {
-      return word.replace(word[0], word[0].toUpperCase());
+    console.log(str)
+    return str.toLowerCase().split(' ').map((word) => {
+      if (word[0]) {
+        return word.replace(word[0], word[0].toUpperCase());
+      } else {
+        return word
+      }
     }).join(' ');
   }
 
