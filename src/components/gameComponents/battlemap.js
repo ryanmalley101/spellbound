@@ -13,6 +13,8 @@ import * as mutations from "@/graphql/mutations";
 import {useDropzone} from 'react-dropzone';
 import {Storage} from "aws-amplify";
 import {updateMap} from "@/graphql/mutations";
+import {Rnd} from "react-rnd";
+import {throttle} from "lodash";
 
 const GRID_SIZE = 75
 
@@ -29,6 +31,17 @@ const BattleMap = () => {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
     mapLayer, setMapLayer, gameID, activeMap, setActiveMap
   } = useBattlemapStore();
+  // Add a ref to the draggable component
+  const draggableRef = useRef(null);
+
+  // Add a ref to store the current position during dragging
+  const dragStartRef = useRef({x: 0, y: 0});
+
+  // Add a ref to store the previous position during dragging
+  const prevDragRef = useRef({x: 0, y: 0});
+
+  // Throttle the mousemove event to avoid excessive updates
+
 
   const removeMapToken = (deletedToken) => {
     console.log("removing map token")
@@ -105,7 +118,7 @@ const BattleMap = () => {
     }
   };
 
-  const handleDragStart = (event) => {
+  const handleFileDrag = (event) => {
     event.dataTransfer.setData("text/plain", event.target.id)
   }
 
@@ -141,49 +154,49 @@ const BattleMap = () => {
   }, [deleteSelectedToken, selectedTokenID]);
 
   // const [mapTokens, setMapTokens] = useState([]);
-  const handleMouseDown = (event) => {
-    if (selectedTool === TOOL_ENUM.DRAG) {
-      console.log("Panning")
-      setPanning(true);
-      panStartRef.current = {
-        x: event.clientX / zoomLevel - mapPosition.x,
-        y: event.clientY / zoomLevel - mapPosition.y,
-      };
-    }
-  };
-
-  const handleMouseMove = (event) => {
-    if (panning) {
-      const deltaX = (event.clientX / zoomLevel - panStartRef.current.x) * (1 / zoomLevel);
-      const deltaY = (event.clientY / zoomLevel - panStartRef.current.y) * (1 / zoomLevel);
-      setMapPosition((prevPos) => ({
-        x: prevPos.x + deltaX,
-        y: prevPos.y + deltaY,
-      }));
-      panStartRef.current = {
-        x: event.clientX / zoomLevel,
-        y: event.clientY / zoomLevel,
-      };
-    }
-  };
-
-  const handleMouseUp = () => {
-    setPanning(false);
-  };
-
-  useEffect(() => {
-    if (panning) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    }
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [panning]);
+  // const handleMouseDown = (event) => {
+  //   if (selectedTool === TOOL_ENUM.DRAG) {
+  //     console.log("Panning")
+  //     setPanning(true);
+  //     panStartRef.current = {
+  //       x: event.clientX / zoomLevel - mapPosition.x,
+  //       y: event.clientY / zoomLevel - mapPosition.y,
+  //     };
+  //   }
+  // };
+  //
+  // const handleMouseMove = (event) => {
+  //   if (panning) {
+  //     const deltaX = (event.clientX / zoomLevel - panStartRef.current.x) * (1 / zoomLevel);
+  //     const deltaY = (event.clientY / zoomLevel - panStartRef.current.y) * (1 / zoomLevel);
+  //     setMapPosition((prevPos) => ({
+  //       x: prevPos.x + deltaX,
+  //       y: prevPos.y + deltaY,
+  //     }));
+  //     panStartRef.current = {
+  //       x: event.clientX / zoomLevel,
+  //       y: event.clientY / zoomLevel,
+  //     };
+  //   }
+  // };
+  //
+  // const handleMouseUp = () => {
+  //   setPanning(false);
+  // };
+  //
+  // useEffect(() => {
+  //   if (panning) {
+  //     document.addEventListener('mousemove', handleMouseMove);
+  //     document.addEventListener('mouseup', handleMouseUp);
+  //   } else {
+  //     document.removeEventListener('mousemove', handleMouseMove);
+  //     document.removeEventListener('mouseup', handleMouseUp);
+  //   }
+  //   return () => {
+  //     document.removeEventListener('mousemove', handleMouseMove);
+  //     document.removeEventListener('mouseup', handleMouseUp);
+  //   };
+  // }, [panning]);
 
   // useEffect(() => {
   // console.log("Pan Start", panStart)
@@ -478,31 +491,82 @@ const BattleMap = () => {
     event.preventDefault(); // Prevent the default right-click context menu behavior
   };
 
+  const handleDragStart = () => {
+    dragStartRef.current = {x: mapPosition.x / zoomLevel, y: mapPosition.y / zoomLevel};
+    prevDragRef.current = dragStartRef.current;
+    console.log("Handle Drag Start")
+  };
+
+  const handleDragStop = async (e, d) => {
+    console.log('Handling drag stop')
+    const {x, y} = d;
+    const dragStart = dragStartRef.current;
+
+    if (dragStart && (Math.abs(x - dragStart.x) > 2 || Math.abs(y - dragStart.y) > 2)) {
+
+      const adjustedX = parseFloat((x).toFixed(1))
+      const adjustedY = parseFloat((y).toFixed(1))
+      setMapPosition({x: adjustedX, y: adjustedY});
+    }
+
+    dragStartRef.current = null;
+  };
+
+  const handleMouseMoveThrottled =
+    throttle((event) => {
+      console.log("Handling mouse move throttled")
+      console.log(event)
+      const deltaX = (event.clientX / zoomLevel - dragStartRef.current.x) * (1 / zoomLevel);
+      const deltaY = (event.clientY / zoomLevel - dragStartRef.current.y) * (1 / zoomLevel);
+
+      const newPos = {
+        x: prevDragRef.current.x + deltaX,
+        y: prevDragRef.current.y + deltaY,
+      };
+
+      setMapPosition(newPos);
+      prevDragRef.current = newPos;
+    }, 16) // 60 FPS (1000ms / 60 = 16.67ms)
+
+
   if (mapTokens !== null) {
     return (
       // <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
-      <div {...getRootProps({onClick: event => event.stopPropagation()})}
-           style={{
-             width: `${widthUnits * GRID_SIZE}px`,
-             height: `${heightUnits * GRID_SIZE}x`,
-             transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
-             boxShadow: '0 0 0 2px black'
-           }}
-           onWheel={handleWheel} onMouseDown={handleMouseDown}
-           onContextMenu={handleContextMenu}
-           className={styles.mapContainer}>
-        <input {...getInputProps()} />
-        {mapTokens.map((token, index) => {
-          // const uniqueKey = `${token.id}_${Date.now()}`; // Add the current timestamp to the key
-          return <DraggableIcon key={`${token.key}`} token={token}/>
-        })}
-        <div className={styles.mapImageContainer}>
-          {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
+      <Rnd
+        ref={draggableRef}
+        size={{width: GRID_SIZE * widthUnits, height: GRID_SIZE * heightUnits}}
+        scale={zoomLevel}// Set the initial size of the draggable and resizable component
+        position={{x: mapPosition.x, y: mapPosition.y}} // Set the initial position of the component
+        onDragStart={handleDragStart}
+        onDragStop={handleMouseMoveThrottled}
+        disableDragging={selectedTool !== TOOL_ENUM.DRAG}
+        style={{zIndex: 10000}}
+        bounds="parent"
+        // className={styles.mapContainer}
+      >
+        <div {...getRootProps({onClick: event => event.stopPropagation()})}
+             style={{
+               width: `${widthUnits * GRID_SIZE}px`,
+               height: `${heightUnits * GRID_SIZE}px`,
+               transform: `scale(${zoomLevel}) translate(${mapPosition.x}px, ${mapPosition.y}px)`,
+               boxShadow: '0 0 0 2px black'
+             }}
+             onWheel={handleWheel}
+             onContextMenu={handleContextMenu}
+             className={styles.mapContainer}>
+          <input {...getInputProps()} />
+          {mapTokens.map((token, index) => {
+            // const uniqueKey = `${token.id}_${Date.now()}`; // Add the current timestamp to the key
+            return <DraggableIcon key={`${token.key}`} token={token}/>
+          })}
+          <div className={styles.mapImageContainer}>
+            {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
+          </div>
+          <GridOverlay gridSize={GRID_SIZE}/>
+          {/*</div>*/}
+          <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
         </div>
-        <GridOverlay gridSize={GRID_SIZE}/>
-        {/*</div>*/}
-        <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
-      </div>
+      </Rnd>
     );
   }
 };

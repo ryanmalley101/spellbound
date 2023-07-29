@@ -76,8 +76,6 @@ const DraggableIcon = ({token}) => {
   const handleDragStart = () => {
     dragStartRef.current = {x: iconPosition.x / zoomLevel, y: iconPosition.y / zoomLevel};
     console.log('Handling drag start')
-
-
   };
 
   const handleDragStop = async (e, d) => {
@@ -102,9 +100,7 @@ const DraggableIcon = ({token}) => {
       });
     }
 
-
     dragStartRef.current = null;
-
   };
 
   useEffect(() => {
