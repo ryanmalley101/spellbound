@@ -47,8 +47,8 @@ const SaveSkillComponent = ({
                               handleCheckboxClick
                             }) => {
 
-  const modField = isSave ? `${checkName.toLowerCase().replace(" ", "_")}_save_mod` : `${checkName.toLowerCase().replace(" ", "_")}_mod`
-  const profField = `${checkName.toLowerCase().replace(" ", "_")}_prof`
+  const modField = isSave ? `${checkName.toLowerCase().replaceAll(" ", "_")}_save_mod` : `${checkName.toLowerCase().replaceAll(" ", "_")}_mod`
+  const profField = `${checkName.toLowerCase().replaceAll(" ", "_")}_prof`
 
   return <li>
     <label form={checkName} className={styles.labelButton}
@@ -528,7 +528,6 @@ const CharacterSheet = ({characterSheetInput}) => {
     }
 
   }
-
 
   const handleInputBlur = () => {
     // Perform backend update here
