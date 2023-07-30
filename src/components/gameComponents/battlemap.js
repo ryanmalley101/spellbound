@@ -1,32 +1,25 @@
 import React, {useEffect, useRef, useState} from 'react';
-import DraggableIcon from "@/components/gameComponents/draggableicon";
-import styles from "../../styles/Battlemap.module.css";
-import GridOverlay from "@/components/gameComponents/gridoverlay";
-import ZoomSlider from "@/components/gameComponents/zoomslider";
+import DraggableIcon from '@/components/gameComponents/draggableicon';
+import styles from '../../styles/Battlemap.module.css';
+import GridOverlay from '@/components/gameComponents/gridoverlay';
+import {API, graphqlOperation, Storage} from 'aws-amplify';
+import {onCreateToken, onDeleteToken, onUpdateToken, onUpdateGame} from '@/graphql/subscriptions';
+import * as mutations from '@/graphql/mutations';
+import {TransformWrapper, TransformComponent, useControls} from 'react-zoom-pan-pinch';
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
-import {API, graphqlOperation, Storage} from "aws-amplify";
-import {onCreateToken, onDeleteToken, onUpdateGame} from "@/graphql/subscriptions";
-import * as mutations from "@/graphql/mutations";
-import {Rnd} from 'react-rnd';
-import {TransformWrapper, TransformComponent, useControls} from "react-zoom-pan-pinch";
 
 
 const GRID_SIZE = 25
 
 
 const BattleMap = () => {
-  // Define your component logic here
-  // Ref for the battlemap container
-  const battlemapRef = useRef(null);
 
-  // State to track the map's position
-  const [mapPosition, setMapPosition] = useState({x: 0, y: 0});
   const [draggingDisabled, setDraggingDisabled] = useState(true);
 
   const [widthUnits, setWidthUnits] = useState(25);
   const [heightUnits, setHeightUnits] = useState(25);
   const [mapTokens, setMapTokens] = useState([])
-  const transformComponentRef = useRef();
+  const [scale, setScale] = useState(1);
 
   const {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
@@ -245,14 +238,11 @@ const BattleMap = () => {
 
   }, [activeMap])
 
-  useEffect(() => {
-    // Define the subscription handler
+  // Separate subscription functions
+  const subscribeToTokenCreation = () => {
     const subscriptionHandler = (data) => {
       const newToken = data.value.data.onCreateToken;
-      console.log('Created Token:', data);
-      // console.log([...mapTokens, newToken])
-      // setMapTokens([...mapTokens, newToken])
-      addMapToken(newToken)
+      addMapToken(newToken);
     };
 
     const subscription = API.graphql(
@@ -263,7 +253,7 @@ const BattleMap = () => {
             eq: 'create',
           },
         },
-      },
+      }
     ).subscribe({
       next: (data) => {
         subscriptionHandler(data);
@@ -278,36 +268,30 @@ const BattleMap = () => {
         subscription.unsubscribe();
       }
     };
-  }, [])
+  };
 
-  useEffect(() => {
-    // Define the subscription handler
+  const subscribeToTokenUpdate = () => {
     const subscriptionHandler = (data) => {
       const updatedToken = data.value.data.onUpdateToken;
-      console.log('Updated Token:', updatedToken);
-      console.log('Current Tokens:', mapTokens); // Use the mutable ref here
-      updateMapToken(updatedToken)
-      // console.log(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
-      // setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
+      updateMapToken(updatedToken);
     };
 
     const subscription = API.graphql(
       graphqlOperation(`
-    subscription OnMapTokenUpdate($filter: ModelSubscriptionTokenFilterInput) {
-      onUpdateToken(filter: $filter) {
-        id
-        imageURL
-        width
-        height
-        rotation
-        positionX
-        positionY
-        layer
-      }
-    }
-  `),
+        subscription OnMapTokenUpdate($filter: ModelSubscriptionTokenFilterInput) {
+          onUpdateToken(filter: $filter) {
+            id
+            imageURL
+            width
+            height
+            rotation
+            positionX
+            positionY
+            layer
+          }
+        }
+      `),
       {
-        // Provide the variables as the second argument
         filter: {
           mutationType: {
             eq: 'update',
@@ -328,17 +312,12 @@ const BattleMap = () => {
         subscription.unsubscribe();
       }
     };
-  }, [])
+  };
 
-  useEffect(() => {
-    // Define the subscription handler
+  const subscribeToTokenDeletion = () => {
     const subscriptionHandler = (data) => {
       const deletedToken = data.value.data.onDeleteToken;
-      console.log('Deleted Token:', deletedToken);
-      console.log('Current Tokens:', mapTokens);
-      removeMapToken(deletedToken)
-      // console.log(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
-      // setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
+      removeMapToken(deletedToken);
     };
 
     const subscription = API.graphql(
@@ -364,18 +343,12 @@ const BattleMap = () => {
         subscription.unsubscribe();
       }
     };
-  }, [])
+  };
 
-  useEffect(() => {
-    // Define the subscription handler
+  const subscribeToGameUpdate = () => {
     const subscriptionHandler = (data) => {
-      console.log("got game update")
-      console.log(data)
       const updatedActiveMap = data.value.data.onUpdateGame.activeMap;
-      console.log('Updated Active Map:', updatedActiveMap);
-      // console.log([...mapTokens, newToken])
-      // setMapTokens([...mapTokens, newToken])
-      setActiveMap(updatedActiveMap)
+      setActiveMap(updatedActiveMap);
     };
 
     const subscription = API.graphql(
@@ -386,7 +359,7 @@ const BattleMap = () => {
             eq: 'update',
           },
         },
-      },
+      }
     ).subscribe({
       next: (data) => {
         subscriptionHandler(data);
@@ -396,8 +369,31 @@ const BattleMap = () => {
       },
     });
 
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  };
 
-  }, [])
+  // Whenever there is a new activeMap loaded, resubscribe to token creations and game updates
+  useEffect(() => {
+    // Other existing useEffect logic...
+
+    // Subscribe to different events
+    const unsubscribeToCreation = subscribeToTokenCreation();
+    const unsubscribeToUpdate = subscribeToTokenUpdate();
+    const unsubscribeToDelete = subscribeToTokenDeletion();
+    const unsubscribeToGameUpdate = subscribeToGameUpdate();
+
+    // Clean up subscriptions
+    return () => {
+      unsubscribeToCreation();
+      unsubscribeToUpdate();
+      unsubscribeToDelete();
+      unsubscribeToGameUpdate();
+    };
+  }, [activeMap]);
 
   useEffect(() => {
 
@@ -420,10 +416,11 @@ const BattleMap = () => {
   return (
     <div id={"Battlemap Start"} style={{height: '100%', width: '100%', position: 'relative'}}>
       <TransformWrapper style={{height: '100%', width: '100%'}} className={styles.mapContainer}
-                        disabled={draggingDisabled} minScale={0.1}>
+                        disabled={draggingDisabled} minScale={0.1} initialScale={scale}
+                        onZoomEnd={(event) => {
+                          setScale(event.scale);
+                        }}>
         <Controls/>
-        {/*<GridOverlay style={{zIndex: -100}} gridSize={25}/>*/}
-
         <TransformComponent wrapperStyle={{
           height: '100%',
           width: '100%',
@@ -437,14 +434,9 @@ const BattleMap = () => {
               width: '100%',
             }}
           >
-            {/* Your content goes here */}
             {mapTokens.map((token, index) => (
-              <DraggableIcon key={`${token.key}`} token={token}/>
+              <DraggableIcon key={`${token.key}`} token={token} scale={scale}/>
             ))}
-            {/*<img
-            src={"https://spellbound-storage-7811eef0192809-dev.s3.us-east-1.amazonaws.com/public/defaultTokens/Humans/Humans%20miscellaneous/spellbound%20mad%20human.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIARHT26VXX2PMQVV5N%2F20230730%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230730T011436Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAIaCXVzLWVhc3QtMSJHMEUCIAHmEi39gpxm7ga%2FOCVLOvCli8lWqewRmMOrz2JkJkzVAiEAyh24s1jByPCk2GDq%2FJJWklsdRGnPCAXGb6RLtHMjZvQqzQQImv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgwwODUwODM0NjcyNDciDE%2FzUk67vNh7bJ4CRyqhBDVECGKrpq7M8EsrMvKjpr1irHw2GH8ECbd43ThYoRla4%2BP4oCxvXzLpKWRHcvfx51J8E8UfgrRmWUEWZwwzkwyoXtFEEcVvB2wKRcz1KeMRpeLnlMqMEfjUPtni9c3ned1ZD6K3G6La3CLHAYMCgYK5DKef07oaEf3Cpq8iWQNoz6RSz8EGxOY1Adw%2FyoWIvbogJ2T5v8ob5SkFgKNJDfsvQopLJ7FC0rpe3giO2qrfNpeKmHAkIUsQbvZN3gMo7zaE61E2qttrdZulTgC64om2aRana5ERTW9bZylpykMdZfYMwD2JoSpiGDdFb7jvbQGNqzbLHr42S8tfQBq1KoQygfyKHQs1b4hefg%2FKePHU%2B2%2BqX2Xz9kIi0cm6udKNI0WooD6CjA3T%2FYd7Yf8QrTsgxF2uFhSV%2FalfhRzR5o0nU261ozQDdhzr1CKDLcteS%2B%2Fldw%2FS8IjyWyX2Ve3gMpo%2FAzehydCawJVJAzvKhr1p1W0vRC%2FjtEHU%2B9ixbecgpj4McUYcuFzWePlCHUCQktfevXDlKSwQ8n2feTiVEytUHAiNmpLF%2BkJ1p%2BiEcG%2Bwamq2hZt9yviNv7wLkZrbv7SjyFg%2FBMna1sK9e63oDpn6Mnn6sxL0XQbAEIaaKFG6HBu5hcV%2FaPMeDCP%2FJb2F2J9lAhA7KSRtsQY14GraMKQ0JEu2aGTUpDFBZB5GEeK5dDOC6EeG7L4TzfOJFsJpx6CBMLLwlqYGOoUCTBikFysTCQfBeJZC9qf%2FUVbd5NJDF8%2By1cLIwPFv7gKfjBagn8CyanGnbMqhq3ShUQhzuqJWYAY1O2Kv2rQZYmPbzQRpspvBWoIlZvhJgZmnKXazueHMO4Mn7sNSYVHOlr%2BRhf1dALgPSr45rlZXP9YNsKPf4tBJ5JGiBAbSo1IIZZQrd3GZECG%2FTZsWFKfkvTbspMsbDvbIOtqRp%2BsCqVjIqKEAa5%2FBMdRM%2F5bigNnvf7JNKv%2Ffsft9%2FvPwAOMKerXbTOsUDHsLFxaBTPEHDdr7RnnPCCfKmLqhIT1qZWnOA2J7pQ2s5K0dDsOKNeWoQed3X104YB5VvUCCkYoWX9VHAEGu&X-Amz-Signature=7ca7b025b9c3fb46dbd349f411b49f08f45c60eccdc48ae3a7fd6fa0a86ae5e1&X-Amz-SignedHeaders=host&x-amz-user-agent=aws-sdk-js%2F3.6.3%20os%2FWindows%2FNT_10.0%20lang%2Fjs%20md%2Fbrowser%2FChrome_115.0.0.0%20api%2Fs3%2F3.6.3%20aws-amplify%2F5.2.5_js&x-id=GetObject"}
-            alt="Icon" width={1000} height={1000} style={{ pointerEvents: 'none' }}
-          />*/}
             <GridOverlay style={{zIndex: -100}} gridSize={25}/>
 
           </div>

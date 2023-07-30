@@ -24,7 +24,7 @@ const CustomHandle = ({position}) => (
   />
 );
 
-const DraggableIcon = ({token}) => {
+const DraggableIcon = ({token, scale}) => {
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
   const [iconPosition, setIconPosition] = useState({x: 0, y: 0});
   const [width, setWidth] = useState(50);
@@ -190,7 +190,7 @@ const DraggableIcon = ({token}) => {
   return (
     <Rnd
       size={{width: width, height: height}}
-      // scale={zoomLevel}// Set the initial size of the draggable and resizable component
+      scale={scale}// Set the initial size of the draggable and resizable component
       position={{x: iconPosition.x, y: iconPosition.y}} // Set the initial position of the component
       onDragStart={handleDragStart}
       onDragStop={handleDragStop}
