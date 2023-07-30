@@ -9,15 +9,26 @@
     border-style: solid;
     border-width: 2px;
     border-color: black;
+    min-width: 100px;
+
 }
 
 .header {
     display: flex;
-    justify-content: flex-end; /* Align items to the right */
     align-items: center;
     padding: 8px;
+    justify-content: space-between; /* Align items to both ends (left and right) */
     background-color: #f0f0f0;
     cursor: move;
+}
+
+.headerTitle {
+
+}
+
+.headerClose {
+    display: flex;
+    align-items: center;
 }
 
 .closeButton {

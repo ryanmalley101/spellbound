@@ -7,16 +7,28 @@ import {BsX} from "react-icons/bs";
 import useBattlemapStore from "@/stores/battlemapStore";
 import MonsterSheet from "@/components/gameComponents/monstersheet";
 
-const DraggableWindow = ({initialPosition, content, onClose}) => {
+const DraggableWindow = ({initialPosition, content, onClose, title}) => {
   const [windowPosition, setWindowPosition] = useState({x: 0, y: 0});
-  const [width, setWidth] = useState(820);
-  const [height, setHeight] = useState(800);
+  const [containerWidth, setContainerWidth] = useState(820);
+  const [containerHeight, setContainerHeight] = useState(800);
+  const [headerWidth, setHeaderWidth] = useState(820)
+  // const [headerHeight, setHeaderHeight] = useState(45)
   const dragStartRef = useRef(null); // Define the dragStartRef using useRef
+  const [isHidden, setIsHidden] = useState(false);
+  const headerHeight = 45; // Adjust this value based on your header's actual height
+
+  const handleDoubleClick = () => {
+    setIsHidden((prevState) => !prevState);
+  };
 
   const handleResize = (e, direction, ref) => {
     const {width, height} = ref.style;
-    setWidth(parseInt(width));
-    setHeight(parseInt(height));
+    if (isHidden) {
+      setHeaderWidth(parseInt(width))
+    } else {
+      setContainerWidth(parseInt(width));
+      setContainerHeight(parseInt(height));
+    }
   };
 
   const handleDragStart = () => {
@@ -51,7 +63,7 @@ const DraggableWindow = ({initialPosition, content, onClose}) => {
 
   return (
     <Rnd
-      size={{width: width, height: height}}
+      size={{width: isHidden ? headerWidth : containerWidth, height: isHidden ? headerHeight : containerHeight}}
       position={{x: windowPosition.x, y: windowPosition.y}} // Set the initial position of the component
       onDragStart={handleDragStart}
       onDragStop={handleDragStop}
@@ -91,12 +103,15 @@ const DraggableWindow = ({initialPosition, content, onClose}) => {
       dragHandleClassName={styles.header}
     >
       <div className={styles.windowContainer}>
-        <div className={styles.header}>
-          <button className={styles.closeButton} onClick={closeWindow}>
-            <BsX className={styles.closeIcon}/>
-          </button>
+        <div className={styles.header} onDoubleClick={handleDoubleClick}>
+          <div className={styles.headerTitle}>{title}</div>
+          <div className={styles.headerClose}>
+            <button className={styles.closeButton} onClick={closeWindow}>
+              <BsX className={styles.closeIcon}/>
+            </button>
+          </div>
         </div>
-        <div className={styles.subContainer}>
+        <div className={styles.subContainer} style={{display: isHidden ? 'none' : 'block'}}>
           {content}
         </div>
       </div>
@@ -114,7 +129,8 @@ const DraggableCharacterWindow = ({characterSheet}) => {
     removeCharacterSheetWindow(characterSheet)
   }
 
-  return <DraggableWindow content={<CharacterSheet characterSheetInput={characterSheet}/>} onClose={onClose}/>
+  return <DraggableWindow content={<CharacterSheet characterSheetInput={characterSheet}/>} onClose={onClose}
+                          title={characterSheet.name}/>
 }
 
 const DraggableMonsterWindow = ({initialPosition, slug}) => {
@@ -125,7 +141,7 @@ const DraggableMonsterWindow = ({initialPosition, slug}) => {
     removeMonsterBlock(slug)
   }
 
-  return <DraggableWindow content={<MonsterSheet slug={slug}/>} onClose={onClose}/>
+  return <DraggableWindow content={<MonsterSheet slug={slug}/>} onClose={onClose} title={slug}/>
 }
 
 export default DraggableWindow
