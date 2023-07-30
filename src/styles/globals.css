@@ -20,9 +20,17 @@ body,
 
 .BattleMapContainer {
     flex: 1;
-    overflow: auto;
+    overflow: auto; /* Use "auto" to display scrollbars when content overflows */
     position: relative;
 }
+
+.BattleMap {
+    /* Add any styling for the BattleMap component here */
+    /* For example, you can set the desired width and height */
+    width: 100%; /* Set the width as needed */
+    height: 100%; /* Set the height as needed */
+}
+
 
 #__next {
     height: 100vh;
@@ -35,7 +43,6 @@ body,
     top: 0;
     left: 0;
     bottom: 0;
-    width: 50px;
     display: flex;
     flex-direction: column;
     /*align-items: center;*/
@@ -48,21 +55,20 @@ body,
     /*align-content: center;*/
 }
 
-.ToolBarContainer,
+.ToolBarContainer {
+    height: 100%;
+    overflow: hidden;
+    width: 75px;
+}
+
 .TabMenuContainer {
     height: 100%;
     overflow: hidden;
+    width: 250px;
 }
 
 .ToolBarContainer {
-    flex: 0 0 50px;
-}
-
-.BattleMapContainer {
-    flex: 1;
-    overflow: auto;
 }
 
 .TabMenuContainer {
-    flex: 0 0 100px;
 }

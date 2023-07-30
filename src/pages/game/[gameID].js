@@ -112,7 +112,7 @@ function GameID() {
             </div>
           </div>
           <div className="BattleMapContainer">
-            <BattleMap/>
+            <BattleMap className="BattleMap"/>
           </div>
           <div className="TabMenuContainer">
             <div className="TabMenu">
