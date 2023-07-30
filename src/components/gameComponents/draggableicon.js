@@ -190,12 +190,16 @@ const DraggableIcon = ({token}) => {
   return (
     <Rnd
       size={{width: width, height: height}}
-      scale={zoomLevel}// Set the initial size of the draggable and resizable component
+      // scale={zoomLevel}// Set the initial size of the draggable and resizable component
       position={{x: iconPosition.x, y: iconPosition.y}} // Set the initial position of the component
       onDragStart={handleDragStart}
       onDragStop={handleDragStop}
       disableDragging={selectedTool !== TOOL_ENUM.SELECT || token.layer !== mapLayer}
-      style={{zIndex: 10, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none'}}
+      style={{
+        zIndex: 100000, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none',
+        width: width, height: height
+        // transform: `scale(${zoomLevel})`, // Scale the Rnd container
+      }}
       onResizeStop={handleResizeStop}
       onResize={handleResize}
       bounds="parent"
@@ -253,11 +257,11 @@ const DraggableIcon = ({token}) => {
           </div>
         )}
       </div>
-      <div className={styles.iconOverlay} onContextMenu={handleContextMenu}>
-        <div className={styles.draggableicon}>
-          <img src={imgsrc} alt="Icon" width={width} height={height} style={{pointerEvents: 'none'}}/>
-        </div>
+      {/*<div className={styles.iconOverlay} onContextMenu={handleContextMenu}>*/}
+      <div className={styles.draggableicon}>
+        <img src={imgsrc} alt="Icon" width={width} height={height} style={{pointerEvents: 'none'}}/>
       </div>
+      {/*</div>*/}
     </Rnd>
   );
 

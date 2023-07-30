@@ -1,19 +1,18 @@
 .battlemap {
     position: relative;
-    display: inline-block;
-    flex: 1;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    background-color: lightgray;
-    z-index: 1;
+    /*background-color: white;*/
+    /*flex: 1;*/
 }
 
 .draggableicon {
+    /* Remove position: relative; */
     display: inline-block;
-    position: relative;
-    z-index: 2
+    /* position: relative; */
+    z-index: 2;
+    width: 100%; /* Add width: 100%; */
+    height: 100%; /* Add height: 100%; */
 }
 
 .draggable-icon img {
@@ -24,7 +23,7 @@
 }
 
 .icon-overlay {
-    position: relative;
+    /*position: relative;*/
     top: 0;
     left: 0;
     width: 100%;
@@ -35,14 +34,15 @@
 
 .mapContainer {
     position: relative;
-    background-color: white;
+    width: 100%;
+    height: 100%;
+    /*background-color: white;*/
     /*flex: 1;*/
 }
 
 .mapImage {
     width: 100%;
     height: 100%;
-    object-fit: contain;
     z-index: 1;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -72,7 +72,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    z-index: 1
+    z-index: 1;
 }
 
 .gridOverlay {
@@ -93,7 +93,7 @@
     width: calc(100% + 10px);
     height: calc(100% + 10px);
     pointer-events: none;
-    z-index: 4
+    z-index: 4;
 }
 
 .resize-handle {
@@ -102,7 +102,7 @@
     height: 10px;
     background-color: #fff;
     border: 1px solid #000;
-    z-index: 4
+    z-index: 4;
 }
 
 .resize-handle.top-left {
@@ -115,19 +115,16 @@
     top: -5px;
     right: -5px;
     cursor: ne-resize;
-
 }
 
 .resize-handle.bottom-left {
     bottom: -5px;
     left: -5px;
     cursor: sw-resize;
-
 }
 
 .resize-handle.bottom-right {
     bottom: -5px;
     right: -5px;
     cursor: se-resize;
-
 }

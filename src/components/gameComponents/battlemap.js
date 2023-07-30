@@ -7,37 +7,31 @@ import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import {API, graphqlOperation, Storage} from "aws-amplify";
 import {onCreateToken, onDeleteToken, onUpdateGame} from "@/graphql/subscriptions";
 import * as mutations from "@/graphql/mutations";
-import {useDropzone} from 'react-dropzone';
-import {Rnd} from "react-rnd";
-import {throttle} from "lodash";
+import {Rnd} from 'react-rnd';
+import {TransformWrapper, TransformComponent, useControls} from "react-zoom-pan-pinch";
 
-const GRID_SIZE = 75
+
+const GRID_SIZE = 25
 
 
 const BattleMap = () => {
   // Define your component logic here
-  const [panning, setPanning] = useState(false);
-  const panStartRef = useRef({x: 0, y: 0});
+  // Ref for the battlemap container
+  const battlemapRef = useRef(null);
+
+  // State to track the map's position
   const [mapPosition, setMapPosition] = useState({x: 0, y: 0});
+  const [draggingDisabled, setDraggingDisabled] = useState(true);
+
   const [widthUnits, setWidthUnits] = useState(25);
   const [heightUnits, setHeightUnits] = useState(25);
   const [mapTokens, setMapTokens] = useState([])
-  const mapPositionRef = useRef({x: 0, y: 0});
+  const transformComponentRef = useRef();
 
   const {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
     mapLayer, setMapLayer, gameID, activeMap, setActiveMap
   } = useBattlemapStore();
-  // Add a ref to the draggable component
-  const draggableRef = useRef(null);
-
-  // Add a ref to store the current position during dragging
-  const dragStartRef = useRef({x: 0, y: 0});
-
-  // Add a ref to store the previous position during dragging
-  const prevDragRef = useRef({x: 0, y: 0});
-
-  // Throttle the mousemove event to avoid excessive updates
 
 
   const removeMapToken = (deletedToken) => {
@@ -149,64 +143,6 @@ const BattleMap = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [deleteSelectedToken, selectedTokenID]);
-
-  // const [mapTokens, setMapTokens] = useState([]);
-  // const handleMouseDown = (event) => {
-  //   if (selectedTool === TOOL_ENUM.DRAG) {
-  //     console.log("Panning")
-  //     setPanning(true);
-  //     panStartRef.current = {
-  //       x: event.clientX / zoomLevel - mapPosition.x,
-  //       y: event.clientY / zoomLevel - mapPosition.y,
-  //     };
-  //   }
-  // };
-  //
-  // const handleMouseMove = (event) => {
-  //   if (panning) {
-  //     const deltaX = (event.clientX / zoomLevel - panStartRef.current.x) * (1 / zoomLevel);
-  //     const deltaY = (event.clientY / zoomLevel - panStartRef.current.y) * (1 / zoomLevel);
-  //     setMapPosition((prevPos) => ({
-  //       x: prevPos.x + deltaX,
-  //       y: prevPos.y + deltaY,
-  //     }));
-  //     panStartRef.current = {
-  //       x: event.clientX / zoomLevel,
-  //       y: event.clientY / zoomLevel,
-  //     };
-  //   }
-  // };
-  //
-  // const handleMouseUp = () => {
-  //   setPanning(false);
-  // };
-  //
-  // useEffect(() => {
-  //   if (panning) {
-  //     document.addEventListener('mousemove', handleMouseMove);
-  //     document.addEventListener('mouseup', handleMouseUp);
-  //   } else {
-  //     document.removeEventListener('mousemove', handleMouseMove);
-  //     document.removeEventListener('mouseup', handleMouseUp);
-  //   }
-  //   return () => {
-  //     document.removeEventListener('mousemove', handleMouseMove);
-  //     document.removeEventListener('mouseup', handleMouseUp);
-  //   };
-  // }, [panning]);
-
-  // useEffect(() => {
-  // console.log("Pan Start", panStart)
-  // console.log("Map Position", mapPosition)
-  // }, [panStart, mapPosition]);
-
-
-  // const [mapTokens, setMapTokens] = useState([]);
-
-  const handleZoomChange = (event) => {
-    const newZoomLevel = parseFloat(event.target.value);
-    setZoomLevel(newZoomLevel);
-  };
 
   const handleWheel = (event) => {
     const scaleFactor = 0.05; // Adjust the scale factor to control the zoom speed
@@ -387,25 +323,6 @@ const BattleMap = () => {
       },
     });
 
-
-    //     const subscription = API.graphql(
-    //   graphqlOperation(onUpdateToken, {mapTokensId: activeMap}),
-    //   {
-    //     filter: {
-    //       mutationType: {
-    //         eq: 'update',
-    //       },
-    //     },
-    //   }
-    // ).subscribe({
-    //   next: (data) => {
-    //     subscriptionHandler(data);
-    //   },
-    //   error: (error) => {
-    //     console.error('Subscription Error:', error);
-    //   },
-    // });
-
     return () => {
       if (subscription) {
         subscription.unsubscribe();
@@ -482,89 +399,61 @@ const BattleMap = () => {
 
   }, [])
 
-  const {getRootProps, getInputProps} = useDropzone({onDrop});
+  useEffect(() => {
 
-  const handleContextMenu = (event) => {
-    event.preventDefault(); // Prevent the default right-click context menu behavior
-  };
-
-  const handleDragStart = () => {
-    const {x, y} = mapPositionRef.current;
-    dragStartRef.current = {x, y};
-    prevDragRef.current = {x, y};
-  };
-
-  const handleDragStop = async (e, d) => {
-    console.log('Handling drag stop')
-    const {x, y} = d;
-    const dragStart = dragStartRef.current;
-
-    if (dragStart && (Math.abs(x - dragStart.x) > 2 || Math.abs(y - dragStart.y) > 2)) {
-
-      const adjustedX = parseFloat((x).toFixed(1))
-      const adjustedY = parseFloat((y).toFixed(1))
-      setMapPosition({x: adjustedX, y: adjustedY});
-    }
-
-    dragStartRef.current = null;
-  };
-
-  const handleMouseMoveThrottled =
-    throttle((event) => {
-      // console.log("Handling mouse move throttled")
-      // console.log(event)
-      const deltaX = (event.clientX / zoomLevel - dragStartRef.current.x) * (1 / zoomLevel);
-      const deltaY = (event.clientY / zoomLevel - dragStartRef.current.y) * (1 / zoomLevel);
-
-      // setMapPosition(newPos);
-      prevDragRef.current = {
-        x: prevDragRef.current.x + deltaX,
-        y: prevDragRef.current.y + deltaY,
-      };
-    }, 16) // 60 FPS (1000ms / 60 = 16.67ms)
+    setDraggingDisabled(selectedTool !== TOOL_ENUM.DRAG)
 
 
-  if (mapTokens !== null) {
+  }, [selectedTool])
+
+  const Controls = () => {
+    const {zoomIn, zoomOut, resetTransform} = useControls();
     return (
-      // <div className={styles.battlemap} onWheel={handleWheel} onMouseDown={handleMouseDown} id={"battlemap"}>
-      <Rnd
-        ref={draggableRef}
-        size={{width: (GRID_SIZE * widthUnits) * zoomLevel, height: (GRID_SIZE * heightUnits) * zoomLevel}}
-        scale={zoomLevel}// Set the initial size of the draggable and resizable component
-        position={{x: mapPosition.x, y: mapPosition.y}} // Set the initial position of the component
-        onDragStart={handleDragStart}
-        // onMouseMove={handleMouseMoveThrottled}
-        onDragStop={handleDragStop}
-        disableDragging={selectedTool !== TOOL_ENUM.DRAG}
-        style={{zIndex: 10000}}
-        bounds="parent"
-        // className={styles.mapContainer}
-      >
-        <div {...getRootProps({onClick: event => event.stopPropagation()})}
-             style={{
-               width: `${widthUnits * GRID_SIZE}px`,
-               height: `${heightUnits * GRID_SIZE}px`,
-               transform: `scale(${zoomLevel})`,
-               boxShadow: '0 0 0 2px black'
-             }}
-             onWheel={handleWheel}
-             onContextMenu={handleContextMenu}
-             className={styles.mapContainer}>
-          <input {...getInputProps()} />
-          {mapTokens.map((token, index) => {
-            // const uniqueKey = `${token.id}_${Date.now()}`; // Add the current timestamp to the key
-            return <DraggableIcon key={`${token.key}`} token={token}/>
-          })}
-          <div className={styles.mapImageContainer}>
-            {/*<img src="/forest_battlemap.jpg" alt="Battle Map" className={styles.mapImage}/>*/}
-          </div>
-          <GridOverlay gridSize={GRID_SIZE}/>
-          {/*</div>*/}
-          <ZoomSlider value={zoomLevel} onChange={handleZoomChange}/>
-        </div>
-      </Rnd>
+      <>
+        <button onClick={() => zoomIn()}>Zoom In</button>
+        <button onClick={() => zoomOut()}>Zoom Out</button>
+        <button onClick={() => resetTransform()}>Reset</button>
+      </>
     );
-  }
+  };
+
+  return (
+    <div id={"Battlemap Start"} style={{height: '100%', width: '100%', position: 'relative'}}>
+      <TransformWrapper style={{height: '100%', width: '100%'}} className={styles.mapContainer}
+                        disabled={draggingDisabled} minScale={0.1}>
+        <Controls/>
+        {/*<GridOverlay style={{zIndex: -100}} gridSize={25}/>*/}
+
+        <TransformComponent wrapperStyle={{
+          height: '100%',
+          width: '100%',
+        }} contentStyle={{
+          height: '100%',
+          width: '100%',
+        }} disabled={draggingDisabled} minScale={0.1}>
+          <div
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+          >
+            {/* Your content goes here */}
+            {mapTokens.map((token, index) => (
+              <DraggableIcon key={`${token.key}`} token={token}/>
+            ))}
+            {/*<img
+            src={"https://spellbound-storage-7811eef0192809-dev.s3.us-east-1.amazonaws.com/public/defaultTokens/Humans/Humans%20miscellaneous/spellbound%20mad%20human.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIARHT26VXX2PMQVV5N%2F20230730%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230730T011436Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAIaCXVzLWVhc3QtMSJHMEUCIAHmEi39gpxm7ga%2FOCVLOvCli8lWqewRmMOrz2JkJkzVAiEAyh24s1jByPCk2GDq%2FJJWklsdRGnPCAXGb6RLtHMjZvQqzQQImv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgwwODUwODM0NjcyNDciDE%2FzUk67vNh7bJ4CRyqhBDVECGKrpq7M8EsrMvKjpr1irHw2GH8ECbd43ThYoRla4%2BP4oCxvXzLpKWRHcvfx51J8E8UfgrRmWUEWZwwzkwyoXtFEEcVvB2wKRcz1KeMRpeLnlMqMEfjUPtni9c3ned1ZD6K3G6La3CLHAYMCgYK5DKef07oaEf3Cpq8iWQNoz6RSz8EGxOY1Adw%2FyoWIvbogJ2T5v8ob5SkFgKNJDfsvQopLJ7FC0rpe3giO2qrfNpeKmHAkIUsQbvZN3gMo7zaE61E2qttrdZulTgC64om2aRana5ERTW9bZylpykMdZfYMwD2JoSpiGDdFb7jvbQGNqzbLHr42S8tfQBq1KoQygfyKHQs1b4hefg%2FKePHU%2B2%2BqX2Xz9kIi0cm6udKNI0WooD6CjA3T%2FYd7Yf8QrTsgxF2uFhSV%2FalfhRzR5o0nU261ozQDdhzr1CKDLcteS%2B%2Fldw%2FS8IjyWyX2Ve3gMpo%2FAzehydCawJVJAzvKhr1p1W0vRC%2FjtEHU%2B9ixbecgpj4McUYcuFzWePlCHUCQktfevXDlKSwQ8n2feTiVEytUHAiNmpLF%2BkJ1p%2BiEcG%2Bwamq2hZt9yviNv7wLkZrbv7SjyFg%2FBMna1sK9e63oDpn6Mnn6sxL0XQbAEIaaKFG6HBu5hcV%2FaPMeDCP%2FJb2F2J9lAhA7KSRtsQY14GraMKQ0JEu2aGTUpDFBZB5GEeK5dDOC6EeG7L4TzfOJFsJpx6CBMLLwlqYGOoUCTBikFysTCQfBeJZC9qf%2FUVbd5NJDF8%2By1cLIwPFv7gKfjBagn8CyanGnbMqhq3ShUQhzuqJWYAY1O2Kv2rQZYmPbzQRpspvBWoIlZvhJgZmnKXazueHMO4Mn7sNSYVHOlr%2BRhf1dALgPSr45rlZXP9YNsKPf4tBJ5JGiBAbSo1IIZZQrd3GZECG%2FTZsWFKfkvTbspMsbDvbIOtqRp%2BsCqVjIqKEAa5%2FBMdRM%2F5bigNnvf7JNKv%2Ffsft9%2FvPwAOMKerXbTOsUDHsLFxaBTPEHDdr7RnnPCCfKmLqhIT1qZWnOA2J7pQ2s5K0dDsOKNeWoQed3X104YB5VvUCCkYoWX9VHAEGu&X-Amz-Signature=7ca7b025b9c3fb46dbd349f411b49f08f45c60eccdc48ae3a7fd6fa0a86ae5e1&X-Amz-SignedHeaders=host&x-amz-user-agent=aws-sdk-js%2F3.6.3%20os%2FWindows%2FNT_10.0%20lang%2Fjs%20md%2Fbrowser%2FChrome_115.0.0.0%20api%2Fs3%2F3.6.3%20aws-amplify%2F5.2.5_js&x-id=GetObject"}
+            alt="Icon" width={1000} height={1000} style={{ pointerEvents: 'none' }}
+          />*/}
+            <GridOverlay style={{zIndex: -100}} gridSize={25}/>
+
+          </div>
+        </TransformComponent>
+      </TransformWrapper>
+
+    </div>
+  );
+
 };
 
 export default BattleMap;
