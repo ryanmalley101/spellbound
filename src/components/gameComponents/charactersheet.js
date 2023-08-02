@@ -10,6 +10,7 @@ import {getCharacterSheet, getGame} from "@/graphql/queries";
 import {DiceRoller} from "@dice-roller/rpg-dice-roller";
 import useBattlemapStore from "@/stores/battlemapStore";
 import * as PropTypes from "prop-types";
+import {BsGear} from "react-icons/bs";
 
 const scoreToMod = (score) => {
   return Math.floor((Number(score) - 10) / 2)
@@ -191,59 +192,119 @@ function AbilityScores(props) {
   </ul>;
 }
 
-const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlur}) => {
+function AttackList(props) {
+  return <header>
+    <section className={styles.attacksandspellcasting}>
+      <div>
+        <label>Attacks &amp; Spellcasting</label>
+        <div>
+          <div className={styles.labelRow}>
+            <div style={{width: "20%", paddingLeft: "10px"}}> Name</div>
+            <div style={{width: "15%", paddingLeft: "10px"}}> Attack Bonus</div>
+            <div style={{width: "20%", paddingLeft: "10px"}}> Damage</div>
+            <div style={{width: "45%", paddingLeft: "10px"}}> Notes</div>
+            <div style={{width: "100px"}}></div>
+          </div>
+          {props.character.attacks.map(props.callbackfn)}
+        </div>
+        <span>
+              <button className={styles.button} name="button-addattack" type="button" onClick={props.onClick}
+                      style={{width: "20%"}}>Add New Attack</button>
+              <button className={styles.button} name="button-removeattack" type="button"
+                      onClick={props.onClick1}
+                      style={{width: "20%"}}>Remove Attack</button>
+            </span>
+        <textarea className={styles.textarea} name="attack_notes" value={props.character.attack_notes}
+                  onChange={props.onChange} onBlur={props.onBlur}/>
+      </div>
+    </section>
+  </header>;
+}
+
+
+const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlur, addDamage}) => {
   delete attack.__typename
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  // const [numDamageDice, setNumDamageDice] = useState(0)
+
+
+  const toggleForm = (e) => {
+    // e.preventDefault()
+    setIsFormOpen(!isFormOpen);
+    console.log("Opening Attack Form")
+  };
+
+  // Function to handle confirming the form and closing it
+  const handleConfirm = (e) => {
+    console.log("Confirming attack changes")
+    e.preventDefault()
+    toggleForm();
+    handleInputBlur();
+  };
+
+  // useEffect(() => {
+  //   setNumDamageDice(attack.damage_dice.length)
+  // }, [attack])
+
 
   return (
-    <tr>
-      <td>
-        <input
-          className={styles.labelButton}
-          onClick={() => rollAttack(attack)}
-          type="text"
-          name={`attacks[${index}].name`}
-          value={attack.name}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          type="text"
-          name={`attacks[${index}].attack_bonus`}
-          value={attack.attack_bonus}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          type="text"
-          name={`attacks[${index}].damage_dice`}
-          value={attack.damage_dice}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          type="text"
-          name={`attacks[${index}].damage_type`}
-          value={attack.damage_type}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td colSpan={2}>
-        <input
-          type="text"
-          name={`attacks[${index}].notes`}
-          value={attack.notes}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-    </tr>
+    <div className={styles.attackRow}>
+      {/* Always visible labels */}
+      <div className={styles.labelRow}>
+        <label style={{width: "20%"}}
+               className={styles.labelButton} onClick={() => rollAttack(attack)}>{attack.name}</label>
+        <label style={{width: "15%"}}>{attack.attack_bonus}</label>
+        <label style={{width: "20%"}}>{attack.damage_dice} {attack.damage_type}</label>
+        <label style={{width: "45%"}}>{attack.notes}</label>
+        <button type="button" onClick={toggleForm}>Edit</button>
+      </div>
+
+      {/* Form fields */}
+      {isFormOpen && (
+        <div className={styles.formRow}>
+          <input
+            type="text"
+            name={`attacks[${index}].name`}
+            value={attack.name}
+            onChange={handleInputChange}
+          />
+          <input
+            type="text"
+            name={`attacks[${index}].attack_bonus`}
+            value={attack.attack_bonus}
+            onChange={handleInputChange}
+          />
+          <div>
+            {attack.damage.map((damage, dIndex) => {
+              return (
+                <div key={dIndex}>
+                  <input
+                    type="text"
+                    name={`attacks[${index}].damage[${dIndex}].damage_dice`}
+                    value={damage.damage_dice}
+                    onChange={handleInputChange}
+                  />
+                  <input
+                    type="text"
+                    name={`attacks[${index}].damage[${dIndex}].damage_type`}
+                    value={damage.damage_type}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )
+            })}
+            <button type="button" onClick={() => addDamage(index)}>+</button>
+          </div>
+          <input
+            type="text"
+            name={`attacks[${index}].notes`}
+            value={attack.notes}
+            onChange={handleInputChange}
+          />
+          <span onClick={handleConfirm}>Confirm</span>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -473,21 +534,36 @@ const CharacterSheet = ({characterSheetInput}) => {
 
   const updateBackendSheet = async () => {
     console.log("Updating Backend Sheet")
-    console.log(character)
+    console.log(characterPreUpdate)
     setCharacterPreUpdate({...characterPreUpdate, id: character.id})
   }
 
   useEffect(() => {
     const sendSheetUpdate = async () => {
+      function removeTypename(obj) {
+        for (const prop in obj) {
+          if (prop === '__typename')
+            delete obj[prop];
+          else if (typeof obj[prop] === 'object')
+            removeTypename(obj[prop]);
+        }
+      }
+
+      console.log("Updates to be pushed to backend:")
       console.log(characterPreUpdate)
+
+      const input = {...characterPreUpdate}
+      removeTypename(input)
+
       const updatedToken = await API.graphql({
         query: mutations.updateCharacterSheet,
-        variables: {input: {...characterPreUpdate}}
+        variables: {input: input}
       })
       console.log(updatedToken)
       await setCharacterPreUpdate({})
     }
-
+    console.log("Character pre update changed")
+    console.log(characterPreUpdate)
     if (characterPreUpdate.id) {
       sendSheetUpdate()
     }
@@ -528,13 +604,14 @@ const CharacterSheet = ({characterSheetInput}) => {
       setCharacter({...character, [name]: value})
       setCharacterPreUpdate({...characterPreUpdate, [name]: value})
     }
-
   }
 
-  const handleInputBlur = () => {
+  const handleInputBlur = async () => {
     // Perform backend update here
     // You can access the updated character sheet using 'editableCharacterSheet'
-    if (characterPreUpdate) {
+    console.log("Handling input blur")
+    console.log(characterPreUpdate)
+    if (Object.keys(characterPreUpdate).length > 0) {
       console.log('Sending update to the backend after input blur');
       updateBackendSheet()
     }
@@ -544,7 +621,6 @@ const CharacterSheet = ({characterSheetInput}) => {
     setCharacterPreUpdate({...characterPreUpdate, [name]: !character[e.target.name]})
     handleInputBlur()
     console.log(e.target.name)
-    // updateBackendSheet()
   }
 
   const addInventory = () => {
@@ -559,7 +635,6 @@ const CharacterSheet = ({characterSheetInput}) => {
         notes: ""
       })
     })
-    // updateBackendSheet()
   }
 
   const removeInventory = () => {
@@ -594,13 +669,33 @@ const CharacterSheet = ({characterSheetInput}) => {
   }
 
   const addAttack = () => {
-    setCharacter({
-      ...character,
-      attacks: character.attacks.concat({name: "", notes: "", attack_bonus: 0, damage_dice: "", damage_type: ""})
+    setCharacterPreUpdate({
+      ...characterPreUpdate,
+      attacks: character.attacks.concat({
+        name: "",
+        notes: "",
+        attack_bonus: 0,
+        damage: {damage_dice: "", damage_type: ""}
+      }),
+      id: character.id
     })
-    // updateBackendSheet()
+    handleInputBlur()
   }
 
+  const addDamage = async (attackIndex) => {
+    console.log(`Adding damage to attack ${attackIndex}`);
+    const postDamageAttacks = character.attacks.map((attack, index) => {
+      if (index === attackIndex) {
+        console.log("Found matching index");
+        const newDamage = [...attack.damage, {damage_dice: "1d4", damage_type: "Piercing"}];
+        console.log(newDamage);
+        return {...attack, damage: newDamage};
+      }
+      return attack;
+    });
+    // Manually add the id to the characterPreUpdate so it will auto update the backend without a race condition for handleInputBlur()
+    setCharacterPreUpdate({...characterPreUpdate, attacks: postDamageAttacks, id: character.id});
+  };
   const longRest = () => {
     return null
   }
@@ -638,11 +733,14 @@ const CharacterSheet = ({characterSheetInput}) => {
     console.log("Rolling Attack")
     console.log(attack)
     // Prevent the page from reloading
+    const convertedDamage = attack.damage.map((dice) => {
+      return {diceString: dice.damage_dice, damageType: dice.damage_type}
+    })
     const input = {
       messageType: "ATTACK",
       abilityName: attack.name,
       d20mod: attack.attack_bonus,
-      damageDice: [{diceString: attack.damage_dice, damageType: attack.damage_type}],
+      damageDice: convertedDamage,
       messageText: attack.notes,
       owner: playerID,
       gameMessageListId: gameID
@@ -660,6 +758,8 @@ const CharacterSheet = ({characterSheetInput}) => {
         input
       },
     });
+    console.log("Attack response")
+    console.log(attack)
   }
 
   if (character) {
@@ -909,49 +1009,18 @@ const CharacterSheet = ({characterSheetInput}) => {
             </div>
           </section>
         </main>
-        <header>
-          <section className={styles.attacksandspellcasting}>
-            <div>
-              <label>Attacks &amp; Spellcasting</label>
-              <table>
-                <thead>
-                <tr>
-                  <th>
-                    Name
-                  </th>
-                  <th>
-                    Attack Bonus
-                  </th>
-                  <th>
-                    Damage String
-                  </th>
-                  <th>
-                    Damage Type
-                  </th>
-                  <th colSpan={2}>
-                    Notes
-                  </th>
-                </tr>
-                </thead>
-                <tbody id="attacktable">
-                {character.attacks.map((attack, index) => (
-                  <AttackRow key={index} attack={attack} index={index} handleInputChange={handleInputChange}
-                             handleInputBlur={handleInputBlur} rollAttack={rollAttack}/>
-                ))}
-                </tbody>
-              </table>
-              <span>
-          <button className={styles.button} name="button-addattack" type="button" onClick={addAttack}
-                  style={{width: '20%'}}>Add New Attack</button>
-          <button className={styles.button} name="button-removeattack" type="button"
-                  onClick={removeLastRow('attacktable')}
-                  style={{width: '20%'}}>Remove Attack</button>
-        </span>
-              <textarea className={styles.textarea} name="attacksnotes" value={character.attack_notes}
-                        onChange={handleInputChange} onBlur={handleInputBlur}/>
-            </div>
-          </section>
-        </header>
+        <AttackList character={character} callbackfn={(attack, index) => (
+          <AttackRow
+            key={index}
+            attack={attack}
+            index={index}
+            handleInputChange={handleInputChange}
+            handleInputBlur={handleInputBlur}
+            rollAttack={rollAttack}
+            addDamage={addDamage}
+          />
+        )} onClick={addAttack} onClick1={removeLastRow('attacktable')} onChange={handleInputChange}
+                    onBlur={handleInputBlur}/>
         <hr className={styles.pageborder}/>
         <header>
           <section className={styles.attacksandspellcasting} id="spellslots">

@@ -340,14 +340,22 @@ type Attack {
     name: String!
     notes: String!
     attack_bonus: Int!
-    damage_dice: String!
-    damage_type: String!
+    damage: [DamageDice]!
 }
 
 input AttackInput {
     name: String
     notes: String
     attack_bonus: Int
+    damage: [DamageDiceInput]
+}
+
+type DamageDice {
+    damage_dice: String
+    damage_type: String
+}
+
+input DamageDiceInput {
     damage_dice: String
     damage_type: String
 }

@@ -91,7 +91,15 @@ const getExampleCharacter = (playerId, gameId) => {
     save_notes: "Advantage on wisdom saves",
     movement: "Fly 60 ft.",
     other_profs: "Land Vehicles\n Celestial",
-    attacks: [],
+    attacks: [{
+      name: "Club",
+      attack_bonus: 1,
+      damage: [{
+        damage_dice: "1d6",
+        damage_type: "Bludgeoning"
+      }],
+      notes: "I Love Joni Mitchell"
+    }],
     attack_notes: "My attack notes",
     spell_slots_1: 1,
     spell_slots_2: 2,

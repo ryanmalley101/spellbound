@@ -17,6 +17,7 @@ function GameID() {
   const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows)
   const monsterBlocks = useBattlemapStore((state) => state.monsterBlocks)
   const setPlayerID = useBattlemapStore(state => state.setPlayerID)
+  const setGamePlayers = useBattlemapStore(state => state.setGamePlayers)
 
   const router = useRouter();
 
@@ -42,8 +43,11 @@ function GameID() {
         variables: {id: gameID}
       });
       console.log(gamesReq.data.getGame)
+      console.log("Game name: ", gamesReq.data.getGame.name)
       setGameName(gamesReq.data.getGame.name)
-      const players = (gamesReq.data.getGame.players.items)
+      const players = gamesReq.data.getGame.players.items
+      console.log("Game players: ", players)
+      setGamePlayers(players)
       console.log(user)
       const userPlayer = players.filter((player) => player.userPlayersId === user.attributes.sub)
       if (userPlayer.length > 1) {

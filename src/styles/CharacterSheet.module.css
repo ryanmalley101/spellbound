@@ -989,3 +989,35 @@ div.box {
 .labelButton:hover {
     color: blue
 }
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.notesHeader {
+    flex-grow: 1; /* Allow the "Notes" column to take remaining space */
+}
+
+.emptyColumn {
+    width: 100px; /* Adjust the width as needed for button columns */
+}
+
+.attackRow {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+}
+
+.formRow {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}

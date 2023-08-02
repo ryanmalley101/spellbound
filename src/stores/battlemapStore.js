@@ -60,8 +60,11 @@ const useBattlemapStore = create((set) => ({
 
   mapLayer: "TOKEN",
   setMapLayer: (layer) =>
-    set((state) => ({mapLayer: layer}))
+    set((state) => ({mapLayer: layer})),
 
+  gamePlayers: [],
+  setGamePlayers: (players) =>
+    set((state) => ({gamePlayers: players})),
 }))
 
 useBattlemapStore.subscribe((state) => console.log('New state:', state));

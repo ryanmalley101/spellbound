@@ -1600,8 +1600,6 @@ export const createToken = /* GraphQL */ `
           name
           notes
           attack_bonus
-          damage_dice
-          damage_type
           __typename
         }
         attack_notes
@@ -1853,8 +1851,6 @@ export const updateToken = /* GraphQL */ `
           name
           notes
           attack_bonus
-          damage_dice
-          damage_type
           __typename
         }
         attack_notes
@@ -2106,8 +2102,6 @@ export const deleteToken = /* GraphQL */ `
           name
           notes
           attack_bonus
-          damage_dice
-          damage_type
           __typename
         }
         attack_notes
@@ -2518,8 +2512,11 @@ export const createCharacterSheet = /* GraphQL */ `
         name
         notes
         attack_bonus
-        damage_dice
-        damage_type
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
         __typename
       }
       attack_notes
@@ -2915,8 +2912,11 @@ export const updateCharacterSheet = /* GraphQL */ `
         name
         notes
         attack_bonus
-        damage_dice
-        damage_type
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
         __typename
       }
       attack_notes
@@ -3312,8 +3312,11 @@ export const deleteCharacterSheet = /* GraphQL */ `
         name
         notes
         attack_bonus
-        damage_dice
-        damage_type
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
         __typename
       }
       attack_notes

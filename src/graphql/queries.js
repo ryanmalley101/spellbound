@@ -811,8 +811,6 @@ export const getToken = /* GraphQL */ `
           name
           notes
           attack_bonus
-          damage_dice
-          damage_type
           __typename
         }
         attack_notes
@@ -1408,8 +1406,11 @@ export const getCharacterSheet = /* GraphQL */ `
         name
         notes
         attack_bonus
-        damage_dice
-        damage_type
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
         __typename
       }
       attack_notes
@@ -1623,8 +1624,6 @@ export const listCharacterSheets = /* GraphQL */ `
           name
           notes
           attack_bonus
-          damage_dice
-          damage_type
           __typename
         }
         attack_notes
