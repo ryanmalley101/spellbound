@@ -52,7 +52,7 @@ function MessageWrapper({owner, content, createdAt, id}) {
 
 
 export default function Message({message, isMe}) {
-  console.log(message)
+  // console.log(message)
 
   switch (message.messageType) {
     case "CHAT": {

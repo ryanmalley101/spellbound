@@ -229,6 +229,21 @@ export const onCreateGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      pings {
+        items {
+          positionX
+          positionY
+          scale
+          ttl
+          id
+          createdAt
+          updatedAt
+          gamePingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       userGamesId
@@ -459,6 +474,21 @@ export const onUpdateGame = /* GraphQL */ `
           updatedAt
           gameCharacterSheetsId
           characterSheetTokenId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      pings {
+        items {
+          positionX
+          positionY
+          scale
+          ttl
+          id
+          createdAt
+          updatedAt
+          gamePingsId
           __typename
         }
         nextToken
@@ -699,6 +729,21 @@ export const onDeleteGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      pings {
+        items {
+          positionX
+          positionY
+          scale
+          ttl
+          id
+          createdAt
+          updatedAt
+          gamePingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       userGamesId
@@ -856,6 +901,10 @@ export const onCreateMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -911,6 +960,10 @@ export const onUpdateMessage = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -972,6 +1025,10 @@ export const onDeleteMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1028,6 +1085,10 @@ export const onCreatePlayer = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -1094,6 +1155,10 @@ export const onUpdatePlayer = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1154,6 +1219,10 @@ export const onDeletePlayer = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -1241,6 +1310,10 @@ export const onCreateMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1309,6 +1382,10 @@ export const onUpdateMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1374,6 +1451,10 @@ export const onDeleteMap = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -2134,6 +2215,165 @@ export const onDeleteToken = /* GraphQL */ `
     }
   }
 `;
+export const onCreatePing = /* GraphQL */ `
+  subscription OnCreatePing($filter: ModelSubscriptionPingFilterInput) {
+    onCreatePing(filter: $filter) {
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
+      positionX
+      positionY
+      scale
+      ttl
+      id
+      createdAt
+      updatedAt
+      gamePingsId
+      __typename
+    }
+  }
+`;
+export const onUpdatePing = /* GraphQL */ `
+  subscription OnUpdatePing($filter: ModelSubscriptionPingFilterInput) {
+    onUpdatePing(filter: $filter) {
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
+      positionX
+      positionY
+      scale
+      ttl
+      id
+      createdAt
+      updatedAt
+      gamePingsId
+      __typename
+    }
+  }
+`;
+export const onDeletePing = /* GraphQL */ `
+  subscription OnDeletePing($filter: ModelSubscriptionPingFilterInput) {
+    onDeletePing(filter: $filter) {
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
+      positionX
+      positionY
+      scale
+      ttl
+      id
+      createdAt
+      updatedAt
+      gamePingsId
+      __typename
+    }
+  }
+`;
 export const onCreateCharacterSheet = /* GraphQL */ `
   subscription OnCreateCharacterSheet(
     $filter: ModelSubscriptionCharacterSheetFilterInput
@@ -2167,6 +2407,10 @@ export const onCreateCharacterSheet = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -2569,6 +2813,10 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -2965,6 +3213,10 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }

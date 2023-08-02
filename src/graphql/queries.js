@@ -229,6 +229,21 @@ export const getGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      pings {
+        items {
+          positionX
+          positionY
+          scale
+          ttl
+          id
+          createdAt
+          updatedAt
+          gamePingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       userGamesId
@@ -269,6 +284,10 @@ export const listGames = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -382,6 +401,10 @@ export const getMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -490,6 +513,10 @@ export const getPlayer = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -613,6 +640,10 @@ export const getMap = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -1101,6 +1132,92 @@ export const listTokens = /* GraphQL */ `
     }
   }
 `;
+export const getPing = /* GraphQL */ `
+  query GetPing($id: ID!) {
+    getPing(id: $id) {
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
+      positionX
+      positionY
+      scale
+      ttl
+      id
+      createdAt
+      updatedAt
+      gamePingsId
+      __typename
+    }
+  }
+`;
+export const listPings = /* GraphQL */ `
+  query ListPings(
+    $filter: ModelPingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPings(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        game {
+          id
+          name
+          dms
+          activeMap
+          createdAt
+          updatedAt
+          userGamesId
+          __typename
+        }
+        positionX
+        positionY
+        scale
+        ttl
+        id
+        createdAt
+        updatedAt
+        gamePingsId
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getCharacterSheet = /* GraphQL */ `
   query GetCharacterSheet($id: ID!) {
     getCharacterSheet(id: $id) {
@@ -1132,6 +1249,10 @@ export const getCharacterSheet = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }

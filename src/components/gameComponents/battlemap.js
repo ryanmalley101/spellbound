@@ -3,11 +3,12 @@ import DraggableIcon from '@/components/gameComponents/draggableicon';
 import styles from '../../styles/Battlemap.module.css';
 import GridOverlay from '@/components/gameComponents/gridoverlay';
 import {API, graphqlOperation, Storage} from 'aws-amplify';
-import {onCreateToken, onDeleteToken, onUpdateToken, onUpdateGame} from '@/graphql/subscriptions';
+import {onCreatePing, onCreateToken, onDeleteToken, onUpdateGame} from '@/graphql/subscriptions';
 import * as mutations from '@/graphql/mutations';
-import {TransformWrapper, TransformComponent, useControls} from 'react-zoom-pan-pinch';
+import {TransformComponent, TransformWrapper, useControls} from 'react-zoom-pan-pinch';
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
-
+import Ping from "@/components/gameComponents/ping";
+import {v4} from "uuid";
 
 const GRID_SIZE = 25
 
@@ -19,13 +20,107 @@ const BattleMap = () => {
   const [widthUnits, setWidthUnits] = useState(25);
   const [heightUnits, setHeightUnits] = useState(25);
   const [mapTokens, setMapTokens] = useState([])
+  const [windowPosition, setWindowPosition] = useState({x: 0, y: 0})
   const [scale, setScale] = useState(1);
+  const [pings, setPings] = useState([])
+  const initialMousePositionRef = useRef(null)
+  const mouseDownTimeRef = useRef(null);
+  const mouseReleasedRef = useRef(false);
 
   const {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
     mapLayer, setMapLayer, gameID, activeMap, setActiveMap
   } = useBattlemapStore();
 
+  useEffect(() => {
+
+    const handleMouseDown = async (event) => {
+      console.log("MouseDown")
+      initialMousePositionRef.current = {
+        x: (event.clientX - windowPosition.x - 75) / scale,
+        y: (event.clientY - windowPosition.y) / scale
+      }
+
+      mouseDownTimeRef.current = Date.now()
+      mouseReleasedRef.current = false
+
+      // Automatically call handleClick after 1 second
+      setTimeout(async () => {
+        console.log("Timeout", mouseReleasedRef.current)
+        if (!mouseReleasedRef.current) {
+          await handleMapClick(event)
+        }
+      }, 1000);
+    };
+
+    const handleMouseUp = () => {
+      console.log("Handle mouse up")
+      mouseReleasedRef.current = true
+      // mouseDownTimeRef.current = null
+      // Clear the timeout if the mouse is released before 1 second
+      // clearTimeout();
+    };
+
+    const handleMapClick = async (event) => {
+      console.log("Handling map click", event)
+      if (!mouseReleasedRef.current && mouseDownTimeRef.current) {
+        const clickEndTime = new Date();
+        const timeDifference = clickEndTime - mouseDownTimeRef.current;
+        if (timeDifference >= 1000) {
+          // Check if the mouse position remained the same during the click
+          const finalMousePosition = {
+            x: (event.clientX - windowPosition.x - 75) / scale,
+            y: (event.clientY - windowPosition.y) / scale
+          };
+          const isMouseStationary = (
+            initialMousePositionRef.current.x === finalMousePosition.x &&
+            initialMousePositionRef.current.y === finalMousePosition.y
+          );
+
+          if (isMouseStationary) {
+            console.log("Creating a ping")
+
+            // Perform the GraphQL mutation to create a Ping object
+            const positionX = event.clientX;
+            const positionY = event.clientY;
+            // Update this with the current scale value from state
+            const pingInput = {
+              gamePingsId: gameID,
+              positionX: positionX,
+              positionY: positionY,
+              scale: zoomLevel,
+              ttl: Math.floor((Date.now() / 1000)) + 60
+            };
+            console.log(pingInput)
+            try {
+              const response = await API.graphql({
+                query: mutations.createPing,
+                variables: {input: pingInput},
+              });
+              console.log("Created Ping object:", response);
+            } catch (error) {
+              console.error("Error creating Ping object:", error);
+            }
+          }
+        }
+      }
+    };
+
+    // Attach the event listener to the map container
+    const mapContainer = document.getElementById("Battlemap Start");
+    if (mapContainer) {
+      mapContainer.addEventListener("mousedown", handleMouseDown);
+      mapContainer.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      // Remove the event listeners when the component is unmounted
+      if (mapContainer) {
+        mapContainer.removeEventListener("mousedown", handleMouseDown);
+        mapContainer.removeEventListener("mouseup", handleMouseUp);
+      }
+    };
+  }, []);
 
   const removeMapToken = (deletedToken) => {
     console.log("removing map token")
@@ -376,15 +471,56 @@ const BattleMap = () => {
     };
   };
 
+  const subscribeToPingCreation = () => {
+    const subscriptionHandler = (data) => {
+      const newPing = {...data.value.data.onCreatePing};
+      const reconstructedX = newPing.positionX * scale + windowPosition.x - 75;
+      const reconstructedY = newPing.positionY * scale + windowPosition.y;
+      newPing.positionX = reconstructedX
+      newPing.positionY = reconstructedY
+      // Draw the circle at (reconstructedX, reconstructedY)
+
+      setPings((prevPings) => [...prevPings, newPing]);
+      // Automatically call handleClick after 1 second
+      setTimeout(async () => {
+        setPings((prevPings) => prevPings.filter((ping) => ping.positionX !== reconstructedX && ping.positionY !== reconstructedY));
+
+      }, 3000);
+    };
+
+    const subscription = API.graphql(
+      graphqlOperation(onCreatePing, {gamePingsID: gameID}),
+      {
+        filter: {
+          mutationType: {
+            eq: "create",
+          },
+        },
+      }
+    ).subscribe({
+      next: (data) => {
+        subscriptionHandler(data);
+      },
+      error: (error) => {
+        console.error("Subscription Error:", error);
+      },
+    });
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  };
+
   // Whenever there is a new activeMap loaded, resubscribe to token creations and game updates
   useEffect(() => {
-    // Other existing useEffect logic...
-
     // Subscribe to different events
     const unsubscribeToCreation = subscribeToTokenCreation();
     const unsubscribeToUpdate = subscribeToTokenUpdate();
     const unsubscribeToDelete = subscribeToTokenDeletion();
     const unsubscribeToGameUpdate = subscribeToGameUpdate();
+    const unsubscribeToPingCreation = subscribeToPingCreation();
 
     // Clean up subscriptions
     return () => {
@@ -392,6 +528,8 @@ const BattleMap = () => {
       unsubscribeToUpdate();
       unsubscribeToDelete();
       unsubscribeToGameUpdate();
+      unsubscribeToPingCreation();
+
     };
   }, [activeMap]);
 
@@ -419,7 +557,11 @@ const BattleMap = () => {
                         disabled={draggingDisabled} minScale={0.1} initialScale={scale}
                         onZoomEnd={(event) => {
                           setScale(event.scale);
-                        }}>
+                        }}
+                        onPanning={({positionX, positionY}) => setWindowPosition({x: positionX, y: positionY})}>
+        {pings.map((ping) => (
+          <Ping key={v4()} x={ping.positionX} y={ping.positionY}/>
+        ))}
         <Controls/>
         <TransformComponent wrapperStyle={{
           height: '100%',
@@ -434,6 +576,7 @@ const BattleMap = () => {
               width: '100%',
             }}
           >
+
             {mapTokens.map((token, index) => (
               <DraggableIcon key={`${token.key}`} token={token} scale={scale}/>
             ))}

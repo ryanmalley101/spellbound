@@ -248,6 +248,21 @@ export const createGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      pings {
+        items {
+          positionX
+          positionY
+          scale
+          ttl
+          id
+          createdAt
+          updatedAt
+          gamePingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       userGamesId
@@ -481,6 +496,21 @@ export const updateGame = /* GraphQL */ `
           updatedAt
           gameCharacterSheetsId
           characterSheetTokenId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      pings {
+        items {
+          positionX
+          positionY
+          scale
+          ttl
+          id
+          createdAt
+          updatedAt
+          gamePingsId
           __typename
         }
         nextToken
@@ -724,6 +754,21 @@ export const deleteGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      pings {
+        items {
+          positionX
+          positionY
+          scale
+          ttl
+          id
+          createdAt
+          updatedAt
+          gamePingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       userGamesId
@@ -893,6 +938,10 @@ export const createMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -951,6 +1000,10 @@ export const updateMessage = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -1015,6 +1068,10 @@ export const deleteMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1074,6 +1131,10 @@ export const createPlayer = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -1143,6 +1204,10 @@ export const updatePlayer = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1206,6 +1271,10 @@ export const deletePlayer = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -1296,6 +1365,10 @@ export const createMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1367,6 +1440,10 @@ export const updateMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -1435,6 +1512,10 @@ export const deleteMap = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -2204,6 +2285,174 @@ export const deleteToken = /* GraphQL */ `
     }
   }
 `;
+export const createPing = /* GraphQL */ `
+  mutation CreatePing(
+    $input: CreatePingInput!
+    $condition: ModelPingConditionInput
+  ) {
+    createPing(input: $input, condition: $condition) {
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
+      positionX
+      positionY
+      scale
+      ttl
+      id
+      createdAt
+      updatedAt
+      gamePingsId
+      __typename
+    }
+  }
+`;
+export const updatePing = /* GraphQL */ `
+  mutation UpdatePing(
+    $input: UpdatePingInput!
+    $condition: ModelPingConditionInput
+  ) {
+    updatePing(input: $input, condition: $condition) {
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
+      positionX
+      positionY
+      scale
+      ttl
+      id
+      createdAt
+      updatedAt
+      gamePingsId
+      __typename
+    }
+  }
+`;
+export const deletePing = /* GraphQL */ `
+  mutation DeletePing(
+    $input: DeletePingInput!
+    $condition: ModelPingConditionInput
+  ) {
+    deletePing(input: $input, condition: $condition) {
+      game {
+        id
+        name
+        owner {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        messageList {
+          nextToken
+          __typename
+        }
+        dms
+        players {
+          nextToken
+          __typename
+        }
+        maps {
+          nextToken
+          __typename
+        }
+        activeMap
+        characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        userGamesId
+        __typename
+      }
+      positionX
+      positionY
+      scale
+      ttl
+      id
+      createdAt
+      updatedAt
+      gamePingsId
+      __typename
+    }
+  }
+`;
 export const createCharacterSheet = /* GraphQL */ `
   mutation CreateCharacterSheet(
     $input: CreateCharacterSheetInput!
@@ -2238,6 +2487,10 @@ export const createCharacterSheet = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
@@ -2641,6 +2894,10 @@ export const updateCharacterSheet = /* GraphQL */ `
           nextToken
           __typename
         }
+        pings {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         userGamesId
@@ -3038,6 +3295,10 @@ export const deleteCharacterSheet = /* GraphQL */ `
         }
         activeMap
         characterSheets {
+          nextToken
+          __typename
+        }
+        pings {
           nextToken
           __typename
         }
