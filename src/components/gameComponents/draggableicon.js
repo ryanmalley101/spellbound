@@ -144,7 +144,12 @@ const DraggableIcon = ({token, scale}) => {
   const handleContextMenu = (event) => {
     console.log("Icon Context")
     event.preventDefault(); // Prevent the default right-click context menu behavior
-    setContextMenuPosition({x: iconPosition.x, y: iconPosition.y});
+    // Calculate the position of the context menu based on the click event coordinates
+    const contextMenuX = iconPosition.x;
+    const contextMenuY = iconPosition.y;
+
+    // Set the context menu position using the calculated coordinates
+    setContextMenuPosition({x: contextMenuX, y: contextMenuY});
     setShowContextMenu(true);
   };
 
@@ -225,8 +230,9 @@ const DraggableIcon = ({token, scale}) => {
       }}
       resizeHandleWrapperClass="resize-handle-wrapper"
       onClick={handleIconClick} // Attach the click handler to the icon
+      onContextMenu={handleContextMenu}
     >
-      <div onContextMenu={handleContextMenu}>
+      <div>
         {/* Your component content */}
 
         {/* Custom Context Menu */}
@@ -235,8 +241,7 @@ const DraggableIcon = ({token, scale}) => {
             id="custom-context-menu"
             style={{
               position: 'fixed',
-              left: contextMenuPosition.x,
-              top: contextMenuPosition.y,
+              transform: `translate(25px, 25px)`,
               backgroundColor: 'transparent', // Make the background transparent
               boxShadow: 'none', // Remove the box shadow
               zIndex: 9999,
