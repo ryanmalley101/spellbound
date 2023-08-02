@@ -62,7 +62,7 @@ const BattleMap = () => {
     };
 
     const handleMapClick = async (event) => {
-      console.log("Handling map click", event)
+      console.log("Handling map click", event, windowPosition, scale)
       if (!mouseReleasedRef.current && mouseDownTimeRef.current) {
         const clickEndTime = new Date();
         const timeDifference = clickEndTime - mouseDownTimeRef.current;
@@ -558,7 +558,10 @@ const BattleMap = () => {
                         onZoomEnd={(event) => {
                           setScale(event.scale);
                         }}
-                        onPanning={({positionX, positionY}) => setWindowPosition({x: positionX, y: positionY})}>
+                        onTransformed={(ref) => {
+                          console.log(ref.state)
+                          setWindowPosition({x: ref.state.positionX, y: ref.state.positionY})
+                        }}>
         {pings.map((ping) => (
           <Ping key={v4()} x={ping.positionX} y={ping.positionY}/>
         ))}
