@@ -30,29 +30,34 @@ function ImageButton(props) {
         const signedUrl = await Storage.get(`${props.src.substring(1)}`, {
           validateObjectExistence: true
         });
-        console.log("Got image")
+        // console.log("Got image")
         console.log(signedUrl)
         setImagePath(signedUrl);
       } catch (e) {
         console.log("Error getting S3 signed URL")
         console.log(e);
-        setImagePath(props.src);
+        // setImagePath(props.src);
       }
     };
 
     fetchImagePath();
   }, [props.src]);
 
-  return <ListItem className="menuItem">
-    <ListItemIcon>
-      <Image src={imagePath} alt={props.alt} width={50} height={50}/>
-    </ListItemIcon>
-    <ListItemText primary={props.primary}/>
-    <ListItemButton sx={{flexGrow: 0, display: "block", minWidth: "auto"}} className={styles.addButton}
-                    onClick={props.onClick} edge="end">
-      <BsFillFilePlusFill size={30}/>
-    </ListItemButton>
-  </ListItem>;
+  if (imagePath) {
+
+    return <ListItem className="menuItem">
+      <ListItemIcon>
+        <Image src={imagePath} alt={props.alt} width={50} height={50}/>
+      </ListItemIcon>
+      <ListItemText primary={props.primary}/>
+      <ListItemButton sx={{flexGrow: 0, display: "block", minWidth: "auto"}} className={styles.addButton}
+                      onClick={props.onClick} edge="end">
+        <BsFillFilePlusFill size={30}/>
+      </ListItemButton>
+    </ListItem>;
+  }
+
+  return null
 }
 
 
