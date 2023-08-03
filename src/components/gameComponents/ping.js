@@ -33,7 +33,7 @@ const Ping = ({x, y, scale}) => {
   return (
     <div
       style={{
-        position: 'absolute',
+        position: 'fixed',
         left: x - ringSize / 2,
         top: y - ringSize / 2,
         width: ringSize,

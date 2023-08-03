@@ -20,8 +20,8 @@ const BattleMap = () => {
   const [widthUnits, setWidthUnits] = useState(25);
   const [heightUnits, setHeightUnits] = useState(25);
   const [mapTokens, setMapTokens] = useState([])
-  const [windowPosition, setWindowPosition] = useState({x: 0, y: 0})
-  const [scale, setScale] = useState(1);
+  const windowPositionRef = useRef({x: 0, y: 0})
+  const scale = useRef(1)
   const [pings, setPings] = useState([])
   const initialMousePositionRef = useRef(null)
   const mouseDownTimeRef = useRef(null);
@@ -37,8 +37,8 @@ const BattleMap = () => {
     const handleMouseDown = async (event) => {
       console.log("MouseDown")
       initialMousePositionRef.current = {
-        x: (event.clientX - windowPosition.x - 75) / scale,
-        y: (event.clientY - windowPosition.y) / scale
+        x: (event.clientX),
+        y: (event.clientY)
       }
 
       mouseDownTimeRef.current = Date.now()
@@ -50,7 +50,7 @@ const BattleMap = () => {
         if (!mouseReleasedRef.current) {
           await handleMapClick(event)
         }
-      }, 1000);
+      }, 1100);
     };
 
     const handleMouseUp = () => {
@@ -62,15 +62,16 @@ const BattleMap = () => {
     };
 
     const handleMapClick = async (event) => {
-      console.log("Handling map click", event, windowPosition, scale)
+      console.log("Handling map click", event, windowPositionRef.current, scale.current)
       if (!mouseReleasedRef.current && mouseDownTimeRef.current) {
+        console.log("Mouse was in the same place")
         const clickEndTime = new Date();
         const timeDifference = clickEndTime - mouseDownTimeRef.current;
         if (timeDifference >= 1000) {
           // Check if the mouse position remained the same during the click
           const finalMousePosition = {
-            x: (event.clientX - windowPosition.x - 75) / scale,
-            y: (event.clientY - windowPosition.y) / scale
+            x: (event.clientX),
+            y: (event.clientY)
           };
           const isMouseStationary = (
             initialMousePositionRef.current.x === finalMousePosition.x &&
@@ -80,14 +81,17 @@ const BattleMap = () => {
           if (isMouseStationary) {
             console.log("Creating a ping")
 
-            // Perform the GraphQL mutation to create a Ping object
-            const positionX = event.clientX;
-            const positionY = event.clientY;
+            // // Perform the GraphQL mutation to create a Ping object
+            // const positionX = event.clientX;
+            // const positionY = event.clientY;
+
+            const deconstructedX = (event.clientX - 75 - windowPositionRef.current.x) / scale.current
+            const deconstructedY = (event.clientY - 20 - windowPositionRef.current.y) / scale.current
             // Update this with the current scale value from state
             const pingInput = {
               gamePingsId: gameID,
-              positionX: positionX,
-              positionY: positionY,
+              positionX: deconstructedX,
+              positionY: deconstructedY,
               scale: zoomLevel,
               ttl: Math.floor((Date.now() / 1000)) + 60
             };
@@ -101,6 +105,8 @@ const BattleMap = () => {
             } catch (error) {
               console.error("Error creating Ping object:", error);
             }
+          } else {
+            console.log("Mouse wants stationary during press")
           }
         }
       }
@@ -473,9 +479,12 @@ const BattleMap = () => {
 
   const subscribeToPingCreation = () => {
     const subscriptionHandler = (data) => {
+      console.log(data, windowPositionRef.current, scale.current)
       const newPing = {...data.value.data.onCreatePing};
-      const reconstructedX = newPing.positionX * scale + windowPosition.x - 75;
-      const reconstructedY = newPing.positionY * scale + windowPosition.y;
+      const reconstructedX = (newPing.positionX * scale.current) + 75 + windowPositionRef.current.x
+      const reconstructedY = (newPing.positionY * scale.current) + 20 + windowPositionRef.current.y
+      console.log("Got a ping", newPing, reconstructedX, reconstructedY)
+
       newPing.positionX = reconstructedX
       newPing.positionY = reconstructedY
       // Draw the circle at (reconstructedX, reconstructedY)
@@ -554,13 +563,11 @@ const BattleMap = () => {
   return (
     <div id={"Battlemap Start"} style={{height: '100%', width: '100%', position: 'relative'}}>
       <TransformWrapper style={{height: '100%', width: '100%'}} className={styles.mapContainer}
-                        disabled={draggingDisabled} minScale={0.1} initialScale={scale}
-                        onZoomEnd={(event) => {
-                          setScale(event.scale);
-                        }}
+                        disabled={draggingDisabled} minScale={0.1} initialScale={scale.current}
                         onTransformed={(ref) => {
                           console.log(ref.state)
-                          setWindowPosition({x: ref.state.positionX, y: ref.state.positionY})
+                          windowPositionRef.current = {x: ref.state.positionX, y: ref.state.positionY}
+                          scale.current = ref.state.scale
                         }}>
         {pings.map((ping) => (
           <Ping key={v4()} x={ping.positionX} y={ping.positionY}/>
@@ -581,7 +588,7 @@ const BattleMap = () => {
           >
 
             {mapTokens.map((token, index) => (
-              <DraggableIcon key={`${token.key}`} token={token} scale={scale}/>
+              <DraggableIcon key={`${token.key}`} token={token} scale={scale.current}/>
             ))}
             <GridOverlay style={{zIndex: -100}} gridSize={25}/>
 
