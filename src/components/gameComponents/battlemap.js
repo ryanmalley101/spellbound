@@ -26,6 +26,7 @@ const BattleMap = () => {
   const initialMousePositionRef = useRef(null)
   const mouseDownTimeRef = useRef(null);
   const mouseReleasedRef = useRef(false);
+  const currentMousePositionRef = useRef({x: 0, y: 0});
 
   const {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
@@ -35,11 +36,16 @@ const BattleMap = () => {
   useEffect(() => {
 
     const handleMouseDown = async (event) => {
+
       console.log("MouseDown")
       initialMousePositionRef.current = {
         x: (event.clientX),
         y: (event.clientY)
       }
+      currentMousePositionRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+      };
 
       mouseDownTimeRef.current = Date.now()
       mouseReleasedRef.current = false
@@ -53,6 +59,13 @@ const BattleMap = () => {
       }, 1100);
     };
 
+    const handleMouseMove = (event) => {
+      currentMousePositionRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+    };
+
     const handleMouseUp = () => {
       console.log("Handle mouse up")
       mouseReleasedRef.current = true
@@ -64,18 +77,12 @@ const BattleMap = () => {
     const handleMapClick = async (event) => {
       console.log("Handling map click", event, windowPositionRef.current, scale.current)
       if (!mouseReleasedRef.current && mouseDownTimeRef.current) {
-        console.log("Mouse was in the same place")
         const clickEndTime = new Date();
         const timeDifference = clickEndTime - mouseDownTimeRef.current;
         if (timeDifference >= 1000) {
-          // Check if the mouse position remained the same during the click
-          const finalMousePosition = {
-            x: (event.clientX),
-            y: (event.clientY)
-          };
           const isMouseStationary = (
-            initialMousePositionRef.current.x === finalMousePosition.x &&
-            initialMousePositionRef.current.y === finalMousePosition.y
+            initialMousePositionRef.current.x === currentMousePositionRef.current.x &&
+            initialMousePositionRef.current.y === currentMousePositionRef.current.y
           );
 
           if (isMouseStationary) {
@@ -106,7 +113,7 @@ const BattleMap = () => {
               console.error("Error creating Ping object:", error);
             }
           } else {
-            console.log("Mouse wants stationary during press")
+            console.log("Mouse wasn't stationary during press")
           }
         }
       }
@@ -117,11 +124,13 @@ const BattleMap = () => {
     if (mapContainer) {
       mapContainer.addEventListener("mousedown", handleMouseDown);
       mapContainer.addEventListener("mouseup", handleMouseUp);
+      mapContainer.addEventListener("mousemove", handleMouseMove);
     }
 
     return () => {
       // Remove the event listeners when the component is unmounted
       if (mapContainer) {
+        mapContainer.addEventListener("mousemove", handleMouseMove);
         mapContainer.removeEventListener("mousedown", handleMouseDown);
         mapContainer.removeEventListener("mouseup", handleMouseUp);
       }
@@ -565,7 +574,6 @@ const BattleMap = () => {
       <TransformWrapper style={{height: '100%', width: '100%'}} className={styles.mapContainer}
                         disabled={draggingDisabled} minScale={0.1} initialScale={scale.current}
                         onTransformed={(ref) => {
-                          console.log(ref.state)
                           windowPositionRef.current = {x: ref.state.positionX, y: ref.state.positionY}
                           scale.current = ref.state.scale
                         }}>

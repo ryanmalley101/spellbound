@@ -64,7 +64,7 @@ const DraggableIcon = ({token, scale}) => {
     const resizedTokenDetails = {
       id: token.id,
       width: parseInt(width),
-      height: parseInt(width)
+      height: parseInt(height)
     };
 
     const updatedToken = await API.graphql({

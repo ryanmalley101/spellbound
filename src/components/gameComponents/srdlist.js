@@ -4,6 +4,7 @@ import styles from "@/styles/SRDList.module.css";
 import {List, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import Image from "next/image";
 import {BsFillFilePlusFill} from "react-icons/bs";
+import srdMonsters from '../../../public/srd_monsters.json';
 
 const SRDList = () => {
   const addMonsterBlock = battlemapStore((state) => state.addMonsterBlock);
@@ -12,10 +13,7 @@ const SRDList = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`https://api.open5e.com/v1/monsters/`);
-      const data = await response.json();
-      console.log(data);
-      setResults(data.results);
+      setResults(srdMonsters);
     }
 
     fetchData();

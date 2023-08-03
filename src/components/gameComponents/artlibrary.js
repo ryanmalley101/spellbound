@@ -9,7 +9,7 @@ import * as mutations from "@/graphql/mutations";
 import * as PropTypes from "prop-types";
 
 function ImageButton(props) {
-  const [imagePath, setImagePath] = useState(null);
+  const [imagePath, setImagePath] = useState("")
 
   // const getImageSource = async (path) => {
   //   console.log("Trying to get the image source", path)
@@ -25,7 +25,7 @@ function ImageButton(props) {
   useEffect(() => {
     const fetchImagePath = async () => {
       try {
-        console.log(`${props.src}`)
+        console.log(`Fetching image src ${props.src}`)
         Storage.configure({level: 'public'});
         const signedUrl = await Storage.get(`${props.src.substring(1)}`, {
           validateObjectExistence: true
@@ -34,8 +34,9 @@ function ImageButton(props) {
         console.log(signedUrl)
         setImagePath(signedUrl);
       } catch (e) {
+        console.log("Error getting S3 signed URL")
         console.log(e);
-        // setImagePath(props.src);
+        setImagePath(props.src);
       }
     };
 
@@ -44,7 +45,7 @@ function ImageButton(props) {
 
   return <ListItem className="menuItem">
     <ListItemIcon>
-      <Image src={props.src} alt={props.alt} width={50} height={50}/>
+      <Image src={imagePath} alt={props.alt} width={50} height={50}/>
     </ListItemIcon>
     <ListItemText primary={props.primary}/>
     <ListItemButton sx={{flexGrow: 0, display: "block", minWidth: "auto"}} className={styles.addButton}
