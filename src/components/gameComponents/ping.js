@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 
 const Ping = ({x, y, scale}) => {
-  const [ringSize, setRingSize] = useState(100);
+  const [ringSize, setRingSize] = useState(0);
   const [pingVisible, setPingVisible] = useState(true);
   const animationRef = useRef();
 
@@ -14,11 +14,11 @@ const Ping = ({x, y, scale}) => {
 
     const updateRingSize = () => {
       setRingSize((prevSize) => {
-        if (prevSize <= 0) {
+        if (prevSize >= 100) {
           setPingVisible(false);
-          return 100;
+          return 0;
         }
-        return prevSize - 5; // Adjust the decrement value to control the animation speed
+        return prevSize + 3; // Adjust the decrement value to control the animation speed
       });
       animationRef.current = requestAnimationFrame(updateRingSize);
     };
@@ -39,7 +39,7 @@ const Ping = ({x, y, scale}) => {
         width: ringSize,
         height: ringSize,
         borderRadius: '50%',
-        border: '2px solid #00f',
+        border: '5px solid #00f',
         boxShadow: '0 0 5px #00f',
         opacity: pingVisible ? 1 : 0,
         zIndex: 10000
