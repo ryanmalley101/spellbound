@@ -42,6 +42,7 @@ const JournalList = () => {
                 items {
                   id
                   name
+                  players
                 }
               }
             }
@@ -53,7 +54,7 @@ const JournalList = () => {
       });
 
       console.log(response);
-      setCharacterSheets(response.data.getGame.characterSheets.items);
+      setCharacterSheets(response.data.getGame.characterSheets.items.filter((sheet) => sheet.players.includes(playerID)));
     };
     retrieveCharacterSheets();
   }, [gameID]);

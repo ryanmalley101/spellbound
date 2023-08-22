@@ -15,16 +15,6 @@ const useBattlemapStore = create((set) => ({
   setZoomLevel: (newZoom) =>
     set((state) => ({zoomLevel: newZoom})),
 
-  mapTokens: [],
-  setMapTokens: (tokens) =>
-    set((state) => ({mapTokens: tokens})),
-  updateMapToken: (updatedToken) =>
-    set((state) => ({mapTokens: state.mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token)})),
-  addMapToken: (newToken) =>
-    set((state) => ({mapTokens: [...state.mapTokens, newToken]})),
-  removeMapToken: (removedToken) =>
-    set((state) => ({mapTokens: state.mapTokens.filter((token) => token.id !== removedToken.id)})),
-
   characterSheetWindows: [],
   addCharacterSheetWindow: (sheet) =>
     set((state) => ({characterSheetWindows: [...state.characterSheetWindows, sheet]})),
@@ -33,10 +23,44 @@ const useBattlemapStore = create((set) => ({
 
 
   monsterBlocks: [],
-  addMonsterBlock: (slug) =>
-    set((state) => ({monsterBlocks: [...state.monsterBlocks, {slug: slug}]})),
+  addMonsterBlock: (slug) => (
+    set((state) => ({monsterBlocks: [...state.monsterBlocks, {slug: slug}]}))
+  ),
   removeMonsterBlock: (slug) =>
-    set((state) => ({monsterBlocks: state.monsterBlocks.filter((slug) => slug !== slug)})),
+    set((state) => ({monsterBlocks: state.monsterBlocks.filter((monster) => monster !== slug)})),
+
+  spellCards: [],
+  addSpellCard: (slug) =>
+    set((state) => (
+      {spellCards: [...state.spellCards, {slug: slug}]}
+    )),
+  removeSpellCard: (slug) =>
+    set((state) => ({spellCards: state.spellCards.filter((spell) => spell.slug !== slug)})),
+
+  magicItemCards: [],
+  addMagicItemCard: (slug) =>
+    set((state) => ({magicItemCards: [...state.magicItemCards, {slug: slug}]})),
+  removeMagicItemCard: (slug) =>
+    set((state) => ({magicItemCards: state.magicItemCards.filter((item) => item.slug !== slug)})),
+
+  weaponCards: [],
+  addWeaponCard: (slug) =>
+    set((state) => ({weaponCards: [...state.weaponCards, {slug: slug}]})),
+  removeWeaponCard: (slug) =>
+    set((state) => ({weaponCards: state.weaponCards.filter((weapon) => weapon.slug !== slug)})),
+
+  armorCards: [],
+  addArmorCard: (slug) =>
+    set((state) => ({armorCards: [...state.armorCards, {slug: slug}]})),
+  removeArmorCard: (slug) =>
+    set((state) => ({armorCards: state.armorCards.filter((armor) => armor.slug !== slug)})),
+
+
+  conditionCards: [],
+  addConditionCard: (slug) =>
+    set((state) => ({conditionCards: [...state.conditionCards, {slug: slug}]})),
+  removeConditionCard: (slug) =>
+    set((state) => ({conditionCards: state.conditionCards.filter((condition) => condition.slug !== slug)})),
 
   gameID: "",
   setGameID: (id) =>

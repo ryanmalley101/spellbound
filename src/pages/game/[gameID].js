@@ -2,9 +2,14 @@ import React, {useEffect, useState} from "react";
 import {API, Auth, withSSRContext, graphqlOperation} from "aws-amplify";
 import TabMenu from "@/components/gameComponents/tabmenu";
 import BattleMap from "@/components/gameComponents/battlemap";
-import {
+import DraggableWindow, {
   DraggableCharacterWindow,
-  DraggableMonsterWindow
+  DraggableMonsterWindow,
+  DraggableSpellWindow,
+  DraggableMagicItemWindow,
+  DraggableWeaponWindow,
+  DraggableArmorWindow,
+  DraggableConditionWindow
 } from "@/components/gameComponents/draggablewindow";
 import useBattlemapStore from "@/stores/battlemapStore";
 import ToolBar from "@/components/gameComponents/toolbar";
@@ -16,6 +21,12 @@ function GameID() {
   const {gameID, setGameID, activeMap, setActiveMap} = useBattlemapStore();
   const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows)
   const monsterBlocks = useBattlemapStore((state) => state.monsterBlocks)
+  const spellCards = useBattlemapStore((state) => state.spellCards)
+  const magicItemCards = useBattlemapStore((state) => state.magicItemCards)
+  const weaponCards = useBattlemapStore((state) => state.weaponCards)
+  const armorCards = useBattlemapStore((state) => state.armorCards)
+  const conditionCards = useBattlemapStore((state) => state.conditionCards)
+
   const setPlayerID = useBattlemapStore(state => state.setPlayerID)
   const setGamePlayers = useBattlemapStore(state => state.setGamePlayers)
 
@@ -56,6 +67,7 @@ function GameID() {
       } else if (userPlayer.length === 0) {
         console.log("No matching player found for logged in user")
       } else {
+        console.log(`PlayerID ${userPlayer[0].id}`)
         setPlayerID(userPlayer[0].id)
       }
       const maps = (gamesReq.data.getGame.maps.items)
@@ -130,6 +142,22 @@ function GameID() {
         {monsterBlocks.map((monster) => (
           <DraggableMonsterWindow key={monster.slug} slug={monster.slug}/>
         ))}
+        {spellCards.map((spell) => (
+          <DraggableSpellWindow key={spell.slug} slug={spell.slug}/>
+        ))}
+        {magicItemCards.map((item) => (
+          <DraggableMagicItemWindow key={item.slug} slug={item.slug}/>
+        ))}
+        {weaponCards.map((item) => (
+          <DraggableWeaponWindow key={item.slug} slug={item.slug}/>
+        ))}
+        {armorCards.map((item) => (
+          <DraggableArmorWindow key={item.slug} slug={item.slug}/>
+        ))}
+        {conditionCards.map((item) => (
+          <DraggableConditionWindow key={item.slug} slug={item.slug}/>
+        ))}
+
       </div>
     );
   } else {

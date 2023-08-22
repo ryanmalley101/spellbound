@@ -6,12 +6,17 @@ import CharacterSheet from "@/components/gameComponents/charactersheet";
 import {BsX} from "react-icons/bs";
 import useBattlemapStore from "@/stores/battlemapStore";
 import MonsterSheet from "@/components/gameComponents/monstersheet";
+import SpellCard from "@/components/gameComponents/spellcard";
+import MagicItemCard from "@/components/gameComponents/magicitemcard";
+import WeaponCard from "@/components/gameComponents/weaponcard";
+import ArmorCard from "@/components/gameComponents/armorcard";
+import ConditionCard from "@/components/gameComponents/conditioncard";
 
-const DraggableWindow = ({initialPosition, content, onClose, title}) => {
+const DraggableWindow = ({initialPosition, content, onClose, title, initialWidth, initialHeight}) => {
   const [windowPosition, setWindowPosition] = useState({x: 0, y: 0});
-  const [containerWidth, setContainerWidth] = useState(820);
-  const [containerHeight, setContainerHeight] = useState(800);
-  const [headerWidth, setHeaderWidth] = useState(820)
+  const [containerWidth, setContainerWidth] = useState(initialWidth ? initialWidth : 820);
+  const [containerHeight, setContainerHeight] = useState(initialHeight ? initialHeight : 800);
+  const [headerWidth, setHeaderWidth] = useState(initialWidth ? initialWidth : 820)
   // const [headerHeight, setHeaderHeight] = useState(45)
   const dragStartRef = useRef(null); // Define the dragStartRef using useRef
   const [isHidden, setIsHidden] = useState(false);
@@ -144,5 +149,73 @@ const DraggableMonsterWindow = ({initialPosition, slug}) => {
   return <DraggableWindow content={<MonsterSheet slug={slug}/>} onClose={onClose} title={slug}/>
 }
 
+const DraggableSpellWindow = ({slug}) => {
+  const removeSpellCard = useBattlemapStore(state => state.removeSpellCard)
+
+  const onClose = () => {
+    console.log(`Closing spell card ${slug}`)
+    removeSpellCard(slug)
+  }
+
+  return <DraggableWindow content={<SpellCard slug={slug}/>} onClose={onClose} title={slug} initialWidth={300}
+                          initialHeight={300}/>
+}
+
+const DraggableMagicItemWindow = ({slug}) => {
+  const removeMagicItemCard = useBattlemapStore(state => state.removeMagicItemCard)
+
+  const onClose = () => {
+    console.log(`Closing spell card ${slug}`)
+    removeMagicItemCard(slug)
+  }
+
+  return <DraggableWindow content={<MagicItemCard slug={slug}/>} onClose={onClose} title={slug} initialWidth={300}
+                          initialHeight={300}/>
+}
+
+const DraggableWeaponWindow = ({slug}) => {
+  const removeWeaponCard = useBattlemapStore(state => state.removeWeaponCard)
+
+  const onClose = () => {
+    console.log(`Closing weapon card ${slug}`)
+    removeWeaponCard(slug)
+  }
+
+  return <DraggableWindow content={<WeaponCard slug={slug}/>} onClose={onClose} title={slug} initialWidth={300}
+                          initialHeight={300}/>
+}
+
+const DraggableArmorWindow = ({slug}) => {
+  const removeArmorCard = useBattlemapStore(state => state.removeArmorCard)
+
+  const onClose = () => {
+    console.log(`Closing armor card ${slug}`)
+    removeArmorCard(slug)
+  }
+
+  return <DraggableWindow content={<ArmorCard slug={slug}/>} onClose={onClose} title={slug} initialWidth={300}
+                          initialHeight={300}/>
+}
+
+const DraggableConditionWindow = ({slug}) => {
+  const removeConditionCard = useBattlemapStore(state => state.removeConditionCard)
+
+  const onClose = () => {
+    console.log(`Closing condition card ${slug}`)
+    removeConditionCard(slug)
+  }
+
+  return <DraggableWindow content={<ConditionCard slug={slug}/>} onClose={onClose} title={slug} initialWidth={300}
+                          initialHeight={300}/>
+}
+
 export default DraggableWindow
-export {DraggableCharacterWindow, DraggableMonsterWindow}
+export {
+  DraggableCharacterWindow,
+  DraggableMonsterWindow,
+  DraggableSpellWindow,
+  DraggableMagicItemWindow,
+  DraggableWeaponWindow,
+  DraggableArmorWindow,
+  DraggableConditionWindow
+}

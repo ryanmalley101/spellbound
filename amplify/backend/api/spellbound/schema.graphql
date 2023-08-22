@@ -381,11 +381,16 @@ input DamageDiceInput {
 }
 
 type Spell {
-    prepared: Boolean!
+    is_prepared: Boolean
+    is_concentration: Boolean
+    is_ritual: Boolean
+    is_attack: Boolean
     name: String!
     level: Int!
     source: String!
-    attack_save: String!
+    save_ability: String
+    attack_save: Int!
+    damage: [DamageDice]!
     cast_time: String!
     range_shape: String!
     duration: String!
@@ -394,11 +399,16 @@ type Spell {
 }
 
 input SpellInput {
-    prepared: Boolean
+    is_prepared: Boolean
+    is_concentration: Boolean
+    is_ritual: Boolean
+    is_attack: Boolean
     name: String
     level: Int
     source: String
-    attack_save: String
+    save_ability: String
+    attack_save: Int
+    damage: [DamageDiceInput]
     cast_time: String
     range_shape: String
     duration: String

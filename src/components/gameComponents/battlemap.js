@@ -154,7 +154,13 @@ const BattleMap = () => {
     setMapTokens((prevTokens) =>
       prevTokens.map((token) => {
           if (token.id === updatedToken.id) {
-            return {...updatedToken, key: `${updatedToken.id}_${Date.now()}`}
+            if (token.height !== updatedToken.height ||
+              token.width !== updatedToken.width ||
+              token.x !== updatedToken.x ||
+              token.y !== updatedToken.y ||
+              token.rotation !== updatedToken.rotation) {
+              return {...updatedToken, key: `${updatedToken.id}_${Date.now()}`}
+            }
           }
           return token
         }

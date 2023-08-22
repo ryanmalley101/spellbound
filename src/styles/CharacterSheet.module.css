@@ -982,6 +982,9 @@ div.box {
 }
 
 .labelButton {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     cursor: pointer;
     color: inherit;
 }
@@ -1020,4 +1023,60 @@ div.box {
     display: flex;
     flex-direction: column;
     margin-top: 10px;
+    border: 2px solid black;
+    border-radius: 10px 10px 10px 10px;
+}
+
+.itemLabel {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/*!* Assuming styles.formRow represents the container of each form row *!*/
+/*.formRow {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: flex-start; !* Align items to the left *!*/
+/*    margin-bottom: 10px;*/
+/*}*/
+
+/* Styling for labels */
+.formRow label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+/* Styling for input elements */
+.formRow input[type="text"],
+.formRow input[type="number"],
+.formRow input[type="checkbox"] {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Styling for the table */
+.formRow table {
+    width: 50%;
+    border-collapse: collapse;
+    margin-top: 5px;
+}
+
+.formRow th,
+.formRow td {
+    padding: 5px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+/* Styling for the "Add" button */
+.formRow button {
+    text-align: center;
+    border: 1px solid black;
+    font-size: 10px;
+    border-radius: 10px 10px 10px 10px;
+    padding: 4px 6px;
+    font-weight: bold;
 }

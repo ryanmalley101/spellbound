@@ -20,6 +20,7 @@
     justify-content: space-between; /* Align items to both ends (left and right) */
     background-color: #f0f0f0;
     cursor: move;
+    z-index: 5;
 }
 
 .headerTitle {
@@ -51,4 +52,5 @@
     display: flex;
     justify-content: center;
     overflow: auto;
+    z-index: 0;
 }

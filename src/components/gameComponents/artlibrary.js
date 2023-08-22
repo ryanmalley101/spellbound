@@ -11,17 +11,6 @@ import * as PropTypes from "prop-types";
 function ImageButton(props) {
   const [imagePath, setImagePath] = useState("")
 
-  // const getImageSource = async (path) => {
-  //   console.log("Trying to get the image source", path)
-  //   try {
-  //     const signedUrl = await Storage.get(`protected/defaultTokens${path}`, {validateObjectExistence: true}).body
-  //     return await signedUrl
-  //   } catch (e) {
-  //     console.log(e)
-  //     return path
-  //   }
-  // }
-
   useEffect(() => {
     const fetchImagePath = async () => {
       try {
@@ -54,17 +43,16 @@ function ImageButton(props) {
                       onClick={props.onClick} edge="end">
         <BsFillFilePlusFill size={30}/>
       </ListItemButton>
-    </ListItem>;
+    </ListItem>
   }
 
   return null
 }
 
 
-const DirectoryMenu = ({directory, parentPath = '', filter, user}) => {
+const ArtDirectoryMenu = ({directory, parentPath = '', filter, user}) => {
 
   const [open, setOpen] = useState(false);
-  const insertToken = useBattlemapStore(state => state.addToken)
   const {activeMap} = useBattlemapStore()
 
   const handleClick = () => {
@@ -136,7 +124,7 @@ const DirectoryMenu = ({directory, parentPath = '', filter, user}) => {
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {childrenDisplay.map((item) => (
-              <DirectoryMenu
+              <ArtDirectoryMenu
                 key={item.name}
                 directory={item}
                 parentPath={currentPath}
@@ -167,8 +155,8 @@ const ArtLibrary = ({artDirectory, user}) => {
       <input type="text" value={filter} onChange={handleFilterChange} placeholder="Filter"/>
       <List className={styles.tokenList}>
         {artDirectory.children.map((item) => (
-          <DirectoryMenu key={item.name} directory={item} parentPath="/defaultTokens/"
-                         filter={filter} user={user}/>
+          <ArtDirectoryMenu key={item.name} directory={item} parentPath="/defaultTokens/"
+                            filter={filter} user={user}/>
         ))}
       </List>
     </div>

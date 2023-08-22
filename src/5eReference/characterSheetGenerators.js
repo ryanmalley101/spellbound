@@ -122,7 +122,26 @@ const getExampleCharacter = (playerId, gameId) => {
     pact_level: 10,
     pact_available: 2,
     pact_maximum: 3,
-    spells: [],
+    spells: [{
+      is_prepared: true,
+      is_concentration: false,
+      is_ritual: false,
+      is_attack: true,
+      name: "Eldritch Blast",
+      level: 0,
+      source: "Warlock",
+      save_ability: "None",
+      attack_save: 5,
+      damage: [{
+        damage_dice: "1d10",
+        damage_type: "Force"
+      }],
+      cast_time: "1 action",
+      range_shape: "120 ft.",
+      duration: "Instantaneous",
+      components: "V, S",
+      notes: ""
+    }],
     spells_notes: "Zathror is the greatest spellcaster in the world.",
     weight_carried: 12,
     weight_capacity: 13,

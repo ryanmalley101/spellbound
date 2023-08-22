@@ -867,10 +867,14 @@ export const getToken = /* GraphQL */ `
         pact_available
         pact_maximum
         spells {
-          prepared
+          is_prepared
+          is_concentration
+          is_ritual
+          is_attack
           name
           level
           source
+          save_ability
           attack_save
           cast_time
           range_shape
@@ -1557,11 +1561,20 @@ export const getCharacterSheet = /* GraphQL */ `
       pact_available
       pact_maximum
       spells {
-        prepared
+        is_prepared
+        is_concentration
+        is_ritual
+        is_attack
         name
         level
         source
+        save_ability
         attack_save
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
         cast_time
         range_shape
         duration
@@ -1770,10 +1783,14 @@ export const listCharacterSheets = /* GraphQL */ `
         pact_available
         pact_maximum
         spells {
-          prepared
+          is_prepared
+          is_concentration
+          is_ritual
+          is_attack
           name
           level
           source
+          save_ability
           attack_save
           cast_time
           range_shape

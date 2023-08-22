@@ -1,0 +1,42 @@
+/* SpellCard.css */
+.spellCard {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    text-align: center;
+    z-index: 2;
+    position: relative;
+}
+
+.spellName {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.divider {
+    margin: 12px auto;
+    width: 50%;
+    border: 1px solid #ddd;
+}
+
+.spellLevel {
+    font-size: 18px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.spellDetails {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.spellDescription {
+    font-size: 14px;
+    color: #555;
+    margin-top: 20px;
+    text-align: left;
+}

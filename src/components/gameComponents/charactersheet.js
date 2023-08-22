@@ -206,7 +206,7 @@ function AttackList(props) {
         <label>Attacks &amp; Spellcasting</label>
         <div>
           <div className={styles.labelRow}>
-            <div style={{width: "20%", paddingLeft: "10px"}}> Name</div>
+            <div className={styles.itemLabel} style={{width: "20%", paddingLeft: "10px"}}> Name</div>
             <div style={{width: "15%", paddingLeft: "10px"}}> Attack Bonus</div>
             <div style={{width: "20%", paddingLeft: "10px"}}> Damage</div>
             <div style={{width: "45%", paddingLeft: "10px"}}> Notes</div>
@@ -217,9 +217,6 @@ function AttackList(props) {
         <span>
               <button className={styles.button} name="button-addattack" type="button" onClick={props.onClick}
                       style={{width: "20%"}}>Add New Attack</button>
-              <button className={styles.button} name="button-removeattack" type="button"
-                      onClick={props.onClick1}
-                      style={{width: "20%"}}>Remove Attack</button>
             </span>
         <textarea className={styles.textarea} name="attack_notes" value={props.character.attack_notes}
                   onChange={props.onChange} onBlur={props.onBlur}/>
@@ -228,7 +225,7 @@ function AttackList(props) {
   </header>;
 }
 
-const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlur, addDamage}) => {
+const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlur, addDamage, removeAttack}) => {
   delete attack.__typename
   const [isFormOpen, setIsFormOpen] = useState(false);
   // const [numDamageDice, setNumDamageDice] = useState(0)
@@ -259,10 +256,10 @@ const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlu
       <div className={styles.labelRow}>
         <label style={{width: "20%"}}
                className={styles.labelButton} onClick={() => rollAttack(attack)}>{attack.name}</label>
-        <label style={{width: "15%"}}>{attack.attack_bonus}</label>
-        <label style={{width: "20%"}}>{attack.damage_dice} {attack.damage_type}</label>
-        <label style={{width: "45%"}}>{attack.notes}</label>
-        <button type="button" onClick={toggleForm}>Edit</button>
+        <label className={styles.itemLabel} style={{width: "15%"}}>{attack.attack_bonus}</label>
+        <label className={styles.itemLabel} style={{width: "20%"}}>{attack.damage_dice} {attack.damage_type}</label>
+        <label className={styles.itemLabel} style={{width: "45%"}}>{attack.notes}</label>
+        <button type="button" onClick={toggleForm}>{isFormOpen ? "Done" : "Edit"}</button>
       </div>
 
       {/* Form fields */}
@@ -320,7 +317,7 @@ const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlu
               })}
               </tbody>
             </table>
-            <button type="button" onClick={() => addDamage(index)}>+</button>
+            <button className={styles.itemButton} type="button" onClick={() => addDamage(index)}>+</button>
           </div>
           <div style={{display: "flex", alignItems: "center"}}>
             <label><b>Notes: </b></label>
@@ -328,93 +325,239 @@ const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlu
               name={`attacks[${index}].notes`}
               value={attack.notes}
               onChange={handleInputChange}
-              style={{borderStyle: "solid", borderColor: "black", borderWidth: "1px"}}
+              style={{borderStyle: "solid", borderColor: "black", borderWidth: "1px", width: "100%"}}
             />
           </div>
-
-          <button type={"button"} onClick={handleConfirm}>Confirm</button>
+          <div style={{display: "flex", alignItems: "center"}}>
+            <button className={styles.itemButton} type={"button"} onClick={handleConfirm} style={{width: "20%"}}>Confirm
+            </button>
+            <button className={styles.button} name="button-removeitem" type="button"
+                    onClick={() => removeAttack(index)}
+                    style={{width: "20%"}}>Remove Attack
+            </button>
+          </div>
         </div>
       )}
     </div>
   )
 }
 
-const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheckboxClick}) => {
+const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheckboxClick, addDamage, removeSpell}) => {
+  delete spell.__typename
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  // const [numDamageDice, setNumDamageDice] = useState(0)
+
+
+  const toggleForm = (e) => {
+    // e.preventDefault()
+    setIsFormOpen(!isFormOpen);
+    console.log("Opening Attack Form")
+  };
+
+  // Function to handle confirming the form and closing it
+  const handleConfirm = (e) => {
+    console.log("Confirming attack changes")
+    e.preventDefault()
+    toggleForm();
+    handleInputBlur();
+  };
 
   return (
-    <tr key={index}>
-      <td>
+    <div className={styles.attackRow}>
+
+      <div className={styles.labelRow}>
         <input
+          style={{width: "5%"}}
           name={`spells[${index}].prepared`}
           type="checkbox"
           onChange={handleCheckboxClick}
           checked={spell.prepared}
         />
-      </td>
-      <td>
-        <input
-          name={`spells[${index}].name`}
-          type="text"
-          value={spell.name}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          name={`spells[${index}].level`}
-          type="text"
-          value={spell.level}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          name={`spells[${index}].cast_time`}
-          type="text"
-          value={spell.cast_time}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          name={`spells[${index}].range_shape`}
-          type="text"
-          value={spell.range_shape}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          name={`spells[${index}].duration`}
-          type="text"
-          value={spell.duration}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          name={`spells[${index}].components`}
-          type="text"
-          value={spell.components}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-      <td>
-        <input
-          name={`spells[${index}].notes`}
-          type="text"
-          value={spell.notes}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      </td>
-    </tr>
+        <label style={{width: "17%", paddingLeft: "50px", paddingRight: "10px"}}
+               className={styles.labelButton}>{spell.name}</label>
+        <label className={styles.itemLabel} style={{width: "8%"}}>{spell.level}</label>
+        <label className={styles.itemLabel} style={{width: "17%"}}>{spell.range_shape}</label>
+        <label className={styles.itemLabel} style={{width: "17%"}}>{spell.cast_time}</label>
+        <label className={styles.itemLabel} style={{width: "20%"}}>{spell.duration}</label>
+        <button className={styles.itemButton} type="button" onClick={toggleForm}>{isFormOpen ? "Done" : "Edit"}</button>
+      </div>
+
+      {/* Form fields */}
+      {isFormOpen && (
+        <div className={styles.formRow}>
+          <div>
+            <label><b>Name: </b></label>
+            <input
+              type="text"
+              name={`spells[${index}].name`}
+              value={spell.name}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Concentration: </b></label>
+            <input
+              name={`spells[${index}].is_concentration`}
+              type="checkbox"
+              onChange={handleCheckboxClick}
+              checked={spell.is_concentration}
+            />
+          </div>
+          <div>
+            <label><b>Ritual: </b></label>
+            <input
+              name={`spells[${index}].is_ritual`}
+              type="checkbox"
+              onChange={handleCheckboxClick}
+              checked={spell.is_ritual}
+            />
+          </div>
+          <div>
+            <label><b>Level: </b></label>
+            <input
+              type="number"
+              min="0" max="9"
+              name={`spells[${index}].level`}
+              value={spell.name}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Cast Time: </b></label>
+            <input
+              type="text"
+              name={`attacks[${index}].cast_time`}
+              value={spell.cast_time}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Range: </b></label>
+            <input
+              type="text"
+              name={`attacks[${index}].range`}
+              value={spell.range}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Duration: </b></label>
+            <input
+              type="text"
+              name={`attacks[${index}].duration`}
+              value={spell.duration}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Save Ability: </b></label>
+            <input
+              type="text"
+              name={`attacks[${index}].save_ability`}
+              value={spell.save_ability}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Components: </b></label>
+            <input
+              type="text"
+              name={`attacks[${index}].components`}
+              value={spell.components}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Description: </b></label>
+            <input
+              type="text"
+              name={`attacks[${index}].description`}
+              value={spell.description}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Attack Bonus / Save DC: </b></label>
+            <input
+              type="number"
+              name={`attacks[${index}].attack_save`}
+              value={spell.attack_save}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Source: </b></label>
+            <input
+              type="text"
+              name={`attacks[${index}].source`}
+              value={spell.source}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label><b>Damage: </b></label>
+            <table>
+              <thead>
+              <tr>
+                <th>Damage String</th>
+                <th>Damage Type</th>
+              </tr>
+              </thead>
+              <tbody>
+              {spell.damage.map((damage, dIndex) => {
+                return (
+                  <tr key={dIndex}>
+                    <td>
+                      <input
+                        type="text"
+                        name={`spells[${index}].damage[${dIndex}].damage_dice`}
+                        value={damage.damage_dice}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name={`spells[${index}].damage[${dIndex}].damage_type`}
+                        value={damage.damage_type}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+              </tbody>
+            </table>
+            <button className={styles.itemButton} type="button" onClick={() => addDamage(index)}>+</button>
+            <div style={{display: "flex", alignItems: "center"}}>
+
+              <label><b>Description: </b></label>
+              <textarea
+                // className={styles.textarea}
+                style={{
+                  borderWidth: "1px",
+                  solid: "#ccc",
+                  borderStyle: "solid",
+                  width: "100%"
+                }}
+                name={`spells[${index}].notes`}
+                value={spell.notes}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+          <div style={{display: "flex", alignItems: "center"}}>
+            <button className={styles.itemButton} type={"button"} onClick={handleConfirm} style={{width: "20%"}}>Confirm
+            </button>
+            <button className={styles.itemButton} name="button-removeitem" type="button"
+                    onClick={() => removeSpell(index)}
+                    style={{width: "20%"}}>
+              Remove Spell
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -534,47 +677,21 @@ function SpellList(props) {
     <header>
       <section className={styles.attacksandspellcasting} id="spells">
         <div>
-          <label>Spell List</label>
-          <table>
-            <thead>
-            <tr>
-              <th>
-                Prepared
-              </th>
-              <th>
-                Name
-              </th>
-              <th>
-                Level
-              </th>
-
-              <th>
-                Cast Time
-              </th>
-              <th>
-                Range/Shape
-              </th>
-              <th>
-                Duration
-              </th>
-              <th>
-                Components
-              </th>
-              <th>
-                Notes
-              </th>
-            </tr>
-            </thead>
-            <tbody id="spelltable">
-            {props.character.spells.map(props.callbackfn)}
-            </tbody>
-          </table>
+          <div className={styles.labelRow}>
+            <div style={{width: "15%", paddingLeft: "10px"}}> Prepared</div>
+            <div style={{width: "20%", paddingLeft: "10px"}}> Name</div>
+            <div style={{width: "10%", paddingLeft: "10px"}}> Level</div>
+            <div style={{width: "20%", paddingLeft: "10px"}}> Range</div>
+            <div style={{width: "20%", paddingLeft: "10px"}}> Casting Time</div>
+            <div style={{width: "20%", paddingLeft: "10px"}}> Duration</div>
+            <div style={{width: "100px"}}></div>
+          </div>
+          {props.character.spells.map(props.callbackfn)}
+        </div>
+        <div>
           <span>
-          <button className={styles.button} name="button-addspell" type="button" onClick={props.onClick}
+          <button className={styles.button} name="button-addspell" type="button" onClick={props.addSpell}
                   style={{width: "20%"}}>Add New Spell</button>
-          <button className={styles.button} name="button-removespell" type="button"
-                  onClick={props.onClick1}
-                  style={{width: "20%"}}>Remove Spell</button>
         </span>
           <textarea className={styles.textarea} name="spells_notes" placeholder="Additional spell notes"
                     value={props.character.spells_notes}
@@ -584,6 +701,95 @@ function SpellList(props) {
       </section>
     </header>
   </div>;
+}
+
+function Item(props) {
+  delete props.item.__typename
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  // const [numDamageDice, setNumDamageDice] = useState(0)
+
+
+  const toggleForm = (e) => {
+    // e.preventDefault()
+    setIsFormOpen(!isFormOpen);
+    console.log("Opening Attack Form")
+  };
+
+  return <div>
+    <div className={styles.labelRow}>
+      <input
+        name={`inventory[${props.index}].equipped`}
+        type="checkbox"
+        style={{width: "5%", marginLeft: "35px"}}
+        onChange={props.handleCheckboxClick}
+        checked={props.item.equipped}
+      />
+      <label className={styles.itemLabel} style={{width: "28%", marginLeft: "32px"}}>{props.item.name}</label>
+      <label className={styles.itemLabel} style={{width: "10%"}}>{props.item.count}</label>
+      <label className={styles.itemLabel} style={{width: "10%"}}>{props.item.weight}</label>
+      <label className={styles.itemLabel} style={{width: "10%"}}>{props.item.value}</label>
+      <label className={styles.itemLabel} style={{width: "40%"}}>{props.item.notes}</label>
+      <button type="button" onClick={toggleForm}>{isFormOpen ? "Done" : "Edit"}</button>
+    </div>
+    {/* Form fields */}
+    {isFormOpen && (
+      <div className={styles.formRow}>
+
+        <label><b>Name: </b></label>
+        <input
+          name={`inventory[${props.index}].name`}
+          type="text"
+          value={props.item.name}
+          onChange={props.handleInputChange}
+          onBlur={props.onBlur}
+        />
+
+        <label><b>Count: </b></label>
+        <input
+          name={`inventory[${props.index}].count`}
+          type="text"
+          value={props.item.count}
+          onChange={props.handleInputChange}
+          onBlur={props.onBlur}
+        />
+
+        <label><b>Weight: </b></label>
+        <input
+          name={`inventory[${props.index}].weight`}
+          type="text"
+          value={props.item.weight}
+          onChange={props.handleInputChange}
+          onBlur={props.onBlur}
+        />
+        <label><b>Value: </b></label>
+        <input
+          name={`inventory[${props.index}].value`}
+          type="text"
+          value={props.item.value}
+          onChange={props.handleInputChange}
+          onBlur={props.onBlur}
+        />
+
+        <label><b>Notes: </b></label>
+        <textarea
+          // className={styles.textarea}
+          style={{
+            borderWidth: "1px",
+            solid: "#ccc",
+            borderStyle: "solid"
+          }}
+          name={`inventory[${props.index}].notes`}
+          value={props.item.notes}
+          onChange={props.handleInputChange}
+          onBlur={props.onBlur}
+        />
+        <button className={styles.button} name="button-removeitem" type="button"
+                onClick={() => props.removeInventory(props.index)}
+                style={{width: "20%"}}>Remove Item
+        </button>
+      </div>
+    )}
+  </div>
 }
 
 function InventoryList(props) {
@@ -692,39 +898,20 @@ function InventoryList(props) {
       <section className={styles.attacksandspellcasting} id="inventory">
         <div>
           <label>Inventory</label>
-          <table>
-            <thead>
-            <tr>
-              <th>
-                Equipped
-              </th>
-              <th>
-                Name
-              </th>
-              <th>
-                Count
-              </th>
-              <th>
-                Weight
-              </th>
-              <th>
-                Value
-              </th>
-              <th>
-                Notes
-              </th>
-            </tr>
-            </thead>
-            <tbody id="inventorytable">
-            {props.character.inventory.map(props.callbackfn)}
-            </tbody>
-          </table>
+          <div className={styles.labelRow}>
+            <div className={styles.itemLabel} style={{width: "15%", paddingLeft: "10px"}}> Equipped</div>
+            <div style={{width: "30%", paddingLeft: "10px"}}> Name</div>
+            <div style={{width: "10%", paddingLeft: "10px"}}> Count</div>
+            <div style={{width: "10%", paddingLeft: "10px"}}> Weight</div>
+            <div style={{width: "10%", paddingLeft: "10px"}}> Value</div>
+            <div style={{width: "40%", paddingLeft: "10px"}}> Notes</div>
+            <div style={{width: "100px"}}></div>
+          </div>
+          {props.character.inventory.map(props.callbackfn)}
           <span>
-          <button className={styles.button} name="button-additem" type="button" onClick={props.onClick2}
-                  style={{width: "20%"}}>Add New Item</button>
-          <button className={styles.button} name="button-removeitem" type="button" onClick={props.onClick3}
-                  style={{width: "20%"}}>Remove Item</button>
-        </span>
+            <button className={styles.button} name="button-additem" type="button" onClick={props.addInventory}
+                    style={{width: "20%"}}>Add New Item</button>
+          </span>
           <textarea className={styles.textarea} name="inventory_notes" placeholder="Additional inventory notes"
                     value={props.character.inventory_notes}
                     onChange={props.onChange} onBlur={props.onBlur}
@@ -1141,67 +1328,6 @@ const CharacterSheet = ({characterSheetInput}) => {
   const gameID = useBattlemapStore((state) => state.gameID)
   const playerID = useBattlemapStore((state) => state.playerID)
 
-  // Pull inventory row out
-  const InventoryRow = ({item, index}) => {
-    return (
-      <tr key={index}>
-        <td>
-          <input
-            name={`inventory[${index}].equipped`}
-            type="checkbox"
-            onChange={handleCheckboxClick}
-            checked={item.equipped}
-          />
-        </td>
-        <td>
-          <input
-            name={`inventory[${index}].name`}
-            type="text"
-            value={item.name}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-        </td>
-        <td>
-          <input
-            name={`inventory[${index}].count`}
-            type="text"
-            value={item.count}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-        </td>
-        <td>
-          <input
-            name={`inventory[${index}].weight`}
-            type="text"
-            value={item.weight}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-        </td>
-        <td>
-          <input
-            name={`inventory[${index}].value`}
-            type="text"
-            value={item.value}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-        </td>
-        <td>
-          <input
-            name={`inventory[${index}].notes`}
-            type="text"
-            value={item.notes}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-          />
-        </td>
-      </tr>
-    )
-  }
-
   const [character, setCharacter] = useState(null);
   const [characterPreUpdate, setCharacterPreUpdate] = useState({});
 
@@ -1236,9 +1362,9 @@ const CharacterSheet = ({characterSheetInput}) => {
     if (!character) return
     // Define the subscription handler
     const subscriptionHandler = (data) => {
-      const updatedSheet = data.value.data.onUpdateCharacterSheet;
+      const updatedSheet = data.value.data.onUpdateCharacterSheet
       console.log('Current Tokens:', character)
-      console.log('Updated Sheet from Subscription:', updatedSheet);
+      console.log('Updated Sheet from Subscription:', updatedSheet)
       setCharacter(updatedSheet)
       // console.log(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
       // setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
@@ -1261,7 +1387,7 @@ const CharacterSheet = ({characterSheetInput}) => {
         console.error('Subscription Error:', error);
       },
     });
-  }, [])
+  }, [character])
 
   const updateBackendSheet = async () => {
     console.log("Updating Backend Sheet")
@@ -1368,8 +1494,29 @@ const CharacterSheet = ({characterSheetInput}) => {
     })
   }
 
-  const removeInventory = () => {
-    return null
+  const removeAttack = (index) => {
+    setCharacterPreUpdate({
+      ...characterPreUpdate,
+      attacks: [...character.attacks].splice(index, 1),
+      id: character.id
+    })
+    handleInputBlur()
+  }
+
+  const removeSpell = (index) => {
+    setCharacterPreUpdate({
+      spells: [...character.spells].splice(index, 1),
+      id: character.id
+    })
+    handleInputBlur()
+  }
+
+  const removeInventory = (index) => {
+    setCharacterPreUpdate({
+      inventory: [...character.inventory].splice(index, 1),
+      id: character.id
+    })
+    handleInputBlur()
   }
 
   const removeLastRow = () => {
@@ -1380,15 +1527,20 @@ const CharacterSheet = ({characterSheetInput}) => {
     setCharacter({
       ...character,
       spells: character.spells.concat({
-        prepared: false,
+        is_prepared: false,
+        is_concentration: false,
+        is_ritual: false,
+        is_attack: false,
         name: "",
         level: 0,
         source: "",
-        attack_save: "",
-        cast_time: "",
-        range_shape: "",
-        duration: "",
-        components: "",
+        save_ability: "None",
+        attack_save: 0,
+        damage: [],
+        cast_time: "1 action",
+        range_shape: "Self",
+        duration: "Instantaneous",
+        components: "V, S",
         notes: ""
       })
     })
@@ -1413,7 +1565,7 @@ const CharacterSheet = ({characterSheetInput}) => {
     handleInputBlur()
   }
 
-  const addDamage = async (attackIndex) => {
+  const addAttackDamage = async (attackIndex) => {
     console.log(`Adding damage to attack ${attackIndex}`);
     const postDamageAttacks = character.attacks.map((attack, index) => {
       if (index === attackIndex) {
@@ -1427,6 +1579,22 @@ const CharacterSheet = ({characterSheetInput}) => {
     // Manually add the id to the characterPreUpdate so it will auto update the backend without a race condition for handleInputBlur()
     setCharacterPreUpdate({...characterPreUpdate, attacks: postDamageAttacks, id: character.id});
   };
+
+  const addSpellDamage = async (spellIndex) => {
+    console.log(`Adding damage to attack ${spellIndex}`);
+    const postDamageSpells = character.spells.map((spells, index) => {
+      if (index === spellIndex) {
+        console.log("Found matching index");
+        const newDamage = [...spells.damage, {damage_dice: "1d4", damage_type: "Piercing"}];
+        console.log(newDamage);
+        return {...spells, damage: newDamage};
+      }
+      return spells;
+    });
+    // Manually add the id to the characterPreUpdate so it will auto update the backend without a race condition for handleInputBlur()
+    setCharacterPreUpdate({...characterPreUpdate, spells: postDamageSpells, id: character.id});
+  };
+
   const longRest = () => {
     return null
   }
@@ -1512,7 +1680,8 @@ const CharacterSheet = ({characterSheetInput}) => {
             handleInputChange={handleInputChange}
             handleInputBlur={handleInputBlur}
             rollAttack={rollAttack}
-            addDamage={addDamage}
+            addDamage={addAttackDamage}
+            removeAttack={removeAttack}
           />
         )} onClick={addAttack} onClick1={removeLastRow('attacktable')} onChange={handleInputChange}
                     onBlur={handleInputBlur}/>
@@ -1520,14 +1689,23 @@ const CharacterSheet = ({characterSheetInput}) => {
         <SpellList character={character} onChange={handleInputChange} onBlur={handleInputBlur}
                    callbackfn={(attack, index) => (
                      <SpellRow key={index} spell={attack} index={index} handleInputChange={handleInputChange}
-                               handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}/>
-                   )} onClick={addSpell} onClick1={removeLastRow('spelltable')}/>
+                               handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}
+                               addDamage={addSpellDamage} removeSpell={removeSpell}/>
+                   )} addSpell={addSpell} onClick1={removeLastRow('spelltable')}/>
         <hr className={styles.pageborder}/>
         <InventoryList character={character} onChange={handleInputChange} onBlur={handleInputBlur}
+                       handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}
                        onClick={addAttunement} onClick1={removeLastRow('attunementtable')}
-                       callbackfn={(item, index) => (
-                         <InventoryRow key={index} item={item} index={index}/>
-                       )} onClick2={addInventory} onClick3={removeInventory}/>
+                       addInventory={addInventory} removeInventory={removeInventory} callbackfn={(item, index) => (
+          <Item
+            key={index}
+            item={item}
+            index={index}
+            handleInputChange={handleInputChange}
+            handleInputBlur={handleInputBlur}
+            handleCheckboxClick={handleCheckboxClick}
+            removeInventory={removeInventory}
+          />)}/>
         <hr className={styles.pageborder}/>
         <Features character={character} onChange={handleInputChange} onBlur={handleInputBlur}/>
         <hr className={styles.pageborder}/>
