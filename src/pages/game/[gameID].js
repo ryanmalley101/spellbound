@@ -26,7 +26,9 @@ function GameID() {
   const weaponCards = useBattlemapStore((state) => state.weaponCards)
   const armorCards = useBattlemapStore((state) => state.armorCards)
   const conditionCards = useBattlemapStore((state) => state.conditionCards)
+  const gameMode = useBattlemapStore((state) => state.gameMode)
 
+  const setGameMode = useBattlemapStore(state => state.setGameMode)
   const setPlayerID = useBattlemapStore(state => state.setPlayerID)
   const setGamePlayers = useBattlemapStore(state => state.setGamePlayers)
 
@@ -70,6 +72,7 @@ function GameID() {
         console.log(`PlayerID ${userPlayer[0].id}`)
         setPlayerID(userPlayer[0].id)
       }
+
       const maps = (gamesReq.data.getGame.maps.items)
       if (maps.length === 0) {
         console.log("Current game has no maps")
@@ -77,7 +80,6 @@ function GameID() {
         console.log("Current game has no active map")
         const activeMapDetails = {
           id: gameID,
-//  _version: 'current_version', // add the "_version" field if your AppSync API has conflict detection (required for DataStore) enabled
           activeMap: maps[0].id
         };
 
@@ -90,6 +92,8 @@ function GameID() {
       } else {
         setActiveMap(gamesReq.data.getGame.activeMap)
       }
+
+      setGameMode(gamesReq.data.getGame.gameMode)
     }
   }
 

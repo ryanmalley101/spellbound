@@ -9,6 +9,7 @@ import useBattlemapStore from "@/stores/battlemapStore";
 import {API} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {shallow} from "zustand/shallow";
+import er_spells from '../../../public/elden_ring.json'
 
 const CategoryMenu = ({categories, filter, user}) => {
   console.log(categories)
@@ -35,6 +36,20 @@ const CategorySubMenu = ({category, filter, user}) => {
 
   console.log(category)
 
+  const items = category.items.sort((a, b) => {
+    const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+    const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+
+    // names must be equal
+    return 0
+  })
+
   return (
     <div>
       <ListItemButton onClick={handleClick} className="menuItem">
@@ -46,7 +61,7 @@ const CategorySubMenu = ({category, filter, user}) => {
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {category.items.map((item) => (
+          {items.map((item) => (
             <Item
               key={item.slug}
               category_name={category.name.toLowerCase().replaceAll(" ", "")}
@@ -151,7 +166,16 @@ const Item = ({category_name, item, filter}) => {
 
 const SRDList = () => {
   const [filter, setFilter] = useState(""); // State variable to store the filter value
-  console.log(srd)
+  const gameMode = useBattlemapStore(state => state.gameMode)
+  let list
+  if (gameMode === "Elden Ring") {
+    list = er_spells
+  } else {
+    list = srd
+  }
+
+  console.log(list)
+
   return (
     <div className={styles.container}>
       {/* Add an input field for filtering */}
@@ -163,7 +187,7 @@ const SRDList = () => {
         className={styles.filterInput}
       />
       <div className={styles.srdList}>
-        <CategoryMenu filter={filter} categories={srd}/>
+        <CategoryMenu filter={filter} categories={list}/>
       </div>
     </div>
   );

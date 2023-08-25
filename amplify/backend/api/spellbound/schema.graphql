@@ -12,6 +12,7 @@ type Game
     activeMap: ID
     characterSheets: [CharacterSheet]! @hasMany
     pings: [Ping]! @hasMany
+    gameMode: String
 }
 
 input GameInput {

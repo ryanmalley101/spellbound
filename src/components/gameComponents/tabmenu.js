@@ -14,6 +14,7 @@ import SRDList from "@/components/gameComponents/srdlist";
 import {GiCompass} from "react-icons/gi";
 import MapList from "@/components/gameComponents/maplist";
 import {CiMusicNote1} from "react-icons/ci";
+import SettingsMenu from "@/components/gameComponents/settingsmenu";
 
 const TabMenu = ({user}) => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -85,6 +86,7 @@ const TabMenu = ({user}) => {
         <TabPanel className={styles.ReactTabsPanel}>
           {/* Content for the Settings */}
           <h2>Settings Content</h2>
+          <SettingsMenu/>
           {/* Add your settings component here */}
         </TabPanel>
       </Tabs>

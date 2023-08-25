@@ -62,6 +62,10 @@ const useBattlemapStore = create((set) => ({
   removeConditionCard: (slug) =>
     set((state) => ({conditionCards: state.conditionCards.filter((condition) => condition.slug !== slug)})),
 
+  gameMode: "",
+  setGameMode: (mode) =>
+    set((state) => ({gameMode: mode})),
+
   gameID: "",
   setGameID: (id) =>
     set((state) => ({gameID: id})),

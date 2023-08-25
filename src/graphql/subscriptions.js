@@ -244,6 +244,7 @@ export const onCreateGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      gameMode
       createdAt
       updatedAt
       userGamesId
@@ -494,6 +495,7 @@ export const onUpdateGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      gameMode
       createdAt
       updatedAt
       userGamesId
@@ -744,6 +746,7 @@ export const onDeleteGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      gameMode
       createdAt
       updatedAt
       userGamesId
@@ -776,6 +779,7 @@ export const onCreateUser = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -815,6 +819,7 @@ export const onUpdateUser = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -854,6 +859,7 @@ export const onDeleteUser = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -905,6 +911,7 @@ export const onCreateMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -967,6 +974,7 @@ export const onUpdateMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1029,6 +1037,7 @@ export const onDeleteMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1092,6 +1101,7 @@ export const onCreatePlayer = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1159,6 +1169,7 @@ export const onUpdatePlayer = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1226,6 +1237,7 @@ export const onDeletePlayer = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1314,6 +1326,7 @@ export const onCreateMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1386,6 +1399,7 @@ export const onUpdateMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1458,6 +1472,7 @@ export const onDeleteMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1487,6 +1502,7 @@ export const onCreateToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -1506,6 +1522,7 @@ export const onCreateToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -1739,6 +1756,7 @@ export const onUpdateToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -1758,6 +1776,7 @@ export const onUpdateToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -1991,6 +2010,7 @@ export const onDeleteToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -2010,6 +2030,7 @@ export const onDeleteToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -2263,6 +2284,7 @@ export const onCreatePing = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -2316,6 +2338,7 @@ export const onUpdatePing = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -2369,6 +2392,7 @@ export const onDeletePing = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -2426,6 +2450,7 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -2838,6 +2863,7 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -3250,6 +3276,7 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId

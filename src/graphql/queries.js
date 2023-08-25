@@ -244,6 +244,7 @@ export const getGame = /* GraphQL */ `
         nextToken
         __typename
       }
+      gameMode
       createdAt
       updatedAt
       userGamesId
@@ -291,6 +292,7 @@ export const listGames = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -326,6 +328,7 @@ export const getUser = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -405,6 +408,7 @@ export const getMessage = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -454,6 +458,7 @@ export const listMessages = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -520,6 +525,7 @@ export const getPlayer = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -564,6 +570,7 @@ export const listPlayers = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -647,6 +654,7 @@ export const getMap = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -680,6 +688,7 @@ export const listMaps = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -712,6 +721,7 @@ export const getToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -731,6 +741,7 @@ export const getToken = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -1172,6 +1183,7 @@ export const getPing = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1202,6 +1214,7 @@ export const listPings = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
@@ -1260,6 +1273,7 @@ export const getCharacterSheet = /* GraphQL */ `
           nextToken
           __typename
         }
+        gameMode
         createdAt
         updatedAt
         userGamesId
@@ -1647,6 +1661,7 @@ export const listCharacterSheets = /* GraphQL */ `
           name
           dms
           activeMap
+          gameMode
           createdAt
           updatedAt
           userGamesId
