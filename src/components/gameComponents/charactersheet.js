@@ -2,7 +2,7 @@ import styles from "@/styles/CharacterSheet.module.css"
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
-import {API, graphqlOperation} from "aws-amplify";
+import {API, Auth, graphqlOperation} from "aws-amplify";
 import {onUpdateCharacterSheet, onUpdateToken} from "@/graphql/subscriptions";
 import * as mutations from "@/graphql/mutations";
 import {updateCharacterSheet} from "@/graphql/mutations";
@@ -49,7 +49,7 @@ const SaveSkillComponent = ({
                             }) => {
 
   const modField = isSave ? `${checkName.toLowerCase().replaceAll(" ", "_")}_save_mod` : `${checkName.toLowerCase().replaceAll(" ", "_")}_mod`
-  const profField = `${checkName.toLowerCase().replaceAll(" ", "_")}_prof`
+  const profField = isSave ? `${checkName.toLowerCase().replaceAll(" ", "_")}_save_prof` : `${checkName.toLowerCase().replaceAll(" ", "_")}_prof`
 
   return <li>
     <label form={checkName} className={styles.labelButton}
@@ -79,6 +79,10 @@ function Skills(props) {
                         handleInputBlur={props.handleInputBlur} handleCheckboxClick={props.handleCheckboxClick}/>
     <SaveSkillComponent checkName="Arcana" checkScore={props.character.arcana_mod}
                         checkProf={props.character.arcana_prof} isSave={false} rollCheck={props.rollCheck}
+                        handleInputChange={props.handleInputChange}
+                        handleInputBlur={props.handleInputBlur} handleCheckboxClick={props.handleCheckboxClick}/>
+    <SaveSkillComponent checkName="Athletics" checkScore={props.character.athletics_mod}
+                        checkProf={props.character.athletics_prof} isSave={false} rollCheck={props.rollCheck}
                         handleInputChange={props.handleInputChange}
                         handleInputBlur={props.handleInputBlur} handleCheckboxClick={props.handleCheckboxClick}/>
     <SaveSkillComponent checkName="Deception" checkScore={props.character.deception_mod}
@@ -225,7 +229,16 @@ function AttackList(props) {
   </header>;
 }
 
-const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlur, addDamage, removeAttack}) => {
+const AttackRow = ({
+                     attack,
+                     index,
+                     rollAttack,
+                     handleInputChange,
+                     handleInputBlur,
+                     handleDamageChange,
+                     addDamage,
+                     removeAttack
+                   }) => {
   delete attack.__typename
   const [isFormOpen, setIsFormOpen] = useState(false);
   // const [numDamageDice, setNumDamageDice] = useState(0)
@@ -254,12 +267,18 @@ const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlu
     <div className={styles.attackRow}>
       {/* Always visible labels */}
       <div className={styles.labelRow}>
-        <label style={{width: "20%"}}
+        <label style={{width: "130px"}}
                className={styles.labelButton} onClick={() => rollAttack(attack)}>{attack.name}</label>
-        <label className={styles.itemLabel} style={{width: "15%"}}>{attack.attack_bonus}</label>
-        <label className={styles.itemLabel} style={{width: "20%"}}>{attack.damage_dice} {attack.damage_type}</label>
-        <label className={styles.itemLabel} style={{width: "45%"}}>{attack.notes}</label>
-        <button type="button" onClick={toggleForm}>{isFormOpen ? "Done" : "Edit"}</button>
+        <label className={styles.itemLabel} style={{paddingLeft: "20px", width: "120px"}}>{attack.attack_bonus}</label>
+        <div style={{width: "515px"}}>
+          {attack.damage.map((damage, index) => {
+            if (index < 5) {
+              return <label key={index} className={styles.itemLabel}
+                            style={{paddingLeft: "0px"}}>{damage.damage_dice} {damage.damage_type} {index < attack.damage.length - 1 ? ' + ' : ''}</label>
+            }
+          })}
+        </div>
+        <button type="button" onClick={toggleForm} style={{float: "right"}}>{isFormOpen ? "Done" : "Edit"}</button>
       </div>
 
       {/* Form fields */}
@@ -301,7 +320,7 @@ const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlu
                         type="text"
                         name={`attacks[${index}].damage[${dIndex}].damage_dice`}
                         value={damage.damage_dice}
-                        onChange={handleInputChange}
+                        onChange={handleDamageChange}
                       />
                     </td>
                     <td>
@@ -309,7 +328,7 @@ const AttackRow = ({attack, index, rollAttack, handleInputChange, handleInputBlu
                         type="text"
                         name={`attacks[${index}].damage[${dIndex}].damage_type`}
                         value={damage.damage_type}
-                        onChange={handleInputChange}
+                        onChange={handleDamageChange}
                       />
                     </td>
                   </tr>
@@ -649,24 +668,17 @@ function SpellList(props) {
       </section>
       <section className={styles.attacksandspellcasting} id="pactslots" style={{width: "20%"}}>
         <div>
-          <label>Pact Slots</label>
+          <label>Spell Points</label>
           <table>
-            <thead>
-            <tr>
-              <th>Level</th>
-              <th><input name="pact_level" type="text" value={props.character.pact_level} onChange={props.onChange}
-                         onBlur={props.onBlur}/></th>
-            </tr>
-            </thead>
             <tbody>
             <tr>
               <td>Available</td>
-              <td><input name="pact_available" type="text" value={props.character.pact_available}
+              <td><input name="sp_available" type="text" value={props.character.sp_available}
                          onChange={props.onChange} onBlur={props.onBlur}/></td>
             </tr>
             <tr>
               <td>Maximum</td>
-              <td><input name="pact_maximum" type="text" placeholder={"0"} value={props.character.pact_maximum}
+              <td><input name="sp_maximum" type="text" placeholder={"0"} value={props.character.sp_maximum}
                          onChange={props.onChange} onBlur={props.onBlur}/></td>
             </tr>
             </tbody>
@@ -1358,9 +1370,8 @@ const CharacterSheet = ({characterSheetInput}) => {
     // Iterate over the character sheet properties and set their values in the form
   }, []);
 
-  useEffect(() => {
-    if (!character) return
-    // Define the subscription handler
+  // Separate subscription functions
+  const subscribeToSheetUpdate = () => {
     const subscriptionHandler = (data) => {
       const updatedSheet = data.value.data.onUpdateCharacterSheet
       console.log('Current Tokens:', character)
@@ -1387,6 +1398,22 @@ const CharacterSheet = ({characterSheetInput}) => {
         console.error('Subscription Error:', error);
       },
     });
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  };
+
+
+  useEffect(() => {
+    if (!character) return
+    const unsubscribeToSheetUpdate = subscribeToSheetUpdate()
+
+    return () => {
+      unsubscribeToSheetUpdate()
+    }
   }, [character])
 
   const updateBackendSheet = async () => {
@@ -1411,13 +1438,17 @@ const CharacterSheet = ({characterSheetInput}) => {
 
       const input = {...characterPreUpdate}
       removeTypename(input)
-
-      const updatedToken = await API.graphql({
-        query: mutations.updateCharacterSheet,
-        variables: {input: input}
-      })
-      console.log(updatedToken)
-      await setCharacterPreUpdate({})
+      try {
+        const updatedToken = await API.graphql({
+          query: mutations.updateCharacterSheet,
+          variables: {input: input}
+        })
+        console.log(updatedToken)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setCharacterPreUpdate({})
+      }
     }
     console.log("Character pre update changed")
     console.log(characterPreUpdate)
@@ -1463,6 +1494,35 @@ const CharacterSheet = ({characterSheetInput}) => {
     }
   }
 
+  const handleDamageChange = (e) => {
+    const separateString = (inputString) => {
+      const diceRegex = /attacks\[(\d+)\]\.damage\[(\d+)\]\.damage_dice/;
+      const diceMatches = inputString.match(diceRegex);
+      if (diceMatches) {
+        const characterCopy = {...character}
+        characterCopy.attacks[diceMatches[1]].damage[diceMatches[2]].damage_dice = e.target.value
+        setCharacter({...character, attacks: characterCopy.attacks});
+        setCharacterPreUpdate({...characterPreUpdate, attacks: characterCopy.attacks});
+        return
+      }
+
+      const typeRegex = /attacks\[(\d+)\]\.damage\[(\d+)\]\.damage_type/;
+      const typeMatches = inputString.match(typeRegex);
+      if (typeMatches) {
+        const characterCopy = {...character}
+        characterCopy.attacks[typeMatches[1]].damage[typeMatches[2]].damage_type = e.target.value
+        setCharacter({...character, attacks: characterCopy.attacks});
+        setCharacterPreUpdate({...characterPreUpdate, attacks: characterCopy.attacks});
+        return
+      }
+
+      return null;
+    }
+
+    let {name, value} = e.target;
+    // console.log(name, value)
+    const chunkString = separateString(name)
+  }
   const handleInputBlur = async () => {
     // Perform backend update here
     // You can access the updated character sheet using 'editableCharacterSheet'
@@ -1475,7 +1535,7 @@ const CharacterSheet = ({characterSheetInput}) => {
   };
 
   const handleCheckboxClick = (e) => {
-    setCharacterPreUpdate({...characterPreUpdate, [name]: !character[e.target.name]})
+    setCharacterPreUpdate({...characterPreUpdate, [e.target.name]: !character[e.target.name], id: character.id})
     handleInputBlur()
     console.log(e.target.name)
   }
@@ -1494,10 +1554,13 @@ const CharacterSheet = ({characterSheetInput}) => {
     })
   }
 
-  const removeAttack = (index) => {
-    setCharacterPreUpdate({
+  const removeAttack = async (index) => {
+    console.log("Removing attack ", index)
+    let newAttacks = [...character.attacks]
+    newAttacks.splice(index, 1)
+    await setCharacterPreUpdate({
       ...characterPreUpdate,
-      attacks: [...character.attacks].splice(index, 1),
+      attacks: newAttacks,
       id: character.id
     })
     handleInputBlur()
@@ -1558,7 +1621,7 @@ const CharacterSheet = ({characterSheetInput}) => {
         name: "",
         notes: "",
         attack_bonus: 0,
-        damage: {damage_dice: "", damage_type: ""}
+        damage: [{damage_dice: "", damage_type: ""}]
       }),
       id: character.id
     })
@@ -1679,6 +1742,7 @@ const CharacterSheet = ({characterSheetInput}) => {
             index={index}
             handleInputChange={handleInputChange}
             handleInputBlur={handleInputBlur}
+            handleDamageChange={handleDamageChange}
             rollAttack={rollAttack}
             addDamage={addAttackDamage}
             removeAttack={removeAttack}

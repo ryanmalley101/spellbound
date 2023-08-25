@@ -187,6 +187,8 @@ export const onCreateGame = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -438,6 +440,8 @@ export const onUpdateGame = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -689,6 +693,8 @@ export const onDeleteGame = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -1658,6 +1664,8 @@ export const onCreateToken = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration
@@ -1912,6 +1920,8 @@ export const onUpdateToken = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration
@@ -2166,6 +2176,8 @@ export const onDeleteToken = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration
@@ -2578,6 +2590,8 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -2751,6 +2765,8 @@ export const onCreateCharacterSheet = /* GraphQL */ `
       pact_level
       pact_available
       pact_maximum
+      sp_maximum
+      sp_available
       spells {
         is_prepared
         is_concentration
@@ -2991,6 +3007,8 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -3164,6 +3182,8 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
       pact_level
       pact_available
       pact_maximum
+      sp_maximum
+      sp_available
       spells {
         is_prepared
         is_concentration
@@ -3404,6 +3424,8 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -3577,6 +3599,8 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
       pact_level
       pact_available
       pact_maximum
+      sp_maximum
+      sp_available
       spells {
         is_prepared
         is_concentration

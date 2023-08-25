@@ -206,6 +206,8 @@ export const createGame = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -460,6 +462,8 @@ export const updateGame = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -714,6 +718,8 @@ export const deleteGame = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -1722,6 +1728,8 @@ export const createToken = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration
@@ -1979,6 +1987,8 @@ export const updateToken = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration
@@ -2236,6 +2246,8 @@ export const deleteToken = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration
@@ -2658,6 +2670,8 @@ export const createCharacterSheet = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -2831,6 +2845,8 @@ export const createCharacterSheet = /* GraphQL */ `
       pact_level
       pact_available
       pact_maximum
+      sp_maximum
+      sp_available
       spells {
         is_prepared
         is_concentration
@@ -3072,6 +3088,8 @@ export const updateCharacterSheet = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -3245,6 +3263,8 @@ export const updateCharacterSheet = /* GraphQL */ `
       pact_level
       pact_available
       pact_maximum
+      sp_maximum
+      sp_available
       spells {
         is_prepared
         is_concentration
@@ -3486,6 +3506,8 @@ export const deleteCharacterSheet = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -3659,6 +3681,8 @@ export const deleteCharacterSheet = /* GraphQL */ `
       pact_level
       pact_available
       pact_maximum
+      sp_maximum
+      sp_available
       spells {
         is_prepared
         is_concentration

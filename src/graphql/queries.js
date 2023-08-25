@@ -187,6 +187,8 @@ export const getGame = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -877,6 +879,8 @@ export const getToken = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration
@@ -1088,6 +1092,8 @@ export const listTokens = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -1401,6 +1407,8 @@ export const getCharacterSheet = /* GraphQL */ `
           pact_level
           pact_available
           pact_maximum
+          sp_maximum
+          sp_available
           spells_notes
           weight_carried
           weight_capacity
@@ -1574,6 +1582,8 @@ export const getCharacterSheet = /* GraphQL */ `
       pact_level
       pact_available
       pact_maximum
+      sp_maximum
+      sp_available
       spells {
         is_prepared
         is_concentration
@@ -1797,6 +1807,8 @@ export const listCharacterSheets = /* GraphQL */ `
         pact_level
         pact_available
         pact_maximum
+        sp_maximum
+        sp_available
         spells {
           is_prepared
           is_concentration

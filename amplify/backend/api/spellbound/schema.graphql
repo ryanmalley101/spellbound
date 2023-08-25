@@ -321,6 +321,8 @@ type CharacterSheet
     pact_level: Int!
     pact_available: Int!
     pact_maximum: Int!
+    sp_maximum: Int!
+    sp_available: Int!
     spells: [Spell]!
     spells_notes: String!
     weight_carried: Int!
