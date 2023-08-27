@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {API, Auth, withSSRContext, graphqlOperation} from "aws-amplify";
+import {API, Auth, Storage} from "aws-amplify";
 import TabMenu from "@/components/gameComponents/tabmenu";
 import BattleMap from "@/components/gameComponents/battlemap";
 import DraggableWindow, {
@@ -27,6 +27,8 @@ function GameID() {
   const armorCards = useBattlemapStore((state) => state.armorCards)
   const conditionCards = useBattlemapStore((state) => state.conditionCards)
   const gameMode = useBattlemapStore((state) => state.gameMode)
+  const playingSong = useBattlemapStore((state) => state.playingSong)
+  const setPlayingSong = useBattlemapStore((state) => state.setPlayingSong)
 
   const setGameMode = useBattlemapStore(state => state.setGameMode)
   const setPlayerID = useBattlemapStore(state => state.setPlayerID)
@@ -94,6 +96,15 @@ function GameID() {
       }
 
       setGameMode(gamesReq.data.getGame.gameMode)
+
+      if (playingSong !== gamesReq.data.getGame.activeSong) {
+        const newSong = await Storage.get('music/' + gamesReq.data.getGame.activeSong + '.MP3', {
+          level: 'protected',
+          identidyId: '253A4971ef34-3da5-4205-87cc-ca1cbcd4a019'
+        })
+        console.log(playingSong)
+        setPlayingSong(newSong)
+      }
     }
   }
 

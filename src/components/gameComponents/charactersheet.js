@@ -394,7 +394,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
         />
         <label style={{width: "17%", paddingLeft: "50px", paddingRight: "10px"}}
                className={styles.labelButton}>{spell.name}</label>
-        <label className={styles.itemLabel} style={{width: "8%"}}>{spell.level}</label>
+        <label className={styles.itemLabel} style={{width: "9%"}}>{spell.level}</label>
         <label className={styles.itemLabel} style={{width: "17%"}}>{spell.range_shape}</label>
         <label className={styles.itemLabel} style={{width: "17%"}}>{spell.cast_time}</label>
         <label className={styles.itemLabel} style={{width: "20%"}}>{spell.duration}</label>

@@ -1,0 +1,36 @@
+.menuItem {
+    padding-left: 16px; /* Offset the menu items */
+}
+
+.menuIcon {
+    margin-right: 8px; /* Add some spacing between the icon and text */
+}
+
+.openIcon {
+    transform: rotate(90deg); /* Rotate the icon when the menu is open */
+    transition: transform 0.3s ease-in-out; /* Add a transition effect */
+}
+
+.addButton {
+    display: block
+}
+
+.tokenList {
+    min-width: 100%;
+    height: 100%;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    /*max-width: 520px;*/
+}

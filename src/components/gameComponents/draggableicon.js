@@ -190,6 +190,14 @@ const DraggableIcon = ({token, scale}) => {
     };
   }, [showContextMenu]);
 
+  let tokenZIndex = 10
+  if (token.layer === 'MAP') {
+    tokenZIndex = 10
+  } else if (token.layer === 'TOKEN') {
+    tokenZIndex = 11
+  } else {
+    tokenZIndex = 12
+  }
 
   // Define the appearance and behavior of the draggable icon
   return (
@@ -201,7 +209,7 @@ const DraggableIcon = ({token, scale}) => {
       onDragStop={handleDragStop}
       disableDragging={selectedTool !== TOOL_ENUM.SELECT || token.layer !== mapLayer}
       style={{
-        zIndex: 100000, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none',
+        zIndex: tokenZIndex, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none',
         width: width, height: height
         // transform: `scale(${zoomLevel})`, // Scale the Rnd container
       }}

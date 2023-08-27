@@ -15,6 +15,7 @@ import {GiCompass} from "react-icons/gi";
 import MapList from "@/components/gameComponents/maplist";
 import {CiMusicNote1} from "react-icons/ci";
 import SettingsMenu from "@/components/gameComponents/settingsmenu";
+import MusicLibrary from "@/components/gameComponents/musiclibrary";
 
 const TabMenu = ({user}) => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -71,10 +72,7 @@ const TabMenu = ({user}) => {
         </TabPanel>
 
         <TabPanel className={styles.ReactTabsPanel}>
-          {/* Content for the Music */}
-          <h2>Music Content</h2>
-          <AudioPlayer song={song}/>
-          {/* Add your music component here */}
+          <MusicLibrary/>
         </TabPanel>
 
         <TabPanel className={styles.ReactTabsPanel}>
@@ -90,6 +88,7 @@ const TabMenu = ({user}) => {
           {/* Add your settings component here */}
         </TabPanel>
       </Tabs>
+      <AudioPlayer autoPlay/>
     </div>
   );
 };

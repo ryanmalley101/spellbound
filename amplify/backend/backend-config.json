@@ -87,6 +87,21 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "mapTrigger": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "spellbound"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "parseMessage": {
       "build": true,
       "dependsOn": [
@@ -134,6 +149,22 @@
         {
           "category": "function",
           "resourceName": "createNewGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_mapTrigger_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "mapTrigger"
+        }
+      ]
+    },
+    "AMPLIFY_function_mapTrigger_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "mapTrigger"
         }
       ]
     },

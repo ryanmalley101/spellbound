@@ -78,6 +78,10 @@ const useBattlemapStore = create((set) => ({
   setActiveMap: (map) =>
     set((state) => ({activeMap: map})),
 
+  playingSong: "",
+  setPlayingSong: (song) =>
+    set((state) => ({playingSong: song})),
+
   selectedTokenID: "",
   setSelectedTokenID: (id) =>
     set((state) => ({selectedTokenID: id})),

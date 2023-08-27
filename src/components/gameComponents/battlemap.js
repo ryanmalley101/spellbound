@@ -9,6 +9,8 @@ import {TransformComponent, TransformWrapper, useControls} from 'react-zoom-pan-
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import Ping from "@/components/gameComponents/ping";
 import {v4} from "uuid";
+import {FileUploader} from "react-drag-drop-files";
+import {useDropzone} from 'react-dropzone'
 
 const GRID_SIZE = 25
 
@@ -20,6 +22,8 @@ const BattleMap = () => {
   const [widthUnits, setWidthUnits] = useState(25);
   const [heightUnits, setHeightUnits] = useState(25);
   const [mapTokens, setMapTokens] = useState([])
+  const [isDraggingFile, setIsDraggingFile] = useState(false)
+
   const windowPositionRef = useRef({x: 0, y: 0})
   const scale = useRef(1)
   const [pings, setPings] = useState([])
@@ -28,9 +32,73 @@ const BattleMap = () => {
   const mouseReleasedRef = useRef(false);
   const currentMousePositionRef = useRef({x: 0, y: 0});
 
+  let dragHandle
+  const body = document.body
+  body.addEventListener("dragover", (e) => {
+    setIsDraggingFile(true)
+    clearTimeout(dragHandle);
+    console.log("Dragging File Over Screen")
+    dragHandle = setTimeout(() => {
+      setIsDraggingFile(false)
+    }, 200);
+  });
+
+  const onDrop = async (acceptedFiles) => {
+    try {
+      const file = acceptedFiles[0];
+      console.log(file)
+      // Generate a unique key for the uploaded file in the S3 bucket
+      const key = `images/${Date.now()}_${file.name}`;
+
+      // Upload the file to S3 using Amplify's Storage API
+      const putFile = await Storage.put(key, file, {
+        contentType: file.type,
+        level: 'public', // Set the appropriate level based on your S3 bucket's permissions
+      });
+
+      console.log(putFile)
+
+      const addToken = async (path) => {
+        const input = {
+          imageURL: path,
+          mapTokensId: activeMap,
+          layer: mapLayer,
+          positionX: 0,
+          positionY: 0,
+          rotation: 0,
+          width: 50,
+          height: 50
+        };
+
+        console.log(path)
+        // Call the createNewGame mutation
+        const newToken = await API.graphql({
+          query: mutations.createToken,
+          variables: {input: input}
+        });
+
+        console.log("Creating a new token")
+        console.log(newToken)
+      }
+
+      addToken('/' + putFile.key)
+
+      // Optionally, you can trigger an event here to notify the parent component about the successful upload.
+    } catch (error) {
+      console.error('Error uploading the file:', error);
+      // Handle any errors that occur during the upload process.
+    }
+  };
+
+  const handleFileDrag = (event) => {
+    event.dataTransfer.setData("text/plain", event.target.id)
+  }
+
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, noClick: true, disabled: !isDraggingFile})
+
   const {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
-    mapLayer, setMapLayer, gameID, activeMap, setActiveMap
+    mapLayer, setMapLayer, gameID, activeMap, setActiveMap, playingSong, setPlayingSong
   } = useBattlemapStore();
 
   useEffect(() => {
@@ -139,12 +207,17 @@ const BattleMap = () => {
 
   const removeMapToken = (deletedToken) => {
     console.log("removing map token")
-    setMapTokens(mapTokens.filter((token) => token.id !== deletedToken.id))
+    setMapTokens(oldMapTokens => oldMapTokens.filter((token) => {
+      console.log(token, deletedToken)
+      if (token.id !== deletedToken.id) {
+        return token
+      }
+    }))
   }
 
   const addMapToken = (newToken) => {
     console.log("adding map token")
-    setMapTokens([...mapTokens, newToken])
+    setMapTokens(oldMapTokens => [...oldMapTokens, newToken])
   }
 
   const updateMapToken = (updatedToken) => {
@@ -170,57 +243,6 @@ const BattleMap = () => {
     // You can access the updated mapTokens directly here:
     console.log("Updated Map Tokens", mapTokens);
   };
-
-  const onDrop = async (acceptedFiles) => {
-    try {
-      const file = acceptedFiles[0];
-      console.log(file)
-      // Generate a unique key for the uploaded file in the S3 bucket
-      const key = `images/${Date.now()}_${file.name}`;
-
-      // Upload the file to S3 using Amplify's Storage API
-      const putFile = await Storage.put(key, file, {
-        contentType: file.type,
-        level: 'public', // Set the appropriate level based on your S3 bucket's permissions
-      });
-
-      console.log(putFile)
-
-      const addToken = async (path) => {
-        const input = {
-          imageURL: path,
-          mapTokensId: activeMap,
-          layer: mapLayer,
-          positionX: 0,
-          positionY: 0,
-          rotation: 0,
-          width: 50,
-          height: 50
-        };
-
-        console.log(path)
-        // Call the createNewGame mutation
-        const newToken = await API.graphql({
-          query: mutations.createToken,
-          variables: {input: input}
-        });
-
-        console.log("Creating a new token")
-        console.log(newToken)
-      }
-
-      addToken('/' + putFile.key)
-
-      // Optionally, you can trigger an event here to notify the parent component about the successful upload.
-    } catch (error) {
-      console.error('Error uploading the file:', error);
-      // Handle any errors that occur during the upload process.
-    }
-  };
-
-  const handleFileDrag = (event) => {
-    event.dataTransfer.setData("text/plain", event.target.id)
-  }
 
   const deleteSelectedToken = async (tokenID) => {
     console.log("Deleting selected token", tokenID);
@@ -433,6 +455,7 @@ const BattleMap = () => {
   const subscribeToTokenDeletion = () => {
     const subscriptionHandler = (data) => {
       const deletedToken = data.value.data.onDeleteToken;
+      console.log("Delete Token Subscription")
       removeMapToken(deletedToken);
     };
 
@@ -462,10 +485,23 @@ const BattleMap = () => {
   };
 
   const subscribeToGameUpdate = () => {
-    const subscriptionHandler = (data) => {
-      const updatedActiveMap = data.value.data.onUpdateGame.activeMap;
+    const subscriptionHandler = async (data) => {
+      console.log("Updated game ", data)
+
+      const updatedActiveMap = data.value.data.onUpdateGame.activeMap
+      const updatedPlayingSong = data.value.data.onUpdateGame.activeSong
+
       setActiveMap(updatedActiveMap);
-    };
+
+      if (playingSong !== updatedPlayingSong) {
+        const newSong = await Storage.get('music/' + updatedPlayingSong + '.MP3', {
+          level: 'protected',
+          identidyId: '253A4971ef34-3da5-4205-87cc-ca1cbcd4a019'
+        })
+        console.log(playingSong)
+        setPlayingSong(newSong)
+      }
+    }
 
     const subscription = API.graphql(
       graphqlOperation(onUpdateGame, {id: gameID}),
@@ -582,7 +618,8 @@ const BattleMap = () => {
                         onTransformed={(ref) => {
                           windowPositionRef.current = {x: ref.state.positionX, y: ref.state.positionY}
                           scale.current = ref.state.scale
-                        }}>
+                        }}
+      >
         {pings.map((ping) => (
           <Ping key={v4()} x={ping.positionX} y={ping.positionY}/>
         ))}
@@ -605,7 +642,10 @@ const BattleMap = () => {
               <DraggableIcon key={`${token.key}`} token={token} scale={scale.current}/>
             ))}
             <GridOverlay style={{zIndex: -100}} gridSize={25}/>
-
+            <div className={styles.fileDropZone}
+                 style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>
+              <input {...getInputProps()} />
+            </div>
           </div>
         </TransformComponent>
       </TransformWrapper>

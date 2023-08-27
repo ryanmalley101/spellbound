@@ -15,8 +15,62 @@ import AddIcon from "@mui/icons-material/Add";
 import useBattlemapStore from "@/stores/battlemapStore";
 import {API, graphqlOperation} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
-import {onCreateMap} from "@/graphql/subscriptions";
+import {onCreateMap, onCreateToken} from "@/graphql/subscriptions";
+import * as PropTypes from "prop-types";
+import {AiFillDelete} from "react-icons/ai";
+import IconButton from "@mui/material/IconButton";
 
+function CreateMapDialog(props) {
+  return <>
+    {/* Dialog for entering map size and name */}
+    <Dialog open={props.open} onClose={props.onClose}>
+      <DialogTitle>Create New Map</DialogTitle>
+      <DialogContent>
+        <TextField
+          label="Size X"
+          variant="outlined"
+          fullWidth
+          value={props.value}
+          onChange={props.onChange}
+          type="number"
+        />
+        <TextField
+          label="Size Y"
+          variant="outlined"
+          fullWidth
+          value={props.value1}
+          onChange={props.onChange1}
+          type="number"
+        />
+        <TextField
+          label="Name"
+          variant="outlined"
+          fullWidth
+          value={props.value2}
+          onChange={props.onChange2}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={props.onClose}>Cancel</Button>
+        <Button onClick={props.onClick} color="primary">
+          Create
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>;
+}
+
+CreateMapDialog.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  value1: PropTypes.string,
+  onChange1: PropTypes.func,
+  value2: PropTypes.string,
+  onChange2: PropTypes.func,
+  onClick: PropTypes.func
+};
 const MapList = () => {
   const [mapList, setMapList] = useState([]);
   const {gameID, playerID, activeMap} = useBattlemapStore();
@@ -89,25 +143,69 @@ const MapList = () => {
   }, [gameID]);
 
   useEffect(() => {
-    const subscriptionHandler = (data) => {
-      console.log("Created Map:", data);
+    const retrieveMaps = async () => {
+      const response = await API.graphql({
+        query: `
+          query GetGameMaps($id: ID!) {
+            getGame(id: $id) {
+              maps {
+                items {
+                  id
+                  name
+                  sizeX
+                  sizeY
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          id: gameID,
+        },
+      });
 
+      console.log(response);
+      setMapList(response.data.getGame.maps.items);
+    };
+    retrieveMaps();
+  }, [gameID]);
+
+  const removeMap = async (mapId) => {
+    const response = await API.graphql({
+      query: mutations.deleteMap,
+      variables: {
+        input: {
+          id: mapId
+        }
+      },
+    });
+
+    console.log(response);
+    setMapList((oldMapList) => oldMapList.filter((map) => map.id !== mapId));
+  };
+
+  const subscribeToMapCreation = () => {
+    const subscriptionHandler = (data) => {
       const newMap = data.value.data.onCreateMap;
-      setMapList([...mapList, newMap]);
+      console.log('Map Created ', newMap)
+      setMapList((oldMaps) => [...oldMaps, newMap]);
     };
 
-    const subscription = API.graphql(graphqlOperation(onCreateMap, {gameMapId: gameID}), {
-      filter: {
-        mutationType: {
-          eq: "create",
+    const subscription = API.graphql(
+      graphqlOperation(onCreateMap, {mapTokensId: activeMap}),
+      {
+        filter: {
+          mutationType: {
+            eq: 'create',
+          },
         },
-      },
-    }).subscribe({
+      }
+    ).subscribe({
       next: (data) => {
         subscriptionHandler(data);
       },
       error: (error) => {
-        console.error("Subscription Error:", error);
+        console.error('Subscription Error:', error);
       },
     });
 
@@ -116,7 +214,14 @@ const MapList = () => {
         subscription.unsubscribe();
       }
     };
-  }, []);
+  }
+
+  useEffect(() => {
+    const unsubscribeToCreation = subscribeToMapCreation();
+    return () => {
+      unsubscribeToCreation();
+    };
+  }, [gameID])
 
   const setActiveMap = async (map) => {
     const input = {
@@ -167,45 +272,21 @@ const MapList = () => {
             }}
           >
             <ListItemText primary={map.name}/>
+            <IconButton
+              onClick={(event) => {
+                event.stopPropagation(); // Prevents the parent's onClick from firing
+                removeMap(map.id); // Call your delete function here
+              }}
+            >
+              <AiFillDelete/> {/* Replace with your delete icon */}
+            </IconButton>
           </ListItemButton>
         ))}
       </List>
 
-      {/* Dialog for entering map size and name */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Create New Map</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Size X"
-            variant="outlined"
-            fullWidth
-            value={mapSizeX}
-            onChange={(e) => setMapSizeX(e.target.value)}
-            type="number"
-          />
-          <TextField
-            label="Size Y"
-            variant="outlined"
-            fullWidth
-            value={mapSizeY}
-            onChange={(e) => setMapSizeY(e.target.value)}
-            type="number"
-          />
-          <TextField
-            label="Name"
-            variant="outlined"
-            fullWidth
-            value={mapName}
-            onChange={(e) => setMapName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={createMap} color="primary">
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <CreateMapDialog open={open} onClose={handleClose} value={mapSizeX} onChange={(e) => setMapSizeX(e.target.value)}
+                       value1={mapSizeY} onChange1={(e) => setMapSizeY(e.target.value)} value2={mapName}
+                       onChange2={(e) => setMapName(e.target.value)} onClick={createMap}/>
     </div>
   );
 };
