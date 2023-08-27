@@ -119,6 +119,8 @@ const getExampleCharacter = (playerId, gameId) => {
     spell_slots_max_7: 7,
     spell_slots_max_8: 8,
     spell_slots_max_9: 9,
+    sp_maximum: 0,
+    sp_available: 0,
     pact_level: 10,
     pact_available: 2,
     pact_maximum: 3,

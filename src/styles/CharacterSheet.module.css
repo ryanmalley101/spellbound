@@ -389,7 +389,7 @@ div.box {
 
 .charsheet main > section section.attributes div div.listSection ul li label {
     text-transform: none;
-    font-size: 8px;
+    font-size: 12px;
     text-align: left;
     -webkit-box-ordinal-group: 4;
     order: 3;
@@ -986,7 +986,7 @@ div.box {
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
-    color: inherit;
+    color: black;
 }
 
 .labelButton:hover {

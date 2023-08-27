@@ -3573,6 +3573,67 @@
                 "rarity": "common",
                 "lore": "Short dagger for throwing. It has no handguard. The blade is polished, and its weight is expertly balanced. This auxiliary weapon, used primarily to constrain an enemy's movements, can still be deadly in the right hands.",
                 "description": "___"
+            },
+            {
+                "name": "Torch",
+                "slug": "Torch",
+                "type": "Torch",
+                "category": "Torchs",
+                "damage_dice": "1d4",
+                "damage_type": "fire",
+                "weight": "1 lb.",
+                "properties": [
+                    "-"
+                ],
+                "rarity": "common",
+                "lore": "This torch's tip is wrapped in oil-soaked rags and set on fire. The flame can illuminate dark locales, or used to attack enemies.",
+                "description": "The flame of this torch burns eternal, but can be snuffed or lit as an action."
+            }
+        ]
+    },
+    {
+        "name": "Magic Items",
+        "items": [
+            {
+                "name": "Incantation Scarab",
+                "slug": "Incantation Scarab",
+                "type": "Wondrous Item, rare (requires attunement)",
+                "lore": "Golden scarab worn directly on the head. These scarabs roll clumps of incantations during their labors. Slightly reduces the FP costs of incantations, but increases damage taken. As a scarab approaches death, it abandons its rolled treasure and stretches its wings wide for long journey to its home nest.",
+                "desc": "Cursed. This scarab opens it\u00e2\u20ac\u2122s wearers flesh to harm, giving it vulnerability to bludgeoning, piercing, and slashing damage while worn.\n"
+            },
+            {
+                "name": "Flask of Crimson Tears",
+                "slug": "Flask of Crimson Tears",
+                "type": "Wondrous Item, unique",
+                "lore": "A sacred flask modelled after a golden holy chalice that was once graced by a tear of life. Filled with crimson tears, this flask restores HP with use. Rest at a site of grace to replenish. The one washed up on the gravesite was sure to die, until this flask offered its gift of rejuvenation. To seek the Elden Ring.",
+                "desc": "10\n"
+            },
+            {
+                "name": "Flask of Cerulean Tears",
+                "slug": "Flask of Cerulean Tears",
+                "type": "Wondrous Item, unique",
+                "lore": "A sacred flask modelled after a golden holy chalice that was once graced by a tear of life. Filled with cerulean tears, this flask restores SP with use. Rest at a site of grace to replenish. The one washed up on the gravesite was sure to die, until this flask offered its gift of rejuvenation. To seek the Elden Ring.",
+                "desc": "While you rest at a Site of Grace, you can move charges to and from the Flask of Crimson Tears and the Flask of Cerulean tears as part of a long rest. You may also reinforce the flask with golden seeds and sacred tears. When you do so, the Flask of Cerulean Tears is reinforced simultaneously. Each sacred tear you offer to the flasks increases the healing you receive when you drink it by 2 SP.\n"
+            },
+            {
+                "name": "Stonesword Key",
+                "slug": "Stonesword Key",
+                "type": "Wondrous Item, uncommon",
+                "lore": "A sword-shaped stone key. Breaks the seal on imp statues, but remains embedded in the statue after use, meaning it can only be used once as an item. Think well before using one."
+            },
+            {
+                "name": "Spirit Calling Bell",
+                "slug": "Spirit Calling Bell",
+                "type": "Wondrous Item, rare",
+                "lore": "A bell capable of summoning various spirits from ashen remains. It usually requires SP to use.",
+                "desc": "When you summon a spirit from a Spirit Ash, the ash itself becomes inert and cannot be used to summon the same spirit again. A Spirit Ash can be rejuvenated with the use of a Spirit Tuner.\n"
+            },
+            {
+                "name": "Spectral Steed Whistle",
+                "slug": "Spectral Steed Whistle",
+                "type": "Wondrous Item, unique",
+                "lore": "A delicate goldwork ring. Can be used as a finger whistle. Sound the whistle to summon and ride Torrent, the spectral steed. (Dismounts steed when used while on horseback.) Upon his death, the spectral steed can be summoned again, but doing so drains the Flask of Crimson Tears",
+                "desc": "If Torrent is reduced to 0 hit points, he vanishes immediately. The whistle can be used to summon Torrent afterwards by expending a charge of the *flask of crimson tears*.\n"
             }
         ]
     }
