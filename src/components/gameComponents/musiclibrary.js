@@ -73,7 +73,7 @@ const MusicLibrary = () => {
   };
 
   const playPlaylist = async (playlistName, songs) => {
-    const newSong = {
+    // const newSong = {
     //   id: gameID,
     //   activeSong: key
     // }
@@ -85,7 +85,6 @@ const MusicLibrary = () => {
     //
     // console.log(updatedGame)
 
-      return
   }
 
   return (
