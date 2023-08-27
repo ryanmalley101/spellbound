@@ -1374,9 +1374,11 @@ const CharacterSheet = ({characterSheetInput}) => {
   const subscribeToSheetUpdate = () => {
     const subscriptionHandler = (data) => {
       const updatedSheet = data.value.data.onUpdateCharacterSheet
-      console.log('Current Tokens:', character)
+      console.log('Current Sheet:', character)
       console.log('Updated Sheet from Subscription:', updatedSheet)
-      setCharacter(updatedSheet)
+      if (character.id === updatedSheet.id) {
+        setCharacter(updatedSheet)
+      }
       // console.log(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
       // setMapTokens(mapTokens.map((token) => token.id === updatedToken.id ? updatedToken : token))
     };

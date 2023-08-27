@@ -52,10 +52,12 @@ const WeaponCard = ({slug}) => {
         <div className={styles.armDetails}>
           <div><strong>Damage:</strong> {weaponData.damage_dice} {weaponData.damage_type}</div>
           <div><strong>Properties:</strong> {weaponData.properties.join(', ')}</div>
+          {weaponData.skill_sp ? <div><strong>Skill Cost:</strong> {weaponData.skill_sp} SP</div> : ""}
         </div>
         <hr className="divider"/>
         <div className={styles.armDescription}>
           {weaponData.desc}
+          <strong>{weaponData.skill_name}</strong>{weaponData.skill_description}
         </div>
       </div>
     );
