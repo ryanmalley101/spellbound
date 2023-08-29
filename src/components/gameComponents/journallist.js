@@ -94,7 +94,9 @@ const JournalList = () => {
   const showWindow = (sheet) => {
     console.log(characterSheetWindows);
     console.log(sheet);
-    addCharacterSheetWindow(sheet);
+    if (characterSheetWindows.filter((s) => s.id === sheet.id).length === 0) {
+      addCharacterSheetWindow(sheet);
+    }
   };
 
   return (

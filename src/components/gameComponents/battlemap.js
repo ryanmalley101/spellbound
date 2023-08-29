@@ -227,13 +227,9 @@ const BattleMap = () => {
     setMapTokens((prevTokens) =>
       prevTokens.map((token) => {
           if (token.id === updatedToken.id) {
-            if (token.height !== updatedToken.height ||
-              token.width !== updatedToken.width ||
-              token.x !== updatedToken.x ||
-              token.y !== updatedToken.y ||
-              token.rotation !== updatedToken.rotation) {
-              return {...updatedToken, key: `${updatedToken.id}_${Date.now()}`}
-            }
+            console.log(token, updatedToken)
+            // return {...updatedToken, key: `${updatedToken.id}_${Date.now()}`}
+            return {...updatedToken}
           }
           return token
         }
@@ -623,7 +619,7 @@ const BattleMap = () => {
         {pings.map((ping) => (
           <Ping key={v4()} x={ping.positionX} y={ping.positionY}/>
         ))}
-        <Controls/>
+        {/*<Controls/>*/}
         <TransformComponent wrapperStyle={{
           height: '100%',
           width: '100%',
@@ -632,16 +628,17 @@ const BattleMap = () => {
           width: '100%',
         }} disabled={draggingDisabled} minScale={0.1}>
           <div
-            style={{
-              height: '100%',
-              width: '100%',
-            }}
+            style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE}}
           >
 
             {mapTokens.map((token, index) => (
-              <DraggableIcon key={`${token.key}`} token={token} scale={scale.current}/>
+              <DraggableIcon key={`${token.key}`} x={token.positionX} y={token.positionY} token={token}
+                             scale={scale.current}/>
             ))}
-            <GridOverlay style={{zIndex: -100}} gridSize={25}/>
+            <GridOverlay style={{
+              zIndex: -100, height: '100%',
+              width: '100%',
+            }} gridSize={GRID_SIZE}/>
             <div className={styles.fileDropZone}
                  style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>
               <input {...getInputProps()} />

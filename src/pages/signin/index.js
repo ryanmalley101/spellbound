@@ -5,7 +5,7 @@ import {Auth} from 'aws-amplify';
 import {Button, TextField, Typography, Container, Box} from '@mui/material';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
@@ -13,7 +13,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      await Auth.signIn(email, password);
+      await Auth.signIn(username, password);
 
       await router.push('/'); // Redirect to the dashboard page after successful login
     } catch (error) {
@@ -32,13 +32,13 @@ const LoginPage = () => {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
             autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <TextField
             margin="normal"

@@ -361,7 +361,16 @@ const AttackRow = ({
   )
 }
 
-const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheckboxClick, addDamage, removeSpell}) => {
+const SpellRow = ({
+                    spell,
+                    index,
+                    handleInputChange,
+                    handleInputBlur,
+                    handleCheckboxClick,
+                    addDamage,
+                    removeSpell,
+                    handleDamageChange
+                  }) => {
   delete spell.__typename
   const [isFormOpen, setIsFormOpen] = useState(false);
   // const [numDamageDice, setNumDamageDice] = useState(0)
@@ -435,9 +444,8 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Level: </b></label>
             <input
               type="number"
-              min="0" max="9"
               name={`spells[${index}].level`}
-              value={spell.name}
+              value={spell.level}
               onChange={handleInputChange}
             />
           </div>
@@ -445,7 +453,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Cast Time: </b></label>
             <input
               type="text"
-              name={`attacks[${index}].cast_time`}
+              name={`spells[${index}].cast_time`}
               value={spell.cast_time}
               onChange={handleInputChange}
             />
@@ -454,7 +462,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Range: </b></label>
             <input
               type="text"
-              name={`attacks[${index}].range`}
+              name={`spells[${index}].range`}
               value={spell.range}
               onChange={handleInputChange}
             />
@@ -463,7 +471,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Duration: </b></label>
             <input
               type="text"
-              name={`attacks[${index}].duration`}
+              name={`spells[${index}].duration`}
               value={spell.duration}
               onChange={handleInputChange}
             />
@@ -472,7 +480,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Save Ability: </b></label>
             <input
               type="text"
-              name={`attacks[${index}].save_ability`}
+              name={`spells[${index}].save_ability`}
               value={spell.save_ability}
               onChange={handleInputChange}
             />
@@ -481,7 +489,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Components: </b></label>
             <input
               type="text"
-              name={`attacks[${index}].components`}
+              name={`spells[${index}].components`}
               value={spell.components}
               onChange={handleInputChange}
             />
@@ -490,7 +498,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Description: </b></label>
             <input
               type="text"
-              name={`attacks[${index}].description`}
+              name={`spells[${index}].description`}
               value={spell.description}
               onChange={handleInputChange}
             />
@@ -499,7 +507,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Attack Bonus / Save DC: </b></label>
             <input
               type="number"
-              name={`attacks[${index}].attack_save`}
+              name={`spells[${index}].attack_save`}
               value={spell.attack_save}
               onChange={handleInputChange}
             />
@@ -508,7 +516,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
             <label><b>Source: </b></label>
             <input
               type="text"
-              name={`attacks[${index}].source`}
+              name={`spells[${index}].source`}
               value={spell.source}
               onChange={handleInputChange}
             />
@@ -531,7 +539,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
                         type="text"
                         name={`spells[${index}].damage[${dIndex}].damage_dice`}
                         value={damage.damage_dice}
-                        onChange={handleInputChange}
+                        onChange={handleDamageChange}
                       />
                     </td>
                     <td>
@@ -539,7 +547,7 @@ const SpellRow = ({spell, index, handleInputChange, handleInputBlur, handleCheck
                         type="text"
                         name={`spells[${index}].damage[${dIndex}].damage_type`}
                         value={damage.damage_type}
-                        onChange={handleInputChange}
+                        onChange={handleDamageChange}
                       />
                     </td>
                   </tr>
@@ -1498,23 +1506,23 @@ const CharacterSheet = ({characterSheetInput}) => {
 
   const handleDamageChange = (e) => {
     const separateString = (inputString) => {
-      const diceRegex = /attacks\[(\d+)\]\.damage\[(\d+)\]\.damage_dice/;
+      const diceRegex = /(.*)\[(\d+)\]\.damage\[(\d+)\]\.damage_dice/;
       const diceMatches = inputString.match(diceRegex);
       if (diceMatches) {
         const characterCopy = {...character}
-        characterCopy.attacks[diceMatches[1]].damage[diceMatches[2]].damage_dice = e.target.value
-        setCharacter({...character, attacks: characterCopy.attacks});
-        setCharacterPreUpdate({...characterPreUpdate, attacks: characterCopy.attacks});
+        characterCopy[diceMatches[1]][diceMatches[2]].damage[diceMatches[3]].damage_dice = e.target.value
+        setCharacter({...character, [diceMatches[1]]: characterCopy[diceMatches[1]]});
+        setCharacterPreUpdate({...characterPreUpdate, [diceMatches[1]]: characterCopy[diceMatches[1]]});
         return
       }
 
-      const typeRegex = /attacks\[(\d+)\]\.damage\[(\d+)\]\.damage_type/;
+      const typeRegex = /(.*)\[(\d+)\]\.damage\[(\d+)\]\.damage_type/;
       const typeMatches = inputString.match(typeRegex);
       if (typeMatches) {
         const characterCopy = {...character}
-        characterCopy.attacks[typeMatches[1]].damage[typeMatches[2]].damage_type = e.target.value
-        setCharacter({...character, attacks: characterCopy.attacks});
-        setCharacterPreUpdate({...characterPreUpdate, attacks: characterCopy.attacks});
+        characterCopy[diceMatches[1]][typeMatches[2]].damage[typeMatches[3]].damage_type = e.target.value
+        setCharacter({...character, [diceMatches[1]]: characterCopy[diceMatches[1]]});
+        setCharacterPreUpdate({...characterPreUpdate, [diceMatches[1]]: characterCopy[diceMatches[1]]});
         return
       }
 
@@ -1537,9 +1545,41 @@ const CharacterSheet = ({characterSheetInput}) => {
   };
 
   const handleCheckboxClick = (e) => {
-    setCharacterPreUpdate({...characterPreUpdate, [e.target.name]: !character[e.target.name], id: character.id})
-    handleInputBlur()
-    console.log(e.target.name)
+    const separateString = (inputString) => {
+      const regex = /([^\[\].]+)\[(\d+)\]\.([^\[\].]+)/;
+      const matches = inputString.match(regex);
+      if (matches) {
+        const [, object, index, property] = matches;
+        return [object, parseInt(index), property];
+      }
+      return null;
+    }
+
+    let {name, value} = e.target;
+    // console.log(name, value)
+    const chunkString = separateString(name)
+    if (chunkString) {
+      const target = chunkString[0]
+      const index = chunkString[1]
+      const property = chunkString[2]
+
+      // Create an intermediate object for the innermost property to update
+      const updatedNestedProperty = {...character[target][index], [property]: !character[target][index][property]};
+
+      // Create an intermediate object for the inner array to update
+      const updatedInnerArray = [...character[target]];
+      updatedInnerArray[index] = updatedNestedProperty;
+
+      // Create the final updated character object with the updated array
+      const updatedCharacter = {...character, [target]: updatedInnerArray};
+
+      setCharacter(updatedCharacter);
+      setCharacterPreUpdate({...characterPreUpdate, [target]: updatedInnerArray});
+    } else {
+      setCharacterPreUpdate({...characterPreUpdate, [e.target.name]: !character[e.target.name], id: character.id})
+      handleInputBlur()
+      console.log(e.target.name)
+    }
   }
 
   const addInventory = () => {
@@ -1569,16 +1609,21 @@ const CharacterSheet = ({characterSheetInput}) => {
   }
 
   const removeSpell = (index) => {
+    console.log(`Removing spell ${index}`)
+    const newSpells = [...character.spells]
+    newSpells.splice(index, 1)
     setCharacterPreUpdate({
-      spells: [...character.spells].splice(index, 1),
+      spells: newSpells,
       id: character.id
     })
     handleInputBlur()
   }
 
   const removeInventory = (index) => {
+    const newInventory = [...character.inventory]
+    newInventory.splice(index, 1)
     setCharacterPreUpdate({
-      inventory: [...character.inventory].splice(index, 1),
+      inventory: newInventory,
       id: character.id
     })
     handleInputBlur()
@@ -1756,7 +1801,8 @@ const CharacterSheet = ({characterSheetInput}) => {
                    callbackfn={(attack, index) => (
                      <SpellRow key={index} spell={attack} index={index} handleInputChange={handleInputChange}
                                handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}
-                               addDamage={addSpellDamage} removeSpell={removeSpell}/>
+                               addDamage={addSpellDamage} removeSpell={removeSpell}
+                               handleDamageChange={handleDamageChange}/>
                    )} addSpell={addSpell} onClick1={removeLastRow('spelltable')}/>
         <hr className={styles.pageborder}/>
         <InventoryList character={character} onChange={handleInputChange} onBlur={handleInputBlur}

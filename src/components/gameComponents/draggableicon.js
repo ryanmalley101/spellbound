@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useRef, useState} from 'react';
+import React, {memo, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import styles from '../../styles/Battlemap.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
@@ -6,27 +6,11 @@ import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import {API, Storage} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {Button} from "@mui/material";
+import Image from 'next/image'
 
-const CustomHandle = ({position}) => (
-  <div
-    style={{
-      position: 'absolute',
-      width: '20px',
-      height: '20px',
-      background: '#fff',
-      border: 'solid',
-      borderWidth: '1',
-      borderColor: 'black',
-      borderRadius: '50%',
-      zIndex: 20, // Adjust the z-index value as needed
-      ...position,
-    }}
-  />
-);
-
-const DraggableIcon = ({token, scale}) => {
+const DraggableIcon = ({token, scale, x, y}) => {
   const zoomLevel = useBattlemapStore(state => state.zoomLevel)
-  const [iconPosition, setIconPosition] = useState({x: 0, y: 0});
+  const [iconPosition, setIconPosition] = useState({x: x, y: y});
   const [width, setWidth] = useState(50);
   const [height, setHeight] = useState(50);
   const [imgsrc, setImgsrc] = useState(null);
@@ -38,11 +22,6 @@ const DraggableIcon = ({token, scale}) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({x: 0, y: 0});
 
-  const handleIconPosition = (position) => {
-    console.log('Handling icon position')
-    setIconPosition(position);
-  };
-
   const handleResize = async (e, direction, ref, delta, position) => {
     const {width, height} = ref.style;
     setWidth(parseInt(width));
@@ -51,7 +30,7 @@ const DraggableIcon = ({token, scale}) => {
 
   const handleResizeStop = async (e, direction, ref, delta, position) => {
     console.log("handling resize stop")
-    console.log(ref)
+    console.log(e, direction, ref, delta, position)
     const {width, height} = ref.style;
 
     setIconPosition({
@@ -64,7 +43,9 @@ const DraggableIcon = ({token, scale}) => {
     const resizedTokenDetails = {
       id: token.id,
       width: parseInt(width),
-      height: parseInt(height)
+      height: parseInt(height),
+      positionX: position.x,
+      positionY: position.y
     };
 
     const updatedToken = await API.graphql({
@@ -77,6 +58,12 @@ const DraggableIcon = ({token, scale}) => {
     dragStartRef.current = {x: iconPosition.x / zoomLevel, y: iconPosition.y / zoomLevel};
     console.log('Handling drag start')
   };
+
+  useEffect(() => {
+    setIconPosition({x: token.positionX, y: token.positionY})
+    setWidth(token.width)
+    setHeight(token.height)
+  }, [token])
 
   const handleDragStop = async (e, d) => {
     console.log('Handling drag stop')
@@ -103,7 +90,7 @@ const DraggableIcon = ({token, scale}) => {
     dragStartRef.current = null;
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const fetchImagePath = async (imageURL) => {
       try {
         Storage.configure({level: 'public'});
@@ -199,85 +186,86 @@ const DraggableIcon = ({token, scale}) => {
     tokenZIndex = 12
   }
 
-  // Define the appearance and behavior of the draggable icon
-  return (
-    <Rnd
-      size={{width: width, height: height}}
-      scale={scale}// Set the initial size of the draggable and resizable component
-      position={{x: iconPosition.x, y: iconPosition.y}} // Set the initial position of the component
-      onDragStart={handleDragStart}
-      onDragStop={handleDragStop}
-      disableDragging={selectedTool !== TOOL_ENUM.SELECT || token.layer !== mapLayer}
-      style={{
-        zIndex: tokenZIndex, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none',
-        width: width, height: height
-        // transform: `scale(${zoomLevel})`, // Scale the Rnd container
-      }}
-      onResizeStop={handleResizeStop}
-      onResize={handleResize}
-      bounds="parent"
-      enableResizing={{
-        top: true,
-        right: true,
-        bottom: true,
-        left: true,
-        topRight: true,
-        bottomRight: true,
-        bottomLeft: true,
-        topLeft: true,
-      }}
-      resizeHandleStyles={{
-        top: {cursor: 'n-resize'},
-        right: {cursor: 'e-resize'},
-        bottom: {cursor: 's-resize'},
-        left: {cursor: 'w-resize'},
-        topRight: {cursor: 'ne-resize'},
-        bottomRight: {cursor: 'se-resize'},
-        bottomLeft: {cursor: 'sw-resize'},
-        topLeft: {cursor: 'nw-resize'},
-      }}
-      resizeHandleWrapperClass="resize-handle-wrapper"
-      onClick={handleIconClick} // Attach the click handler to the icon
-      onContextMenu={handleContextMenu}
-    >
-      <div>
-        {/* Your component content */}
+  if (imgsrc) {
+    // Define the appearance and behavior of the draggable icon
+    return (
+      <Rnd
+        size={{width: width, height: height}}
+        scale={scale}// Set the initial size of the draggable and resizable component
+        position={{x: iconPosition.x, y: iconPosition.y}} // Set the initial position of the component
+        onDragStart={handleDragStart}
+        onDragStop={handleDragStop}
+        disableDragging={selectedTool !== TOOL_ENUM.SELECT || token.layer !== mapLayer}
+        style={{
+          zIndex: tokenZIndex, boxShadow: selectedTokenID === token.id ? '0 0 0 2px blue' : 'none',
+          width: width, height: height
+          // transform: `scale(${zoomLevel})`, // Scale the Rnd container
+        }}
+        onResizeStop={handleResizeStop}
+        onResize={handleResize}
+        bounds="parent"
+        enableResizing={{
+          top: true,
+          right: true,
+          bottom: true,
+          left: true,
+          topRight: true,
+          bottomRight: true,
+          bottomLeft: true,
+          topLeft: true,
+        }}
+        resizeHandleStyles={{
+          top: {cursor: 'n-resize'},
+          right: {cursor: 'e-resize'},
+          bottom: {cursor: 's-resize'},
+          left: {cursor: 'w-resize'},
+          topRight: {cursor: 'ne-resize'},
+          bottomRight: {cursor: 'se-resize'},
+          bottomLeft: {cursor: 'sw-resize'},
+          topLeft: {cursor: 'nw-resize'},
+        }}
+        resizeHandleWrapperClass="resize-handle-wrapper"
+        onClick={handleIconClick} // Attach the click handler to the icon
+        onContextMenu={handleContextMenu}
+      >
+        <div>
+          {/* Your component content */}
 
-        {/* Custom Context Menu */}
-        {showContextMenu && (
-          <div
-            id="custom-context-menu"
-            style={{
-              position: 'fixed',
-              transform: `translate(25px, 25px)`,
-              backgroundColor: 'transparent', // Make the background transparent
-              boxShadow: 'none', // Remove the box shadow
-              zIndex: 9999,
-              display: 'flex',
-              flexDirection: 'column', // Stack the icons vertically
-            }}
-          >
-            {/* MUI Buttons */}
-            <Button onClick={() => handleMenuClick('GM')} variant="contained" color="primary">
-              GM
-            </Button>
-            <Button onClick={() => handleMenuClick('TOKEN')} variant="contained" color="primary">
-              Token
-            </Button>
-            <Button onClick={() => handleMenuClick('MAP')} variant="contained" color="primary">
-              Map
-            </Button>
-          </div>
-        )}
-      </div>
-      {/*<div className={styles.iconOverlay} onContextMenu={handleContextMenu}>*/}
-      <div className={styles.draggableicon}>
-        <img src={imgsrc} alt="Icon" width={width} height={height} style={{pointerEvents: 'none'}}/>
-      </div>
-      {/*</div>*/}
-    </Rnd>
-  );
-
+          {/* Custom Context Menu */}
+          {showContextMenu && (
+            <div
+              id="custom-context-menu"
+              style={{
+                position: 'fixed',
+                transform: `translate(25px, 25px)`,
+                backgroundColor: 'transparent', // Make the background transparent
+                boxShadow: 'none', // Remove the box shadow
+                zIndex: 9999,
+                display: 'flex',
+                flexDirection: 'column', // Stack the icons vertically
+              }}
+            >
+              {/* MUI Buttons */}
+              <Button onClick={() => handleMenuClick('GM')} variant="contained" color="primary">
+                GM
+              </Button>
+              <Button onClick={() => handleMenuClick('TOKEN')} variant="contained" color="primary">
+                Token
+              </Button>
+              <Button onClick={() => handleMenuClick('MAP')} variant="contained" color="primary">
+                Map
+              </Button>
+            </div>
+          )}
+        </div>
+        {/*<div className={styles.iconOverlay} onContextMenu={handleContextMenu}>*/}
+        <div className={styles.draggableicon}>
+          <Image src={imgsrc} priority={true} alt="Icon" width={width} height={height} style={{pointerEvents: 'none'}}/>
+        </div>
+        {/*</div>*/}
+      </Rnd>
+    );
+  }
 }
 
 export default DraggableIcon
