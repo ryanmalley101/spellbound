@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "api": {
+      "spellbound": [
+        "Query",
+        "Mutation"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}
