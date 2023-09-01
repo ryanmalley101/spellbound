@@ -9,7 +9,7 @@ import DraggableWindow, {
   DraggableMagicItemWindow,
   DraggableWeaponWindow,
   DraggableArmorWindow,
-  DraggableConditionWindow
+  DraggableConditionWindow, DraggableAshOfWarWindow
 } from "@/components/gameComponents/draggablewindow";
 import useBattlemapStore from "@/stores/battlemapStore";
 import ToolBar from "@/components/gameComponents/toolbar";
@@ -26,6 +26,7 @@ function GameID() {
   const weaponCards = useBattlemapStore((state) => state.weaponCards)
   const armorCards = useBattlemapStore((state) => state.armorCards)
   const conditionCards = useBattlemapStore((state) => state.conditionCards)
+  const ashOfWarCards = useBattlemapStore((state) => state.ashOfWarCards)
   const gameMode = useBattlemapStore((state) => state.gameMode)
   const playingSong = useBattlemapStore((state) => state.playingSong)
   const setPlayingSong = useBattlemapStore((state) => state.setPlayingSong)
@@ -171,6 +172,9 @@ function GameID() {
         ))}
         {conditionCards.map((item) => (
           <DraggableConditionWindow key={item.slug} slug={item.slug}/>
+        ))}
+        {ashOfWarCards.map((item) => (
+          <DraggableAshOfWarWindow key={item.slug} slug={item.slug}/>
         ))}
 
       </div>

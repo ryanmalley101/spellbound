@@ -83,6 +83,7 @@ const Item = ({category_name, item, filter}) => {
   const weaponCards = useBattlemapStore((state) => state.magicItemCards)
   const armorCards = useBattlemapStore((state) => state.armorCards)
   const conditionCards = useBattlemapStore((state) => state.conditionCards)
+  const ashOfWarCards = useBattlemapStore((state) => state.ashOfWarCards)
 
   const {
     addMonsterBlock,
@@ -90,7 +91,8 @@ const Item = ({category_name, item, filter}) => {
     addMagicItemCard,
     addWeaponCard,
     addArmorCard,
-    addConditionCard
+    addConditionCard,
+    addAshOfWarCard
   } = useBattlemapStore();
   const {
     removeMonsterBlock,
@@ -98,7 +100,8 @@ const Item = ({category_name, item, filter}) => {
     removeMagicItemCard,
     removeWeaponCard,
     removeArmorCard,
-    removeConditionCard
+    removeConditionCard,
+    removeAshOfWarCard
   } = useBattlemapStore();
 
   const showWindow = (item, category_name) => {
@@ -142,12 +145,12 @@ const Item = ({category_name, item, filter}) => {
           removeArmorCard(item.slug)
         }
         break
-      case "conditions":
+      case "ashesofwar":
         console.log(item)
-        if (conditionCards.some(block => block.slug !== item.slug) || conditionCards.length === 0) {
-          addConditionCard(item.slug);
+        if (ashOfWarCards.some(block => block.slug !== item.slug) || ashOfWarCards.length === 0) {
+          addAshOfWarCard(item.slug)
         } else {
-          removeConditionCard(item.slug)
+          removeAshOfWarCard(item.slug)
         }
         break
     }

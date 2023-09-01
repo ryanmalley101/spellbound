@@ -11,6 +11,7 @@ import MagicItemCard from "@/components/gameComponents/magicitemcard";
 import WeaponCard from "@/components/gameComponents/weaponcard";
 import ArmorCard from "@/components/gameComponents/armorcard";
 import ConditionCard from "@/components/gameComponents/conditioncard";
+import AshOfWarCard from "@/components/gameComponents/ashofwarcard";
 
 const DraggableWindow = ({initialPosition, content, onClose, title, initialWidth, initialHeight}) => {
   const [windowPosition, setWindowPosition] = useState({x: 0, y: 0});
@@ -209,6 +210,19 @@ const DraggableConditionWindow = ({slug}) => {
                           initialHeight={300}/>
 }
 
+const DraggableAshOfWarWindow = ({slug}) => {
+  const removeConditionCard = useBattlemapStore(state => state.removeConditionCard)
+
+  const onClose = () => {
+    console.log(`Closing condition card ${slug}`)
+    removeConditionCard(slug)
+  }
+
+  return <DraggableWindow content={<AshOfWarCard slug={slug}/>} onClose={onClose} title={slug}
+                          initialWidth={300}
+                          initialHeight={300}/>
+}
+
 export default DraggableWindow
 export {
   DraggableCharacterWindow,
@@ -217,5 +231,6 @@ export {
   DraggableMagicItemWindow,
   DraggableWeaponWindow,
   DraggableArmorWindow,
-  DraggableConditionWindow
+  DraggableConditionWindow,
+  DraggableAshOfWarWindow
 }
