@@ -2744,9 +2744,6 @@
         "name": "Ashes of War",
         "items": [
             {
-                "description": ""
-            },
-            {
                 "description": "You stomp on the ground, kicking up dust and bracing yourself. Until the end of your next turn, you have advantage on ability checks and saving throws made to avoid being knocked prone or shoved. As an action while you are braced, you can make a single attack roll at advantage with the weapon tied to this skill.",
                 "name": "Stamp (Upward Cut)",
                 "slug": "Stamp (Upward Cut)",
