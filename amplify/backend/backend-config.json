@@ -164,6 +164,120 @@
     }
   },
   "hosting": {},
+  "parameters": {
+    "AMPLIFY_function_createDatabaseUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createDatabaseUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createDatabaseUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createDatabaseUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createNewGame_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createNewGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_createNewGame_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createNewGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_mapTrigger_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "mapTrigger"
+        }
+      ]
+    },
+    "AMPLIFY_function_mapTrigger_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "mapTrigger"
+        }
+      ]
+    },
+    "AMPLIFY_function_nextSong_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "nextSong"
+        }
+      ]
+    },
+    "AMPLIFY_function_nextSong_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "nextSong"
+        }
+      ]
+    },
+    "AMPLIFY_function_parseMessage_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "parseMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_parseMessage_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "parseMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_playPlaylist_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playPlaylist"
+        }
+      ]
+    },
+    "AMPLIFY_function_playPlaylist_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playPlaylist"
+        }
+      ]
+    },
+    "AMPLIFY_function_playSong_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playSong"
+        }
+      ]
+    },
+    "AMPLIFY_function_playSong_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playSong"
+        }
+      ]
+    }
+  },
   "storage": {
     "s3spellboundstorage7811eef0": {
       "dependsOn": [],
