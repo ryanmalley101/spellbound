@@ -526,6 +526,7 @@ const BattleMap = () => {
     };
   };
 
+
   const subscribeToPingCreation = () => {
     const subscriptionHandler = (data) => {
       console.log(data, windowPositionRef.current, scale.current)
