@@ -32,9 +32,8 @@ function MessageWrapper({owner, content, createdAt, id}) {
       }
       key={id}
     >
-      <p className={styles.senderText}>{playerName}</p>
+      <strong className={styles.senderText}>{playerName}</strong>
       <div className={isMe ? styles.sentMessage : styles.receivedMessage}>
-        {dateStr}
         {content}
       </div>
     </div>;
@@ -63,9 +62,9 @@ export default function Message({message, isMe}) {
     case "DICEROLL": {
       const rolls = JSON.parse(message.rolls)
       const content = <div>
-        <p>Rolling {rolls.notation}</p>
+        <strong>Rolling {rolls.notation}</strong>
         <p>{rolls.output}</p>
-        <p>Total {rolls.total}</p>
+        <strong>Total {rolls.total}</strong>
       </div>
       return <MessageWrapper me={isMe} owner={message.owner} content={content} createdAt={message.createdAt}
                              id={message.id}/>
@@ -78,18 +77,36 @@ export default function Message({message, isMe}) {
       const damageString = parsedDamageResults.map((damage) => {
         return <p key={v4()}>{damage.rolls.output} {damage.damageType} damage</p>
       })
+      let attackRoll
+      if (message.advantage === "disadvantage") {
+        if (rolls[1].total < rolls[0].total) {
+          attackRoll = <p>Attack: {rolls[0].total} | <strong> {rolls[1].total}</strong></p>
+        } else {
+          attackRoll = <p>Attack: <strong>{rolls[0].total}</strong> | {rolls[1].total}</p>
+        }
+      } else if (message.advantage === "advantage") {
+        if (rolls[1].total > rolls[0].total) {
+          attackRoll = <p>Attack: {rolls[0].total} | <strong> {rolls[1].total}</strong></p>
+        } else {
+          attackRoll = <p>Attack: <strong>{rolls[0].total}</strong> | {rolls[1].total}</p>
+        }
+      } else {
+        attackRoll = <p>Attack: <strong> {rolls[0].total}</strong></p>
+      }
       const content =
         <div>
-          <p>{message.abilityName}.</p>
-          <p>Attack: {rolls[0].total} | {rolls[1].total}</p>
+          <strong>{message.abilityName}.</strong>
+          {attackRoll}
+          <p>-----------------------------------</p>
           {damageString}
+          <p>{message.messageText}</p>
         </div>
       return <MessageWrapper me={isMe} owner={message.owner} content={content} createdAt={message.createdAt}
                              id={message.id}/>
     }
     case "SAVEDC": {
       const content = <div>
-        <p>{mesage.abilityName}</p>
+        <strong>{mesage.abilityName}</strong>
         <p>DC {message.saveScore}</p>
         <p>{message.saveAbility}</p>
         <p>{message.messageText}</p>
@@ -99,7 +116,7 @@ export default function Message({message, isMe}) {
     }
     case "ABILITY": {
       const content = <div>
-        <p>{message.abilityName}</p>
+        <strong>{message.abilityName}</strong>
         <p>{message.messageText}</p>
       </div>
       return <MessageWrapper me={isMe} owner={message.owner} content={content} createdAt={message.createdAt}
@@ -107,10 +124,27 @@ export default function Message({message, isMe}) {
     }
     case "CHECK": {
       const rolls = JSON.parse(message.rolls).rolls
+      let checkRoll
+      if (message.advantage === "disadvantage") {
+        console.log(rolls)
+        if (rolls[1].total < rolls[0].total) {
+          checkRoll = <p>Total: {rolls[0].total} | <strong> {rolls[1].total}</strong></p>
+        } else {
+          checkRoll = <p>Total: <strong>{rolls[0].total}</strong> | {rolls[1].total}</p>
+        }
+      } else if (message.advantage === "advantage") {
+        if (rolls[1].total > rolls[0].total) {
+          checkRoll = <p>Total: {rolls[0].total} | <strong> {rolls[1].total}</strong></p>
+        } else {
+          checkRoll = <p>Total: <strong>{rolls[0].total}</strong> | {rolls[1].total}</p>
+        }
+      } else {
+        checkRoll = <p>Total: <strong> {rolls[0].total}</strong></p>
+      }
       const content =
         <div>
-          <p>{message.abilityName}.</p>
-          <p>{rolls[0].total} | {rolls[1].total}</p>
+          <strong>{message.abilityName}.</strong>
+          {checkRoll}
         </div>
       return <MessageWrapper me={isMe} owner={message.owner} content={content} createdAt={message.createdAt}
                              id={message.id}/>

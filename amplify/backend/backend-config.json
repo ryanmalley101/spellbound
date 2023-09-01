@@ -102,7 +102,52 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "nextSong": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "spellbound"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "parseMessage": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "spellbound"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "playPlaylist": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "spellbound"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "playSong": {
       "build": true,
       "dependsOn": [
         {
@@ -168,6 +213,22 @@
         }
       ]
     },
+    "AMPLIFY_function_nextSong_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "nextSong"
+        }
+      ]
+    },
+    "AMPLIFY_function_nextSong_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "nextSong"
+        }
+      ]
+    },
     "AMPLIFY_function_parseMessage_deploymentBucketName": {
       "usedBy": [
         {
@@ -181,6 +242,38 @@
         {
           "category": "function",
           "resourceName": "parseMessage"
+        }
+      ]
+    },
+    "AMPLIFY_function_playPlaylist_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playPlaylist"
+        }
+      ]
+    },
+    "AMPLIFY_function_playPlaylist_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playPlaylist"
+        }
+      ]
+    },
+    "AMPLIFY_function_playSong_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playSong"
+        }
+      ]
+    },
+    "AMPLIFY_function_playSong_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "playSong"
         }
       ]
     }

@@ -47,7 +47,6 @@ export const createGame = /* GraphQL */ `
           owner
           messageType
           advantage
-          disadvantage
           damageDice
           damageDiceResults
           rolls
@@ -267,6 +266,7 @@ export const createGame = /* GraphQL */ `
       }
       gameMode
       activeSong
+      songPlaying
       songQueue {
         game {
           id
@@ -275,6 +275,7 @@ export const createGame = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -327,7 +328,6 @@ export const updateGame = /* GraphQL */ `
           owner
           messageType
           advantage
-          disadvantage
           damageDice
           damageDiceResults
           rolls
@@ -547,6 +547,7 @@ export const updateGame = /* GraphQL */ `
       }
       gameMode
       activeSong
+      songPlaying
       songQueue {
         game {
           id
@@ -555,6 +556,7 @@ export const updateGame = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -607,7 +609,6 @@ export const deleteGame = /* GraphQL */ `
           owner
           messageType
           advantage
-          disadvantage
           damageDice
           damageDiceResults
           rolls
@@ -827,6 +828,7 @@ export const deleteGame = /* GraphQL */ `
       }
       gameMode
       activeSong
+      songPlaying
       songQueue {
         game {
           id
@@ -835,6 +837,7 @@ export const deleteGame = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -898,6 +901,7 @@ export const createSongQueue = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -964,6 +968,7 @@ export const updateSongQueue = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1030,6 +1035,7 @@ export const deleteSongQueue = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1085,6 +1091,7 @@ export const createUser = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -1130,6 +1137,7 @@ export const updateUser = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -1175,6 +1183,7 @@ export const deleteUser = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -1232,6 +1241,7 @@ export const createMessage = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1250,7 +1260,6 @@ export const createMessage = /* GraphQL */ `
       owner
       messageType
       advantage
-      disadvantage
       damageDice
       damageDiceResults
       rolls
@@ -1309,6 +1318,7 @@ export const updateMessage = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1327,7 +1337,6 @@ export const updateMessage = /* GraphQL */ `
       owner
       messageType
       advantage
-      disadvantage
       damageDice
       damageDiceResults
       rolls
@@ -1386,6 +1395,7 @@ export const deleteMessage = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1404,7 +1414,6 @@ export const deleteMessage = /* GraphQL */ `
       owner
       messageType
       advantage
-      disadvantage
       damageDice
       damageDiceResults
       rolls
@@ -1464,6 +1473,7 @@ export const createPlayer = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1546,6 +1556,7 @@ export const updatePlayer = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1628,6 +1639,7 @@ export const deletePlayer = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1731,6 +1743,7 @@ export const createMap = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1818,6 +1831,7 @@ export const updateMap = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1905,6 +1919,7 @@ export const deleteMap = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1949,6 +1964,7 @@ export const createToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -1971,6 +1987,7 @@ export const createToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -2212,6 +2229,7 @@ export const updateToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -2234,6 +2252,7 @@ export const updateToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -2475,6 +2494,7 @@ export const deleteToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -2497,6 +2517,7 @@ export const deleteToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -2758,6 +2779,7 @@ export const createPing = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -2826,6 +2848,7 @@ export const updatePing = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -2894,6 +2917,7 @@ export const deletePing = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -2964,6 +2988,7 @@ export const createCharacterSheet = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -3393,6 +3418,7 @@ export const updateCharacterSheet = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -3822,6 +3848,7 @@ export const deleteCharacterSheet = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs

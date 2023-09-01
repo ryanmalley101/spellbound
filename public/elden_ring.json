@@ -3616,6 +3616,13 @@
                 "desc": "While you rest at a Site of Grace, you can move charges to and from the Flask of Crimson Tears and the Flask of Cerulean tears as part of a long rest. You may also reinforce the flask with golden seeds and sacred tears. When you do so, the Flask of Cerulean Tears is reinforced simultaneously. Each sacred tear you offer to the flasks increases the healing you receive when you drink it by 2 SP.\n"
             },
             {
+                "name": "Flask of Wondrous Physick",
+                "slug": "Flask of Wondrous Physick",
+                "type": "Wondrous Item, unique",
+                "lore": "A relic of the physick chemists, priests of the Erdtree. Harnesses the powers of crystal tears, which only form after the passage of many moons. Various special effects are bestowed upon the drinker, dependent on the specific mixture of crystal tears. Rest at a site of grace to replenish.",
+                "desc": "This flask is initially empty, though it fills with invigorating fluids when crystal tears are placed within it. The flask can hold up to two crystal tears at a time, taking on the tears properties. The tears within the flask can be changed over the course of a long rest. Once the contents have been consumed as an action, the flask refills after you finish a long rest.\n"
+            },
+            {
                 "name": "Stonesword Key",
                 "slug": "Stonesword Key",
                 "type": "Wondrous Item, uncommon",
@@ -3626,7 +3633,7 @@
                 "slug": "Spirit Calling Bell",
                 "type": "Wondrous Item, rare",
                 "lore": "A bell capable of summoning various spirits from ashen remains. It usually requires SP to use.",
-                "desc": "When you summon a spirit from a Spirit Ash, the ash itself becomes inert and cannot be used to summon the same spirit again. A Spirit Ash can be rejuvenated with the use of a Spirit Tuner.\n"
+                "desc": "When you summon a spirit from a Spirit Ash, the ash becomes inert and cannot be used to summon the same spirit again. A Spirit Ash can be rejuvenated with the use of a Spirit Tuner.\n"
             },
             {
                 "name": "Spectral Steed Whistle",
@@ -3634,6 +3641,1068 @@
                 "type": "Wondrous Item, unique",
                 "lore": "A delicate goldwork ring. Can be used as a finger whistle. Sound the whistle to summon and ride Torrent, the spectral steed. (Dismounts steed when used while on horseback.) Upon his death, the spectral steed can be summoned again, but doing so drains the Flask of Crimson Tears",
                 "desc": "If Torrent is reduced to 0 hit points, he vanishes immediately. The whistle can be used to summon Torrent afterwards by expending a charge of the *flask of crimson tears*.\n"
+            },
+            {
+                "name": "Blue Cipher Ring",
+                "slug": "Blue Cipher Ring",
+                "type": "Wondrous Item, uncommon",
+                "lore": "Puts the wearer in ready state to answer should someone in another world call for rescue. You will be summoned to their world as a hunter.",
+                "desc": "While wearing this ring, you may be called to the aid of another tarnished wearing a White Cipher Ring should they be invaded.\n"
+            },
+            {
+                "name": "Tarnished's Trick-Mirror",
+                "slug": "Tarnished's Trick-Mirror",
+                "type": "Wondrous Item, uncommon",
+                "lore": "A small, clouded mirror that reflects a flesh-and-blood figure. Makes the bearer take on the appearance of a Host of Fingers. One of the ritual implements created by the Tarnished to deceive invaders.",
+                "desc": "Looking into this small mirror, you can use an action to cast the disguise self spell it at will.\n"
+            },
+            {
+                "name": "Memory Stone",
+                "slug": "Memory Stone",
+                "type": "Wondrous Item, unique",
+                "lore": "A black, lightly beguiling stone. Prized by the sorcerers who produce them. Said to be a fragment of the black moon that once hung above the Eternal City.",
+                "desc": "If you do not prepare spells, you learn an additional spell that meets the requirements for a spell you would learn at your current level. This spell is tied to the memory stone when you where it, you cannot replace it until you level up.\n"
+            },
+            {
+                "name": "White Cipher Ring",
+                "slug": "White Cipher Ring",
+                "type": "Wondrous Item, unique",
+                "lore": "Allows you to automatically request for a hunter from another world to come to your rescue when your world is invaded. One of the lost mystic codes said to have been bestowed by the Two Fingers.",
+                "desc": "While wearing this ring, if you are invaded by another tarnished, an ally wearing a Blue Cipher Ring may come to your aid.\n"
+            }
+        ]
+    },
+    {
+        "name": "Consumables",
+        "items": [
+            {
+                "name": "Rune Arc",
+                "slug": "Rune Arc",
+                "type": "Wondrous Item, rare",
+                "lore": "A shard of the shattered Elden Ring. Grants the blessing of an equipped Great Rune upon use. Even if no Great Rune is equipped, it will slightly increase maximum HP upon use.",
+                "desc": "As an action, you may crush this rune and activate the latent potential of a Great Rune that you have possess. The effects of the Great Rune last until you finish a long rest. Your Sanity score also increases by one when you use the rune.\n"
+            },
+            {
+                "name": "Rainbow Stone",
+                "slug": "Rainbow Stone",
+                "type": "Wondrous Item, common",
+                "lore": "Ruin Fragment that has undergone some simple processing. Craftable item. Stones such as these shine with the colors of the rainbow, making them useful markers when placed on the ground.",
+                "desc": "As an action you may place one of these glowing, colored stones on the ground to serve as a marker for others. The stones give off dim light in a five foot radius.\n"
+            },
+            {
+                "name": "Glowstone",
+                "slug": "Glowstone",
+                "type": "Wondrous Item, common",
+                "lore": "Polished Ruin Fragment that shines brighter than Rainbow Stone. Craftable item. Emits light from the location it is placed, illuminating surroundings. However, the effect is short-lived, and it lacks the diverse colors of rainbow stones.",
+                "desc": "As an action, you can drop one of these stones onto the ground. After it impacts, it begins to glow, shedding bright light in a 15-foot radius and dim light for an additional 15 feet.\n"
+            },
+            {
+                "name": "Scriptstone",
+                "slug": "Scriptstone",
+                "type": "Wondrous Item, common",
+                "lore": "Ruin Fragment with a cipher inscription. Craftable item. Uses FP to reveal more messages from other worlds.",
+                "desc": "You can crush this stone in your hand, revealing messages from other worlds to help you along your journey. The messages may tell of traps nearby, hidden rooms, or ambushes as the DM determines. In the absence of nearby points of interest, the messages may just be words of encouragement or remarks about the area in general.\n"
+            },
+            {
+                "name": "Magic Pot",
+                "slug": "Magic Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of magically resonant materials is sealed inside, and a short rope that aids throwing has been secured around the pot. Called a \"faux sorcery\" in Raya Lucaria.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target takes 4d6 force damage.\n"
+            },
+            {
+                "name": "Oil Pot",
+                "slug": "Oil Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of oil-infused materials is sealed inside.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target is soaked in oil. If the target takes any fire damage before the oil dries (after 1 minute), the target takes an additional 3d6 fire damage from the burning oil.\n"
+            },
+            {
+                "name": "Fire Pot",
+                "slug": "Fire Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of incendiary materials is sealed inside.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target takes 3d6 fire damage and each other creature within five feet of the target takes 1d6 fire damage.\n"
+            },
+            {
+                "name": "Volcano Pot",
+                "slug": "Volcano Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Powdered volcanic rock is sealed inside.",
+                "desc": "As an action, you can throw this flask up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target takes 4d6 fire damage and a cloud of superheated gas appears in a 5-foot radius sphere around the target. Each creature that moves into the area or ends their turn there takes 2d6 fire damage.\n"
+            },
+            {
+                "name": "Lightning Pot",
+                "slug": "Lightning Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of fulminating materials is sealed inside.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target takes 3d6 lightning damage and each other creature within five feet of the target takes 1d6 lightning damage.\n"
+            },
+            {
+                "name": "Holy Water Pot",
+                "slug": "Holy Water Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. Enchanted by incantations of the Golden Order. Consumes FP. Throw at enemy to inflict holy damage.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, an undead target takes 3d6 radiant damage and cannot use its reanimation ability if killed within a minute.\n"
+            },
+            {
+                "name": "Poison Pot",
+                "slug": "Poison Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of poisonous materials is sealed inside.",
+                "desc": "When you throw the pot, you must succeed on a DC 12 Constitution saving throw or be poisoned until the end of your next turn.\n"
+            },
+            {
+                "name": "Fetid Pot",
+                "slug": "Fetid Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of effluents is sealed inside. As the mixture ferments, toxins are produced alongside a putrid stench that seeps out once ripe. Throw at enemies to cause buildup of deadly poison.",
+                "desc": "When you throw the pot, you must succeed on a DC 14 Constitution saving throw or be poisoned until the end of your next turn.\n"
+            },
+            {
+                "name": "Swarm Pot",
+                "slug": "Swarm Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of effluents is sealed inside. Craftable item prepared using a cracked pot.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target suffers from Bleed 2. They must make a DC 14 Constitution saving throw at the end of the current turn. Each time you hit the target on the same turn increases the DC by 1. On a failure, the creature takes damage equal to 2 of their hit dice.\n"
+            },
+            {
+                "name": "Sleep Pot",
+                "slug": "Sleep Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. Enchanted by the incantations of St. Trina. Consumes FP. Throw enemies to cause buildup of sleep.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target is affected as if it was targeted by the sleep spell.\n"
+            },
+            {
+                "name": "Rancor Pot",
+                "slug": "Rancor Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. Enchanted by the ancient death hex. Consumes FP. Throw at enemies to spawn vengeful spirits that chase down foes.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. Four wraiths burst out of the broken pot, each pursuing a randomly determined enemy creature within 20 feet of the pot. Each wraith makes an attack roll against its target with +6 to hit, dealing 2d6 necrotic damage on a hit.\n"
+            },
+            {
+                "name": "Roped Magic Pot",
+                "slug": "Roped Magic Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of magically resonant materials is sealed inside. Called a \"\"faux sorcery\"\" in Raya Lucaria.",
+                "desc": "This pot functions as a *magic pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Oil Pot",
+                "slug": "Roped Oil Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of oil-infused materials is sealed inside, and a short rope that aids throwing has been secured around the pot.",
+                "desc": "This pot functions as an *oil pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Fire Pot",
+                "slug": "Roped Fire Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of incendiary materials is sealed inside, and a short rope that aids throwing has been secured around the pot.",
+                "desc": "This pot functions as a *fire pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Volcano Pot",
+                "slug": "Roped Volcano Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. Powdered volcanic rock is sealed inside, and a short rope that aids throwing has been secured around the pot.",
+                "desc": "This pot functions as a *volcano pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Lightning Pot",
+                "slug": "Roped Lightning Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of fulminating materials is sealed inside, and a short rope that aids throwing has been secured around the pot.",
+                "desc": "This pot functions as a *lightning pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Holy Water Pot",
+                "slug": "Roped Holy Water Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. Enchanted by incantations of the Golden Order, and a short rope that aids throwing has been secured around the pot. Consumes FP. Throw at rearward enemies to inflict holy damage.",
+                "desc": "This pot functions as a *holy water pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Poison Pot",
+                "slug": "Roped Poison Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot.",
+                "desc": "This pot functions as a *poison pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Fetid Pot",
+                "slug": "Roped Fetid Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of effluents is sealed inside, and a short rope that aids throwing has been secured around the pot. Throw at rearward enemies to cause buildup of deadly poison.",
+                "desc": "This pot functions as a *fetid pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Fly Pot",
+                "slug": "Roped Fly Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a cracked pot. A cocktail of effluents is sealed inside, and a short rope that aids throwing has been secured around the pot. Throw at rearward enemies to release a swarm of flies. Their fangs inflict countless painful lacerations on the victim while the grating sound of their wings assails their sanity.",
+                "desc": "This pot functions as a *fly pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Roped Freezing Pot",
+                "slug": "Roped Freezing Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable with a cracked pot. Frost has been sealed inside. A short rope that aids throwing is attached.",
+                "desc": "This pot functions as a *freezing pot*, except that its range is increased to 30 feet.\n"
+            },
+            {
+                "name": "Academy Magic Pot",
+                "slug": "Academy Magic Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Enchanted by Raya Lucaria sorceries. Consumes FP. Throw at enemies to inflict heavy magic damage.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target takes 6d6 force damage.\n"
+            },
+            {
+                "name": "Redmane Fire Pot",
+                "slug": "Redmane Fire Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Engraved with the crest of red-maned lion. Throw at enemies to inflict heavy fire damage.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the redmane fire pot as a simple weapon. On a hit, the target takes 5d6 fire damage and each other creature within five feet of the target takes 2d6 fire damage.\n"
+            },
+            {
+                "name": "Giantsflame Fire Pot",
+                "slug": "Giantsflame Fire Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Enchanted by incantations of the Giants' Flame. Consumes FP. Throw at enemies to inflict heavy fire damage.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the redmane fire pot as a simple weapon. On a hit, the target takes 6d6 + your Wisdom modifier fire damage and each other creature within five feet of the target takes 2d6 + your Wisdom modifier fire damage.\n"
+            },
+            {
+                "name": "Ancient Dragonbolt Pot",
+                "slug": "Ancient Dragonbolt Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Engraved with the crest of the ancient dragon. Throw at enemies to inflict heavy lightning damage.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target takes 6d6 lightning damage and each other creature within five feet of the target takes 2d6 lightning damage.\n"
+            },
+            {
+                "name": "Sacred Order Pot",
+                "slug": "Sacred Order Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Enchanted by incantations of the Golden Order. Consumes FP. Throw at enemies to inflict heavy holy damage.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, an undead target takes 6d6 radiant damage and cannot use its reanimation ability if killed within a minute.\n"
+            },
+            {
+                "name": "Freezing Pot",
+                "slug": "Freezing Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Engraved with the crest of the Carian Royals. Throw at enemies to cause buildup of frost.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target and each creature within 5 feet of it must succeed on a DC 15 Constitution saving throw or be frostbitten until the end of their next turn.\n"
+            },
+            {
+                "name": "Rot Pot",
+                "slug": "Rot Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Decorated with the crest of scarlet wings. Throw at enemies to cause buildup of scarlet rot.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target and each creature within 5 feet of it must succeed on a DC 15 Constitution saving throw or be afflicted by scarlet rot until the end of their next turn.\n"
+            },
+            {
+                "name": "Cursed-Blood Pot",
+                "slug": "Cursed-Blood Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Decorated with the crest of the Lord of Blood. Throw at enemies to douse them in accursed blood, causing summoned spirits to assail them with a rabid fervor.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. Six wraiths burst out of the broken pot, each pursuing a randomly determined enemy creature within 20 feet of the pot. Each wraith makes an attack roll against its target with +8 to hit, dealing 2d6 necrotic damage on a hit.\n"
+            },
+            {
+                "name": "Alluring Pot",
+                "slug": "Alluring Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Enchanted with assassin incantations. Consumes FP. Throw to create a pale shadow.",
+                "desc": "As an action, you can throw this pot at a point up to 20 feet, shattering it on impact. Each Humanoid within 30 feet of the pot must succeed on a DC 14 Wisdom saving throw or be compelled to move to the point that the pot landed. Creatures in combat automatically succeed on the save, except for demi-humans.\n"
+            },
+            {
+                "name": "Beastlure Pot",
+                "slug": "Beastlure Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Enchanted with assassin incantations. Consumes FP. Throw to create a red shadow.",
+                "desc": "As an action, you can throw this pot at a point up to 20 feet, shattering it on impact. Each Beast within 30 feet of the pot must succeed on a DC 14 Wisdom saving throw or be compelled to move to the point that the pot landed.\n"
+            },
+            {
+                "name": "Albinauric Pot",
+                "slug": "Albinauric Pot",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item prepared using a ritual pot. Enchanted by sorceries of the Cuckoos. Consumes FP. Throw at enemies to impede recovery actions using a flask of tears for a certain duration.",
+                "desc": "As an action, you can throw this pot up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the fire pot as a simple weapon. On a hit, the target cannot restore hit points using a *flask of crimson tears*, nor restore spell points using a *flask of cerulean tears*.\n"
+            },
+            {
+                "name": "Magic Grease",
+                "slug": "Magic Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of magically resonant materials. Craftable item.",
+                "desc": "Weapon greases can only be applied to common, uncommon, or rare weapons. Only one weapon grease can be applied to a weapon at a time.\n"
+            },
+            {
+                "name": "Fire Grease",
+                "slug": "Fire Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of incendiary materials. Craftable item.",
+                "desc": "Weapon greases can only be applied to common, uncommon, or rare weapons. Only one weapon grease can be applied to a weapon at a time.\n"
+            },
+            {
+                "name": "Lightning Grease",
+                "slug": "Lightning Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of fulminating materials. Craftable item.",
+                "desc": "Weapon greases can only be applied to common, uncommon, or rare weapons. Only one weapon grease can be applied to a weapon at a time.\n"
+            },
+            {
+                "name": "Holy Grease",
+                "slug": "Holy Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of holy resonant materials. Craftable item.",
+                "desc": "Weapon greases can only be applied to common, uncommon, or rare weapons. Only one weapon grease can be applied to a weapon at a time.\n"
+            },
+            {
+                "name": "Poison Grease",
+                "slug": "Poison Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of poison-green materials. Craftable item.",
+                "desc": "Weapon greases can only be applied to common, uncommon, or rare weapons. Only one weapon grease can be applied to a weapon at a time.\n"
+            },
+            {
+                "name": "Rot Grease",
+                "slug": "Rot Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of rotten materials. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Blood Grease",
+                "slug": "Blood Grease",
+                "type": "Wondrous Item, common",
+                "lore": " Solidified grease made from a mixture of blood-red materials. Craftable item.",
+                "desc": "Weapon greases can only be applied to common, uncommon, or rare weapons. Only one weapon grease can be applied to a weapon at a time.\n"
+            },
+            {
+                "name": "Freezing Grease",
+                "slug": "Freezing Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of frozen materials. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Soporific Grease",
+                "slug": "Soporific Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of light-purple materials. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Dragonwound Grease",
+                "slug": "Dragonwound Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of gravels stones. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Shield Grease",
+                "slug": "Shield Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of magically resonant materials. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Holy Water Grease",
+                "slug": "Holy Water Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Grease which holds the blessing of the Erdtree. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Magic Grease",
+                "slug": "Drawstring Magic Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of magically resonant materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Fire Grease",
+                "slug": "Drawstring Fire Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of incendiary materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Holy Grease",
+                "slug": "Drawstring Holy Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of holy resonant materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Lightning Grease",
+                "slug": "Drawstring Lightning Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of fulminating materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Poison Grease",
+                "slug": "Drawstring Poison Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of poison-green materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Rot Grease",
+                "slug": "Drawstring Rot Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of rotten materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Blood Grease",
+                "slug": "Drawstring Blood Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Blistered solid grease made from a mixture of blood-red materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Freezing Grease",
+                "slug": "Drawstring Freezing Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made using Rani's furtive arts. Craftable item. A short string is attached to this lump. Quickly coats weapon, inflicting frostbite.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Drawstring Soporific Grease",
+                "slug": "Drawstring Soporific Grease",
+                "type": "Wondrous Item, common",
+                "lore": "Solidified grease made from a mixture of light-purple materials. Craftable item. A short string is attached to this lump.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Poison Spraymist",
+                "slug": "Poison Spraymist",
+                "type": "Wondrous Item, common",
+                "lore": "Forbidden art of depraved perfumers. Craftable with a perfume bottle. Uses FP to release a poison mist from user's mouth, causing a buildup of poison.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Acid Spraymist",
+                "slug": "Acid Spraymist",
+                "type": "Wondrous Item, common",
+                "lore": "Forbidden art of depraved perfumers. Craftable with a perfume bottle. Uses FP to release an acidic mist from user's mouth, damaging armaments and temporarily lowering attack power.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Ironjar Aromatic",
+                "slug": "Ironjar Aromatic",
+                "type": "Wondrous Item, common",
+                "lore": "Forbidden art of depraved perfumers. Craftable with a perfume bottle. Uses FP to temporarily turn body to steel, boosting poise, resistances and damage negation at the expense of mobility and vulnerability to lightning.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Bloodboil Aromatic",
+                "slug": "Bloodboil Aromatic",
+                "type": "Wondrous Item, common",
+                "lore": "Forbidden art of depraved perfumers. Craftable with a perfume bottle. Uses FP to enter a temporary state of fervor, raising maximum attack power and stamina while also increasing damage received.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Spark Aromatic",
+                "slug": "Spark Aromatic",
+                "type": "Wondrous Item, common",
+                "lore": "Art of the perfumers who fought In the Shattering. Craftable with a perfume bottle. Uses FP to broadly scatter sparks in a wide arc straight ahead.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Uplifting Aromatic",
+                "slug": "Uplifting Aromatic",
+                "type": "Wondrous Item, common",
+                "lore": "Art of the perfumers who fought in the Shattering. Craftable with a perfume bottle. Uses FP to raise the attack power of the user and nearby allies while also reducing the damage from one incoming attack by half.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Neutralizing Boluses",
+                "slug": "Neutralizing Boluses",
+                "type": "Wondrous Item, common",
+                "lore": "Green boluses made from cave moss. Craftable item. Alleviates poison buildup and cures poison ailment.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Preserving Boluses",
+                "slug": "Preserving Boluses",
+                "type": "Wondrous Item, common",
+                "lore": "Scarlet boluses made of cave moss. Craftable item. Alleviates scarlet rot buildup and cures rot aliment.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Stanching Boluses",
+                "slug": "Stanching Boluses",
+                "type": "Wondrous Item, common",
+                "lore": "Red boluses made from cave moss. Craftable item. Alleviates impending blood loss.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Stimulating Boluses",
+                "slug": "Stimulating Boluses",
+                "type": "Wondrous Item, common",
+                "lore": "Ice-hued boluses made from cave moss. Craftable item. Alleviates buildup of frost and cures frostbite ailments.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Rejuvenating Boluses",
+                "slug": "Rejuvenating Boluses",
+                "type": "Wondrous Item, common",
+                "lore": "Light-purple boluses made from cave moss. Craftable item. Alleviates buildup of sleep.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Clarifying Boluses",
+                "slug": "Clarifying Boluses",
+                "type": "Wondrous Item, common",
+                "lore": "Yellow boluses made of cave moss. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Rejuvenating Boluses",
+                "slug": "Rejuvenating Boluses",
+                "type": "Wondrous Item, common",
+                "lore": "Black boluses made of cave moss. Craftable item. Alleviates death blight buildup.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Dappled Cured Meat",
+                "slug": "Dappled Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "Cured strip of meat, dried out after pickling in a dappled medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Immunizing Cured Meat",
+                "slug": "Immunizing Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "Cured strip of meat, dried out after pickling in a green medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Invigorating Cured Meat",
+                "slug": "Invigorating Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "Cured strip of meat, dried out after pickling in a red medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Clarifying Cured Meat",
+                "slug": "Clarifying Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "Cured strip of meat, dried out after pickling in a purple medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Deathsbane Jerky",
+                "slug": "Deathsbane Jerky",
+                "type": "Wondrous Item, common",
+                "lore": "A grey colored cured liver, dried out after pickling in a medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Dappled White Cured Meat",
+                "slug": "Dappled White Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "A white sliced meat, dried out after pickling in a dappled medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Immunizing White Cured Meat",
+                "slug": "Immunizing White Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "A white sliced meat, dried out after pickling in a green medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Invigorating White Cured Meat",
+                "slug": "Invigorating White Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "A white sliced meat, dried out after pickling in a red medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Clarifying White Cured Meat",
+                "slug": "Clarifying White Cured Meat",
+                "type": "Wondrous Item, common",
+                "lore": "A white sliced meat, dried out after pickling in a purple medicinal solution.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Deathsbane White Jerky",
+                "slug": "Deathsbane White Jerky",
+                "type": "Wondrous Item, common",
+                "lore": "A black-gold colored cured liver, dried out after pickling in a medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Fireproof Dried Liver",
+                "slug": "Fireproof Dried Liver",
+                "type": "Wondrous Item, common",
+                "lore": "Cured animal liver, dried out after pickling in a red medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Spellproof Dried Liver",
+                "slug": "Spellproof Dried Liver",
+                "type": "Wondrous Item, common",
+                "lore": "Cured animal liver, dried out after pickling in a blue medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Lightningproof Dried Liver",
+                "slug": "Lightningproof Dried Liver",
+                "type": "Wondrous Item, common",
+                "lore": "Cured animal liver, dried out after pickling in an yellow medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Holyproof Dried Liver",
+                "slug": "Holyproof Dried Liver",
+                "type": "Wondrous Item, common",
+                "lore": "Cured animal liver, dried out after pickling in a golden medicinal solution. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Boiled Prawn",
+                "slug": "Boiled Prawn",
+                "type": "Wondrous Item, common",
+                "lore": "Boiled prawn meat. A prime specimen of plump and moist meat. True connoisseurs know how to keep from over-salting.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Boiled Crab",
+                "slug": "Boiled Crab",
+                "type": "Wondrous Item, common",
+                "lore": "Boiled crab meat. A prime specimen of plump and moist meat. True connoisseurs know how to keep from over-salting.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Soft Cotton",
+                "slug": "Soft Cotton",
+                "type": "Wondrous Item, common",
+                "lore": "A soft but sturdy cotton formed from splitting open Rowa fruit in a particular manner. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Bone Dart",
+                "slug": "Bone Dart",
+                "type": "Wondrous Item, common",
+                "lore": "Animal bone sharpened into a knife for throwing. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Throwing Dagger",
+                "slug": "Throwing Dagger",
+                "type": "Wondrous Item, common",
+                "lore": "Short dagger for throwing. It has no handguard. The blade is polished, and its weight is expertly balanced.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Crystal Dart",
+                "slug": "Crystal Dart",
+                "type": "Wondrous Item, common",
+                "lore": "Throwing knife chiseled from impure crystal. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Fan Daggers",
+                "slug": "Fan Daggers",
+                "type": "Wondrous Item, common",
+                "lore": "A set of five throwing knives bundled together. A concealed weapon cherished by the raptor assassins.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Kukri",
+                "slug": "Kukri",
+                "type": "Wondrous Item, common",
+                "lore": "A large knife used for throwing. Its curved blade is sharp enough to slice flesh cleanly.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Poisonbone Dart",
+                "slug": "Poisonbone Dart",
+                "type": "Wondrous Item, common",
+                "lore": "Animal bone sharpened into a knife for throwing, with a poison-laced tip. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Explosive Stone",
+                "slug": "Explosive Stone",
+                "type": "Wondrous Item, common",
+                "lore": "A small stone with a smoldering core. Explodes when thrown at enemies, inflicting fire damage.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Explosive Stone Clump",
+                "slug": "Explosive Stone Clump",
+                "type": "Wondrous Item, common",
+                "lore": "A clump of small stones with smoldering cores.Explodes when thrown together at enemies, inflicting fire damage.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Glintstone Scrap",
+                "slug": "Glintstone Scrap",
+                "type": "Wondrous Item, common",
+                "lore": "Piece of glintstone tinged with unstable magic. Found in crystal tunnels. Break gem, using FP to produce a magic bolt.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Large Glintstone Scrap",
+                "slug": "Large Glintstone Scrap",
+                "type": "Wondrous Item, common",
+                "lore": "Large piece of glintstone tinged with unstable magic. Found in crystal tunnels. Break gem, using FP to produce a magic bolt.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Cuckoo Glintstone",
+                "slug": "Cuckoo Glintstone",
+                "type": "Wondrous Item, common",
+                "lore": "Lump of broken glintstone enwreathed with magic power. A \"faux sorcery\" used by the Knights of the Cuckoo. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Heavy Meteorite Fragment",
+                "slug": "Heavy Meteorite Fragment",
+                "type": "Wondrous Item, common",
+                "lore": "Shard of rock found in the wake of a meteorite strike. It is imbued with a particularly weighty magic. Consumes FP.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Gravity Stone Chunk",
+                "slug": "Gravity Stone Chunk",
+                "type": "Wondrous Item, common",
+                "lore": "Shard of rock found in the wake of a meteorite strike. It is imbued with a particularly weighty magic. Throw at enemies, using FP to cause a gravitational explosion.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Gravity Stone Fan",
+                "slug": "Gravity Stone Fan",
+                "type": "Wondrous Item, common",
+                "lore": "Shard of rock found in the wake of a meteorite strike. It is imbued with a particularly weighty magic. Uses FP to emit gravitational shockwave.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Poisoned Stone",
+                "slug": "Poisoned Stone",
+                "type": "Wondrous Item, common",
+                "lore": "A small stone with a poisoned core. Throw at enemies to cause buildup of poison.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Poisoned Stone Clump",
+                "slug": "Poisoned Stone Clump",
+                "type": "Wondrous Item, common",
+                "lore": "A clump of small stones with poison cores. Throw together at enemies to cause buildup of poison.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Raw Meat Dumpling",
+                "slug": "Raw Meat Dumpling",
+                "type": "Wondrous Item, common",
+                "lore": "A pungent raw meatball, made succulent by virtue of being on the verge of turning. Restores HP but also poisons the user.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Warming Stone",
+                "slug": "Warming Stone",
+                "type": "Wondrous Item, common",
+                "lore": "Ruin Fragment blessed with an incantation of the Two Fingers. Craftable item. Uses FP to generate warmth, continuously restoring the HP of those nearby.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Frenzyflame Stone",
+                "slug": "Frenzyflame Stone",
+                "type": "Wondrous Item, common",
+                "lore": "Ruin Fragment blessed with an incantation of the Three Fingers. Craftable item. Uses FP to generate warmth, continuously restoring the HP of those who host the frenzied flame.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Rowa Raisin",
+                "slug": "Rowa Raisin",
+                "type": "Wondrous Item, common",
+                "lore": "Preparation of dried Rowa fruit. Craftable item. Feed to Torrent, the spectral steed, while riding to restore his HP.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Sweet Raisin",
+                "slug": "Sweet Raisin",
+                "type": "Wondrous Item, common",
+                "lore": "Preparation of dried Golden Rowa fruit. Craftable item. Feed to Torrent, the spectral steed, while riding to greatly restore his HP.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Frozen Raisin",
+                "slug": "Frozen Raisin",
+                "type": "Wondrous Item, common",
+                "lore": "Preparation of dried Rimed Rowa. Craftable item. Feed to Torrent, the spectral steed, while riding to vastly restore his HP.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Gold-Pickled Fowl Foot",
+                "slug": "Gold-Pickled Fowl Foot",
+                "type": "Wondrous Item, common",
+                "lore": "Four-toed foot of a fowl, pickled in a golden medicinal solution. Craftable item. Boosts the amount of runes obtained from defeating enemies for a certain duration.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Silver-Pickled Fowl Foot",
+                "slug": "Silver-Pickled Fowl Foot",
+                "type": "Wondrous Item, common",
+                "lore": "Four-toed foot of a fowl, pickled in a silvery medicinal solution. Craftable item. Temporarily boosts item discovery.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Exalted Flesh",
+                "slug": "Exalted Flesh",
+                "type": "Wondrous Item, common",
+                "lore": "A lump of animal flesh pickled in a medicinal solution mixed with fiery spices. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Fetid Flesh",
+                "slug": "Fetid Flesh",
+                "type": "Wondrous Item, common",
+                "lore": "A lump of beast flesh pickled in egg wash. Craftable item.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Pickled Turtle Neck",
+                "slug": "Pickled Turtle Neck",
+                "type": "Wondrous Item, common",
+                "lore": "Turtle neck meat, pickled in a bitter medicinal solution. Craftable item. Temporarily boosts stamina recovery.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Baldachin's Blessing",
+                "slug": "Baldachin's Blessing",
+                "type": "Wondrous Item, common",
+                "lore": "Favor bestowed by a deathbed companion. Protection of a hidden temple in the guise of a bedchamber. Uses FP to temporarily boost poise.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Radiant Baldachin's Blessing",
+                "slug": "Radiant Baldachin's Blessing",
+                "type": "Wondrous Item, common",
+                "lore": "Protection of a hidden temple in the guise of a bedchamber. This blessing is of the utmost rarity. Uses FP to temporarily raise poise. The effect lasts longer than a mere favor.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Bewitching Branch",
+                "slug": "Bewitching Branch",
+                "type": "Wondrous Item, common",
+                "lore": "Tree branch blessed with an incantation of unalloyed gold. Craftable item. Pierce a foe, using FP to turn them into a temporary ally.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Starlight Shards",
+                "slug": "Starlight Shards",
+                "type": "Wondrous Item, common",
+                "lore": "An ephemeral sliver that gives off a pale blue glow. What remains of a passing flash of starlight. Use to gradually recover FP.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Soap",
+                "slug": "Soap",
+                "type": "Wondrous Item, common",
+                "lore": "A plant-based soap made from mushroom juice. Craftable item. Cleans off filth and other accumulations on the body while also slightly reducing poison buildup.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Grace Mimic",
+                "slug": "Grace Mimic",
+                "type": "Wondrous Item, common",
+                "lore": "A fetish indicating the guidance of grace. Craftable item. Similar to grace, this fetish draws rays guiding the way, only without any sense of order.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Miquella's Needle",
+                "slug": "Miquella's Needle",
+                "type": "Wondrous Item, common",
+                "lore": "One of the unalloyed gold needles that Miquella crafted to ward away the meddling of outer gods.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Pauper's Rune",
+                "slug": "Pauper's Rune",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of The Lands Between; the lingering residue of gold.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Lands Between Rune",
+                "slug": "Lands Between Rune",
+                "type": "Wondrous Item, common",
+                "lore": "Grace said to have once dwelled in the eyes of the inhabitants of the Lands Between; the lingering residue of gold.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [1]",
+                "slug": "Golden Rune [1]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering trace of gold. Use to gain 200 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [1]",
+                "slug": "Golden Rune [1]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering trace of gold. Use to gain 400 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [2]",
+                "slug": "Golden Rune [2]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering trace of gold. Use to gain 400 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [3]",
+                "slug": "Golden Rune [3]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering trace of gold. Use to gain 800 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [4]",
+                "slug": "Golden Rune [4]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering trace of gold. Use to gain 1200 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [5]",
+                "slug": "Golden Rune [5]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering trace of gold. Use to gain 1600 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [6]",
+                "slug": "Golden Rune [6]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 2000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [7]",
+                "slug": "Golden Rune [7]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 2500 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [8]",
+                "slug": "Golden Rune [8]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 3000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [9]",
+                "slug": "Golden Rune [9]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 3800 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [10]",
+                "slug": "Golden Rune [10]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 5000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [11]",
+                "slug": "Golden Rune [11]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 6250 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [12]",
+                "slug": "Golden Rune [12]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 7500 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Golden Rune [13]",
+                "slug": "Golden Rune [13]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 10000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Numen's Rune [1]",
+                "slug": "Numen's Rune [1]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 12500 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Hero's Rune [1]",
+                "slug": "Hero's Rune [1]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 15000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Hero's Rune [2]",
+                "slug": "Hero's Rune [2]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 20000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Hero's Rune [3]",
+                "slug": "Hero's Rune [3]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 25000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Hero's Rune [4]",
+                "slug": "Hero's Rune [4]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 30000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Hero's Rune [4]",
+                "slug": "Hero's Rune [4]",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; the lingering residue of gold. Use to gain 35000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Lord's Rune",
+                "slug": "Lord's Rune",
+                "type": "Wondrous Item, common",
+                "lore": "Grace that dwells within the inhabitants of the Lands Between; true vestiges of gold. Use to gain 50000 runes.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Lord's Rune",
+                "slug": "Lord's Rune",
+                "type": "Wondrous Item, common",
+                "lore": "Glass shard covered in dirt. Because it sparkles in the light, it might be mistaken for an object of value when seen from afar.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Furlcalling Finger Remedy",
+                "slug": "Furlcalling Finger Remedy",
+                "type": "Wondrous Item, common",
+                "lore": "Craftable item. Reveals cooperative and competitive multiplayer signs. Co-op summoning signs will be shown in gold, while hostile summoning signs will be shown in red.",
+                "desc": "___\n"
+            },
+            {
+                "name": "Festering Bloody Finger",
+                "slug": "Festering Bloody Finger",
+                "type": "Wondrous Item, common",
+                "lore": "Consumed upon use. Attempts an invasion of another player's world. If successful, you will arrive as an invader (Bloody Finger) with the objective of defeating the Host of Fingers of that world.",
+                "desc": "___\n"
             }
         ]
     }

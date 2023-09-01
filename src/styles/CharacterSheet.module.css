@@ -23,6 +23,16 @@ hr.pageborder {
     font-weight: bold;
 }
 
+.buttonPressed {
+    text-align: center;
+    border: 1px solid black;
+    font-size: 10px;
+    border-radius: 10px 10px 10px 10px;
+    padding: 4px 6px;
+    font-weight: bold;
+    background-color: #666666;
+}
+
 #buttonload {
     text-align: center;
     border: 1px solid black;

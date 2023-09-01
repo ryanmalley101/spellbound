@@ -98,7 +98,7 @@ const BattleMap = () => {
 
   const {
     zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
-    mapLayer, setMapLayer, gameID, activeMap, setActiveMap, playingSong, setPlayingSong
+    mapLayer, setMapLayer, gameID, activeMap, setActiveMap, playingSong, setPlayingSong, setIsSongPlaying
   } = useBattlemapStore();
 
   useEffect(() => {
@@ -486,11 +486,13 @@ const BattleMap = () => {
 
       const updatedActiveMap = data.value.data.onUpdateGame.activeMap
       const updatedPlayingSong = data.value.data.onUpdateGame.activeSong
+      const isPlayingSong = data.value.data.onUpdateGame.songPlaying
 
-      setActiveMap(updatedActiveMap);
+      setActiveMap(updatedActiveMap)
+      setIsSongPlaying(isPlayingSong)
 
-      if (playingSong !== updatedPlayingSong) {
-        const newSong = await Storage.get('music/' + updatedPlayingSong + '.MP3', {
+      if (playingSong !== updatedPlayingSong && data.value.data.onUpdateGame.playingSong) {
+        const newSong = await Storage.get('music/' + updatedPlayingSong, {
           level: 'protected',
           identidyId: '253A4971ef34-3da5-4205-87cc-ca1cbcd4a019'
         })
@@ -628,7 +630,7 @@ const BattleMap = () => {
           width: '100%',
         }} disabled={draggingDisabled} minScale={0.1}>
           <div
-            style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE}}
+            style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE, margin: "50px"}}
           >
 
             {mapTokens.map((token, index) => (

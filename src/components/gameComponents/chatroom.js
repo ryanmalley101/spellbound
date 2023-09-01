@@ -28,7 +28,6 @@ const ChatRoom = ({user}) => {
                 createdAt
                 owner
                 advantage
-                disadvantage
                 damageDice
                 damageDiceResults
                 rolls
@@ -40,7 +39,6 @@ const ChatRoom = ({user}) => {
                 placeholder
                 createdAt
               }
-              # Include any other fields you need from the messageList object
             }
           }
         }
@@ -88,11 +86,6 @@ const ChatRoom = ({user}) => {
       }
     };
   }, [])
-
-
-  // useEffect(() => {
-  //   setMessages(gameData.messageList.items);
-  // }, [gameData])
 
   const handleSubmit = async (event) => {
     // Prevent the page from reloading

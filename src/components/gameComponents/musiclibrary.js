@@ -6,6 +6,7 @@ import {Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText} fr
 import {BsFillCaretDownFill, BsFillCaretRightFill, BsFillPlayFill} from "react-icons/bs";
 import useBattlemapStore from "@/stores/battlemapStore";
 import * as mutations from "@/graphql/mutations";
+import {AiFillPlayCircle} from "react-icons/ai";
 
 function SongButton({song, playSong}) {
   if (song) {
@@ -28,28 +29,32 @@ const PlaylistMenu = ({playlist, playSong, playPlaylist}) => {
   };
 
   return (
-    <div>
-      <ListItemButton onClick={handleClick} className="menuItem">
-        <ListItemIcon>
-          {open ? <BsFillCaretDownFill/> : <BsFillCaretRightFill/>}
-        </ListItemIcon>
-        <ListItemText primary={playlist.name}/>
+    <div style={{"display": "flex"}}>
+      <div style={{"display": "block"}}>
+        <ListItemButton onClick={handleClick} className="menuItem">
+          <ListItemIcon>
+            {open ? <BsFillCaretDownFill/> : <BsFillCaretRightFill/>}
+          </ListItemIcon>
+          <ListItemText primary={playlist.name}/>
+
+        </ListItemButton>
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {playlist.songs.map((song) => (
+              <SongButton
+                key={song}
+                song={song}
+                playSong={playSong}
+              />
+            ))}
+          </List>
+        </Collapse>
+      </div>
+      <ListItemButton sx={{flexGrow: 0, display: "block", minWidth: "auto"}} className={styles.addButton}
+                      onClick={() => playPlaylist(playlist.name, playlist.songs)} edge="end"
+                      style={{position: "absolute", right: "0"}}>
+        <AiFillPlayCircle size={30}/>
       </ListItemButton>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {playlist.songs.map((song) => (
-            <SongButton
-              key={song}
-              song={song}
-              playSong={playSong}
-            />
-          ))}
-          <ListItemButton sx={{flexGrow: 0, display: "block", minWidth: "auto"}} className={styles.addButton}
-                          onClick={() => playPlaylist(playlist.name, playlist.songs)} edge="end">
-            <BsFillPlayFill size={30}/>
-          </ListItemButton>
-        </List>
-      </Collapse>
     </div>
   )
 }

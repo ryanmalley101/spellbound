@@ -1,16 +1,11 @@
 import styles from "@/styles/CharacterSheet.module.css"
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {getExampleCharacter} from "@/5eReference/characterSheetGenerators";
-import {API, Auth, graphqlOperation} from "aws-amplify";
+import {API, graphqlOperation} from "aws-amplify";
 import {onUpdateCharacterSheet, onUpdateToken} from "@/graphql/subscriptions";
 import * as mutations from "@/graphql/mutations";
-import {updateCharacterSheet} from "@/graphql/mutations";
 import {getCharacterSheet, getGame} from "@/graphql/queries";
-import {DiceRoller} from "@dice-roller/rpg-dice-roller";
 import useBattlemapStore from "@/stores/battlemapStore";
-import * as PropTypes from "prop-types";
-import {BsGear} from "react-icons/bs";
 
 const scoreToMod = (score) => {
   return Math.floor((Number(score) - 10) / 2)
@@ -211,8 +206,8 @@ function AttackList(props) {
         <div>
           <div className={styles.labelRow}>
             <div className={styles.itemLabel} style={{width: "20%", paddingLeft: "10px"}}> Name</div>
-            <div style={{width: "15%", paddingLeft: "10px"}}> Attack Bonus</div>
-            <div style={{width: "20%", paddingLeft: "10px"}}> Damage</div>
+            <div style={{width: "7%", paddingLeft: "10px"}}> To Hit</div>
+            <div style={{width: "28%", paddingLeft: "10px"}}> Damage</div>
             <div style={{width: "45%", paddingLeft: "10px"}}> Notes</div>
             <div style={{width: "100px"}}></div>
           </div>
@@ -267,10 +262,10 @@ const AttackRow = ({
     <div className={styles.attackRow}>
       {/* Always visible labels */}
       <div className={styles.labelRow}>
-        <label style={{width: "130px"}}
+        <label style={{width: "120px"}}
                className={styles.labelButton} onClick={() => rollAttack(attack)}>{attack.name}</label>
-        <label className={styles.itemLabel} style={{paddingLeft: "20px", width: "120px"}}>{attack.attack_bonus}</label>
-        <div style={{width: "515px"}}>
+        <label className={styles.itemLabel} style={{paddingLeft: "20px", width: "57px"}}>{attack.attack_bonus}</label>
+        <div style={{width: "172px", overflowX: "hidden"}}>
           {attack.damage.map((damage, index) => {
             if (index < 5) {
               return <label key={index} className={styles.itemLabel}
@@ -278,6 +273,7 @@ const AttackRow = ({
             }
           })}
         </div>
+        <label className={styles.itemLabel} style={{paddingLeft: "20px", width: "300px"}}>{attack.notes}</label>
         <button type="button" onClick={toggleForm} style={{float: "right"}}>{isFormOpen ? "Done" : "Edit"}</button>
       </div>
 
@@ -1158,8 +1154,33 @@ function CombatValues(props) {
 }
 
 function Attributes(props) {
+
+  const changeAdvantage = (value) => {
+    props.setAdvantage(value)
+  }
+
   return <section>
     <section className={styles.flavor}>
+      <div
+        style={{display: "inline-block", flexDirection: "column-reverse", width: "calc(100% - 10px)", padding: "5px"}}>
+
+        <button className={props.advantage === "advantage" ? styles.buttonPressed : styles.button}
+                name="button-advantage"
+                type="button"
+                onClick={() => changeAdvantage("advantage")}
+                style={{width: "33%"}}>Advantage
+        </button>
+        <button className={props.advantage === "normal" ? styles.buttonPressed : styles.button}
+                name="button-normalroll" type="button"
+                onClick={() => changeAdvantage("normal")}
+                style={{width: "33%"}}>Normal
+        </button>
+        <button className={props.advantage === "disadvantage" ? styles.buttonPressed : styles.button}
+                name="button-disadvantage" type="button"
+                onClick={() => changeAdvantage("disadvantage")}
+                style={{width: "33%"}}>Disadvantage
+        </button>
+      </div>
       <div className={styles.personality}>
         <label form="defenses">Defenses &amp; Active Conditions</label><textarea className={styles.textarea}
                                                                                  name="defenses"
@@ -1350,6 +1371,7 @@ const CharacterSheet = ({characterSheetInput}) => {
 
   const [character, setCharacter] = useState(null);
   const [characterPreUpdate, setCharacterPreUpdate] = useState({});
+  const [advantage, setAdvantage] = useState("normal");
 
   const {register, setValue, handleSubmit} = useForm();
 
@@ -1720,7 +1742,8 @@ const CharacterSheet = ({characterSheetInput}) => {
       abilityName: name,
       d20mod: d20mod,
       owner: playerID,
-      gameMessageListId: gameID
+      gameMessageListId: gameID,
+      advantage: advantage
     };
     // Call the createNewGame mutation
     const response = await API.graphql({
@@ -1752,7 +1775,8 @@ const CharacterSheet = ({characterSheetInput}) => {
       damageDice: convertedDamage,
       messageText: attack.notes,
       owner: playerID,
-      gameMessageListId: gameID
+      gameMessageListId: gameID,
+      advantage: advantage,
     };
     // Call the createNewGame mutation
     const response = await API.graphql({
@@ -1780,7 +1804,8 @@ const CharacterSheet = ({characterSheetInput}) => {
                      handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}/>
           <CombatValues character={character} onChange={handleInputChange} onBlur={handleInputBlur}
                         onChange1={handleCheckboxClick}/>
-          <Attributes character={character} onChange={handleInputChange} onBlur={handleInputBlur}/>
+          <Attributes character={character} onChange={handleInputChange} onBlur={handleInputBlur}
+                      setAdvantage={setAdvantage} advantage={advantage}/>
         </main>
         <AttackList character={character} callbackfn={(attack, index) => (
           <AttackRow

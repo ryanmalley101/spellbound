@@ -28,7 +28,6 @@ export const getGame = /* GraphQL */ `
           owner
           messageType
           advantage
-          disadvantage
           damageDice
           damageDiceResults
           rolls
@@ -248,6 +247,7 @@ export const getGame = /* GraphQL */ `
       }
       gameMode
       activeSong
+      songPlaying
       songQueue {
         game {
           id
@@ -256,6 +256,7 @@ export const getGame = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -320,6 +321,7 @@ export const listGames = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -378,6 +380,7 @@ export const getSongQueue = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -418,6 +421,7 @@ export const listSongQueues = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -464,6 +468,7 @@ export const getUser = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -546,6 +551,7 @@ export const getMessage = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -564,7 +570,6 @@ export const getMessage = /* GraphQL */ `
       owner
       messageType
       advantage
-      disadvantage
       damageDice
       damageDiceResults
       rolls
@@ -607,6 +612,7 @@ export const listMessages = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -616,7 +622,6 @@ export const listMessages = /* GraphQL */ `
         owner
         messageType
         advantage
-        disadvantage
         damageDice
         damageDiceResults
         rolls
@@ -676,6 +681,7 @@ export const getPlayer = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -732,6 +738,7 @@ export const listPlayers = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -818,6 +825,7 @@ export const getMap = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -863,6 +871,7 @@ export const listMaps = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -898,6 +907,7 @@ export const getToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -920,6 +930,7 @@ export const getToken = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -1368,6 +1379,7 @@ export const getPing = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1410,6 +1422,7 @@ export const listPings = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId
@@ -1471,6 +1484,7 @@ export const getCharacterSheet = /* GraphQL */ `
         }
         gameMode
         activeSong
+        songPlaying
         songQueue {
           playlistName
           songs
@@ -1874,6 +1888,7 @@ export const listCharacterSheets = /* GraphQL */ `
           activeMap
           gameMode
           activeSong
+          songPlaying
           createdAt
           updatedAt
           userGamesId

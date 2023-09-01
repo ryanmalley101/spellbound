@@ -14,6 +14,7 @@ type Game
     pings: [Ping]! @hasMany
     gameMode: String
     activeSong: String
+    songPlaying: Boolean
     songQueue: SongQueue @hasOne
 }
 
@@ -67,8 +68,7 @@ type Message
     game: Game @belongsTo
     owner: ID!
     messageType: String
-    advantage: Boolean
-    disadvantage: Boolean
+    advantage: String
     damageDice: [AWSJSON]
     damageDiceResults: [AWSJSON]
     rolls: [AWSJSON]
@@ -85,8 +85,7 @@ input MessageInput {
     gameMessageListId: ID
     owner: ID
     messageType: String
-    advantage: Boolean
-    disadvantage: Boolean
+    advantage: String
     damageDice: [AWSJSON]
     damageDiceResults: [AWSJSON]
     rolls: [AWSJSON]
@@ -111,8 +110,7 @@ input ParseMessageInput {
     d20mod: Int
     saveAbility: String
     saveScore: Int
-    advantage: Boolean
-    disadvantage: Boolean
+    advantage: String
     damageDice: [DamageDieInput]
 }
 

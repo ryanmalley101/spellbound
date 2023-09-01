@@ -24,10 +24,8 @@ const query = `
                 createdAt
                 updatedAt
                 messageType
-                messageText
                 owner
                 advantage
-                disadvantage
                 damageDice
                 damageDiceResults
                 rolls
@@ -58,25 +56,22 @@ export const handler = async (event) => {
     saveAbility,
     saveScore,
     advantage,
-    disadvantage,
     damageDice,
     gameMessageListId,
   } = event.arguments.input
 
-  const messageInput = {owner, messageType, gameMessageListId}
+  const messageInput = {owner, messageType, gameMessageListId, advantage, messageText}
 
   if (messageType === "ATTACK") {
     messageInput.abilityName = abilityName
-    messageInput.owner = owner
-    messageInput.advantage = advantage
-    messageInput.disadvantage = disadvantage
     messageInput.damageDice = JSON.stringify(damageDice)
     const damageDiceResults = []
     damageDice.map((damage) => {
       const dieResult = {}
       dieResult.damageType = damage.damageType
       dieResult.diceString = damage.diceString
-      dieResult.rolls = roller.roll(`${damage.diceString}`).export(exportFormats.OBJECT)
+      const cleanedDiceString = damage.diceString.replace('D', 'd')
+      dieResult.rolls = roller.roll(`${cleanedDiceString}`).export(exportFormats.OBJECT)
       damageDiceResults.push(dieResult)
     })
     messageInput.damageDiceResults = JSON.stringify(damageDiceResults)

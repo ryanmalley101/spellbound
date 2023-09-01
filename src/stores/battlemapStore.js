@@ -97,6 +97,10 @@ const useBattlemapStore = create((set) => ({
   gamePlayers: [],
   setGamePlayers: (players) =>
     set((state) => ({gamePlayers: players})),
+
+  isSongPlaying: false,
+  setIsSongPlaying: (playing) =>
+    set((state) => ({isSongPlaying: playing})),
 }))
 
 useBattlemapStore.subscribe((state) => console.log('New state:', state));

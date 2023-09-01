@@ -98,7 +98,7 @@ function GameID() {
       setGameMode(gamesReq.data.getGame.gameMode)
 
       if (playingSong !== gamesReq.data.getGame.activeSong) {
-        const newSong = await Storage.get('music/' + gamesReq.data.getGame.activeSong + '.MP3', {
+        const newSong = await Storage.get('music/' + gamesReq.data.getGame.activeSong, {
           level: 'protected',
           identidyId: '253A4971ef34-3da5-4205-87cc-ca1cbcd4a019'
         })
