@@ -63,7 +63,6 @@ const MusicLibrary = () => {
   const {gameID} = useBattlemapStore();
   const [shuffle, setShuffle] = useState(false)
 
-
   const playSong = async (key) => {
     const newSong = {
       id: gameID,
