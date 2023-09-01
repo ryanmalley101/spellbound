@@ -2744,274 +2744,337 @@
         "name": "Ashes of War",
         "items": [
             {
-                "name": "",
-                "sp": "",
-                "activation_time": "",
-                "affinity": "",
-                "duration": "",
-                "applicable_arms": "",
-                "lore": "",
                 "description": ""
             },
             {
+                "description": "You stomp on the ground, kicking up dust and bracing yourself. Until the end of your next turn, you have advantage on ability checks and saving throws made to avoid being knocked prone or shoved. As an action while you are braced, you can make a single attack roll at advantage with the weapon tied to this skill.",
                 "name": "Stamp (Upward Cut)",
-                "sp": "2",
+                "slug": "Stamp (Upward Cut)",
+                "sp": 2,
                 "activation_time": "1 bonus action",
                 "affinity": "Heavy",
-                "duration": " 1 round",
+                "duration": "1 round",
                 "applicable_arms": "Greatswords, Colossal Swords, Curved Greatswords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Colossal Weapons",
-                "lore": "Brace armament and step into a low stance that prevents recoil from most enemy attacks. Follow up with a strong attack for an upward strike.",
-                "description": "You stomp on the ground, kicking up dust and bracing yourself. For the duration, you have advantage on ability checks and saving throws made to avoid being knocked prone or shoved. As an action while you are braced, you can make an attack roll at disadvantage at up to two creatures in range."
+                "lore": "Brace armament and step into a low stance that prevents recoil from most enemy attacks. Follow up with a strong attack for an upward strike."
             },
             {
+                "description": "You stomp on the ground, kicking up dust and bracing yourself. For the duration, you have advantage on ability checks and saving throws made to avoid being knocked prone or shoved. As an action while you are braced, you can make an attack roll at disadvantage at up to two creatures in range.",
+                "name": "Stamp (Upward Cut)",
+                "slug": "Stamp (Upward Cut)",
+                "sp": 2,
+                "activation_time": "1 bonus action",
+                "affinity": "Heavy",
+                "duration": "1 round",
+                "applicable_arms": "Greatswords, Colossal Swords, Curved Greatswords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Colossal Weapons",
+                "lore": "Brace armament and step into a low stance that prevents recoil from most enemy attacks. Follow up with a strong attack for an upward strike."
+            },
+            {
+                "description": "You move up to 5 feet in any direction without provoking attacks of opportunity.",
                 "name": "Quickstep",
-                "sp": "1",
+                "slug": "Quickstep",
+                "sp": 1,
                 "activation_time": "1 bonus action",
                 "affinity": "Keen",
-                "duration": " Instantaneous",
+                "duration": "Instantaneous",
                 "applicable_arms": "All melee armaments",
-                "lore": "Skill prized by the crafty and fleet of foot. Perform a quickstep maneuver that allows for circling around lock-on targets.",
-                "description": "You move up to 5 feet in any direction without provoking attacks of opportunity."
+                "lore": "Skill prized by the crafty and fleet of foot. Perform a quickstep maneuver that allows for circling around lock-on targets."
             },
             {
+                "description": "You bellow a bestial roar, bolstering yourself. For a number of rounds equal to your proficiency bonus, your attack and damage rolls with Heavy weapons are increased by 1.",
                 "name": "Barbaric Roar",
-                "sp": "2",
+                "slug": "Barbaric Roar",
+                "sp": 2,
                 "activation_time": "1 bonus action",
                 "affinity": "Heavy",
                 "duration": "Prof. Mod Rounds",
                 "applicable_arms": "Usable on melee armaments (daggers, thrusting swords, and whips excepted)",
-                "lore": "Let loose a bestial roar to rally the spirit and increase attack power. While active, strong attacks change to savage combo attacks.",
-                "description": "You bellow a bestial roar, bolstering yourself. For a number of rounds equal to your proficiency bonus, your attack and damage rolls with Heavy weapons are increased by 1."
+                "lore": "Let loose a bestial roar to rally the spirit and increase attack power. While active, strong attacks change to savage combo attacks."
             },
             {
+                "description": "You enter a prepared stance until the beginning of your next turn. While prepared, you may make an attack of opportunity against any creature who enters your reach.",
                 "name": "Square Off",
-                "sp": "1",
+                "slug": "Square Off",
+                "sp": 1,
                 "activation_time": "1 bonus action",
                 "affinity": "Quality",
                 "duration": "Straight Swords",
                 "applicable_arms": "Usable on melee armaments (daggers, thrusting swords, and whips excepted)",
-                "lore": "This skill starts with the sword held level. Follow up with a normal attack to slash upwards through enemy's guard, or a strong attack to perform a running thrust.\"",
-                "description": "You enter a prepared stance until the beginning of your next turn. While prepared, you may make an attack of opportunity against any creature who enters your reach."
+                "lore": "This skill starts with the sword held level. Follow up with a normal attack to slash upwards through enemy's guard, or a strong attack to perform a running thrust.\""
             },
             {
+                "description": "While wielding this weapon, you have advantage on shove attacks made to push an enemy 5 feet away from you.",
                 "name": "Kick",
-                "sp": "0",
+                "slug": "Kick",
+                "sp": 0,
                 "activation_time": "passive",
                 "affinity": "Heavy",
                 "duration": "Instantaneous",
                 "applicable_arms": "All melee armaments",
-                "lore": "Push an enemy back with a high kick. Effective against enemies who are guarding, and can break a foe's stance. Sometimes a simple tool is the most effective.",
-                "description": "While wielding this weapon, you have advantage on shove attacks made to push an enemy 5 feet away from you."
+                "lore": "Push an enemy back with a high kick. Effective against enemies who are guarding, and can break a foe's stance. Sometimes a simple tool is the most effective."
             },
             {
+                "description": "When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls during this turn, but attack rolls against you have advantage until your next turn.",
                 "name": "Wild Strikes",
-                "sp": "2",
+                "slug": "Wild Strikes",
+                "sp": 2,
                 "activation_time": "1 free action",
                 "affinity": "Heavy",
                 "duration": "1 Turn",
                 "applicable_arms": "Greatswords, Curved Swords, Curved Greatswords, Hammers, Great Hammers, Axes, Greataxes, Flails",
-                "lore": "Swing armament with wild abandon. Hold to continue swinging. Can be followed up with a normal or strong attack.",
-                "description": "When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls during this turn, but attack rolls against you have advantage until your next turn."
+                "lore": "Swing armament with wild abandon. Hold to continue swinging. Can be followed up with a normal or strong attack."
             },
             {
+                "description": "You keenly thrust your blade between an opponent's guard. Until the beginning of your next turn, attacks you make with this weapon ignore the AC bonus of shields the target wields.",
                 "name": "Impaling Thrust",
-                "sp": "2",
+                "slug": "Impaling Thrust",
+                "sp": 2,
                 "activation_time": "1 bonus action",
                 "affinity": "Keen",
                 "duration": "1 Turn",
                 "applicable_arms": "Daggers, Straight Swords, Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Spears, Great Spears, Halberds, Claws",
-                "lore": "Skill that lets piercing armaments overcome enemy shields. Build power, then lunge forward for a strong thrust that pierces an enemy's guard.",
-                "description": "You keenly thrust your blade between an opponent's guard. Until the beginning of your next turn, attacks you make with this weapon ignore the AC bonus of shields the target wields."
+                "lore": "Skill that lets piercing armaments overcome enemy shields. Build power, then lunge forward for a strong thrust that pierces an enemy's guard."
             },
             {
+                "description": "You spin your blade in a circle around you, attacking a number of separate targets equal to your proficiency modifier. These attacks are made at disadvantage.",
                 "name": "Spinning Slash",
-                "sp": "4",
+                "slug": "Spinning Slash",
+                "sp": 4,
                 "activation_time": "1 action",
                 "affinity": "Keen",
                 "duration": "Instantaneous",
                 "applicable_arms": "Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Axes, Greataxes, Spears, Great Spears, Halberds, Reapers",
-                "lore": "Skill favored by dexterous warriors. Slash foes as your body spins. Additional input allows for a follow-up attack.",
-                "description": "You spin your blade in a circle around you, attacking a number of separate targets equal to your proficiency modifier. These attacks are made at disadvantage."
+                "lore": "Skill favored by dexterous warriors. Slash foes as your body spins. Additional input allows for a follow-up attack."
             },
             {
+                "description": "You sheathe your blade and prepare yourself for whatever comes your way. Until you make an attack roll, you have advantage on attacks made as a reaction.",
                 "name": "Unsheathe",
-                "sp": "2",
+                "slug": "Unsheathe",
+                "sp": 2,
                 "activation_time": "1 bonus action",
                 "affinity": "Keen",
                 "duration": "Special",
                 "applicable_arms": "Katanas",
-                "lore": "Skill of swordsmen from the Land of Reeds. Sheathe blade, holding it at the hip in a composed stance. Follow up with a normal or strong attack to perform a swift slash attack.",
-                "description": "You sheathe your blade and prepare yourself for whatever comes your way. Until you make an attack roll, you have advantage on attacks made as a reaction."
+                "lore": "Skill of swordsmen from the Land of Reeds. Sheathe blade, holding it at the hip in a composed stance. Follow up with a normal or strong attack to perform a swift slash attack."
             },
             {
+                "description": "You begin spinning the spiked ball on the end of your flail. Until the end your next turn, when a creature within 5 feet of you makes a melee attack against you, you may make an attack of opportunity against that creature as a reaction.",
                 "name": "Spinning Chain",
-                "sp": "3",
+                "slug": "Spinning Chain",
+                "sp": 3,
                 "activation_time": "1 bonus action",
                 "affinity": "Keen",
                 "duration": "1 round",
                 "applicable_arms": "Flails",
-                "lore": "Spins the striking part of a flail at high speed to attack. Follow up with a normal or strong attack to link the momentum of this skill into a successful attack.",
-                "description": "You begin spinning the spiked ball on the end of your flail. Until the end your next turn, when a creature within 5 feet of you makes a melee attack against you, you may make an attack of opportunity against that creature as a reaction."
+                "lore": "Spins the striking part of a flail at high speed to attack. Follow up with a normal or strong attack to link the momentum of this skill into a successful attack."
             },
             {
+                "description": "You root yourself firmly in the ground. Until the beginning of your next turn, your movement speed is halved and you have advantage on ability checks and saving throws made to avoid being knocked prone or shoved. In addition, you gain resistance to bludgeoning, piercing, and slashing damage.",
                 "name": "Endure",
-                "sp": "2",
+                "slug": "Endure",
+                "sp": 2,
                 "activation_time": "1 action",
                 "affinity": "Keen",
                 "duration": "1 round",
                 "applicable_arms": "Flails",
-                "lore": "Spins the striking part of a flail at high speed to attack. Follow up with a normal or strong attack to link the momentum of this skill into a successful attack.",
-                "description": "You root yourself firmly in the ground. Until the beginning of your next turn, your movement speed is halved and you have advantage on ability checks and saving throws made to avoid being knocked prone or shoved. In addition, you gain resistance to bludgeoning, piercing, and slashing damage."
+                "lore": "Spins the striking part of a flail at high speed to attack. Follow up with a normal or strong attack to link the momentum of this skill into a successful attack."
             },
             {
+                "description": "You move up to your movement speed in a straight line without provoking an attack of opportunity and make an attack at advantage at a creature within your reach.",
                 "name": "Charge Forth",
-                "sp": "3",
+                "slug": "Charge Forth",
+                "sp": 3,
                 "activation_time": "1 action",
                 "affinity": "Quality",
                 "duration": "Instantaneous",
-                "applicable_arms": " Twinblades, Heavy Thrusting Swords, Spears, Great Spears, Halberds",
-                "lore": "Quickly charge forward with the armament at the hip, carrying the momentum into a thrust.",
-                "description": "You move up to your movement speed in a straight line without provoking an attack of opportunity and make an attack at advantage at a creature within your reach."
+                "applicable_arms": "Twinblades, Heavy Thrusting Swords, Spears, Great Spears, Halberds",
+                "lore": "Quickly charge forward with the armament at the hip, carrying the momentum into a thrust."
             },
             {
+                "description": "You make an attack roll with this bow at a target within the bow\u00e2\u20ac\u2122s first range increment at disadvantage.",
                 "name": "Barrage",
-                "sp": "3",
+                "slug": "Barrage",
+                "sp": 3,
                 "activation_time": "1 bonus action",
                 "affinity": "Standard",
                 "duration": "Instantaneous",
                 "applicable_arms": "Light Bows",
-                "lore": "Archery skill using a bow held horizontally. Ready the bow, then fire off a rapid succession of shots faster than the eye can see.",
-                "description": "You make an attack roll with this bow at a target within the bow\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s first range increment at disadvantage."
+                "lore": "Archery skill using a bow held horizontally. Ready the bow, then fire off a rapid succession of shots faster than the eye can see."
             },
             {
+                "description": "You make an attack roll with this bow at a target within the bow\u00e2\u20ac\u2122s first range increment at disadvantage.",
                 "name": "Mighty Shot",
-                "sp": "1",
+                "slug": "Mighty Shot",
+                "sp": 1,
                 "activation_time": "1 bonus action",
                 "affinity": "Standard",
                 "duration": "Instantaneous",
                 "applicable_arms": "Light Bows, Bows",
-                "lore": "Archery skill performed from an oblique stance. Ready the bow, then pull the bowstring to its limit to enhance the power of the shot, penetrating the enemy's guard.",
-                "description": "You make an attack roll with this bow at a target within the bow\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s first range increment at disadvantage."
+                "lore": "Archery skill performed from an oblique stance. Ready the bow, then pull the bowstring to its limit to enhance the power of the shot, penetrating the enemy's guard."
             },
             {
+                "description": "You draw the string of your greatbow as far as it will go, firing a greatarrow in a straight line of length equal to the bow\u00e2\u20ac\u2122s first range increment. Make an attack roll against the creature in that line nearest to you. On a hit, the target takes damage as normal and the arrow punctures through them and continues in the line, striking each target in the line. Each target hit reduces the attack roll of the arrow by 1.",
                 "name": "Through and Through",
-                "sp": "4",
+                "slug": "Through and Through",
+                "sp": 4,
                 "activation_time": "1 action",
                 "affinity": "Standard",
                 "duration": "Instantaneous",
                 "applicable_arms": "Light Bows, Bows",
-                "lore": "Powerful archery skill using a greatbow held in an oblique stance. Ready the greatbow, then twist the bowstring to fire a mighty greatarrow that can penetrate through enemies.",
-                "description": "You draw the string of your greatbow as far as it will go, firing a greatarrow in a straight line of length equal to the bow\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s first range increment. Make an attack roll against the creature in that line nearest to you. On a hit, the target takes damage as normal and the arrow punctures through them and continues in the line, striking each target in the line. Each target hit reduces the attack roll of the arrow by 1."
+                "lore": "Powerful archery skill using a greatbow held in an oblique stance. Ready the greatbow, then twist the bowstring to fire a mighty greatarrow that can penetrate through enemies."
             },
             {
+                "description": "As part of your Attack action, you may make an additional attack with this weapon.",
                 "name": "Repeating Thrust",
-                "sp": "3",
+                "slug": "Repeating Thrust",
+                "sp": 3,
                 "activation_time": "1 action",
                 "affinity": "Keen",
                 "duration": "Instantaneous",
                 "applicable_arms": "Daggers, Straight Swords, Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Spears, Great Spears, Halberds",
-                "lore": "Twist to build power, then unleash a flurry of thrusts.",
-                "description": "As part of your Attack action, you may make an additional attack with this weapon."
+                "lore": "Twist to build power, then unleash a flurry of thrusts."
             },
             {
+                "description": "You cast *glintstone pebble* followed by a melee attack with this weapon using your Affinity ability modifier for the attack and damage roll.",
                 "name": "Glintstone Pebble",
-                "sp": "3",
+                "slug": "Glintstone Pebble",
+                "sp": 2,
                 "activation_time": "1 action",
                 "affinity": "Magic",
                 "duration": "Instantaneous",
-                "applicable_arms": " Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Spears, Great Spears, Halberds",
-                "lore": "Skill that employs the glintstone sorcery of the same name. Follow up with a strong attack to chain this skill into a lunging thrust, performed while the armament is still imbued with glintstone.",
-                "description": "You cast the Glintstone Pebble sorcery using Intelligence as your spellcasting modifier, immediately followed by an attack made with this weapon at a target within range. Between the spell and attack, you may move up to 5 feet without provoking attacks of opportunity."
+                "applicable_arms": "Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Spears, Great Spears, Halberds",
+                "lore": "Skill that employs the glintstone sorcery of the same name. Follow up with a strong attack to chain this skill into a lunging thrust, performed while the armament is still imbued with glintstone."
             },
             {
+                "description": "As a bonus action, you manifest a magic greatsword from the hilt of this weapon, striking down at an enemy within five feet of you. Make a melee attack roll using your Intelligence modifier. On a hit, the target takes 3d6 force damage. You may activate this ability using an action instead, increasing the range of the the attack to ten feet and the damage to 6d6 force damage.",
                 "name": "Carian Grandeur",
-                "sp": "4",
+                "slug": "Carian Grandeur",
+                "sp": 4,
                 "activation_time": "Variable",
                 "affinity": "Magic",
                 "duration": "Instantaneous",
-                "applicable_arms": " Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords.",
-                "lore": "Carian royal prestige embodied in a skill. Transform the blade into a magical greatsword and swing it down. Can be charged to increase its power.",
-                "description": "As a bonus action, you manifest a magic greatsword from the hilt of this weapon, striking down at an enemy within five feet of you. Make a melee attack roll using your Intelligence modifier. On a hit, the target takes 3d6 force damage. You may activate this ability using an action instead, increasing the range of the the attack to ten feet and the damage to 6d6 force damage."
+                "applicable_arms": "Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords.",
+                "lore": "Carian royal prestige embodied in a skill. Transform the blade into a magical greatsword and swing it down. Can be charged to increase its power."
             },
             {
+                "description": "You fire an arc of golden light at a creature within 30 feet of you as a ranged attack with this weapon. On a hit, the target takes 4d6 radiant damage. Until the end of your next turn, your weapon glows brightly with unalloyed gold, and deals an 2d6 radiant damage on a hit.",
                 "name": "Sacred Blade",
-                "sp": "3",
+                "slug": "Sacred Blade",
+                "sp": 3,
                 "activation_time": "1 action",
                 "affinity": "Magic",
                 "duration": "1 round",
-                "applicable_arms": " Daggers, Straight Swords, Greatswords, Colossal Swords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Spears, Great Spears, Halberds, Reapers, Colossal Weapons",
-                "lore": "Grants armament's attacks holy essence and fires off a golden blade projectile. The armament retains its holy essence for a while",
-                "description": "You fire an arc of golden light at a creature within 30 feet of you as a ranged attack with this weapon. On a hit, the target takes 4d6 radiant damage. Until the end of your next turn, your weapon glows brightly with unalloyed gold, and deals an 2d6 radiant damage on a hit."
+                "applicable_arms": "Daggers, Straight Swords, Greatswords, Colossal Swords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Spears, Great Spears, Halberds, Reapers, Colossal Weapons",
+                "lore": "Grants armament's attacks holy essence and fires off a golden blade projectile. The armament retains its holy essence for a while"
             },
             {
+                "description": "You summon an arc of flame in a 20-foot cone in front of you. Each creature caught in the area must succeed on a Dexterity Saving Throw against your Affinity DC or take 5d6 fire damage. On a successful save, the creature takes half as much damage. Until the end of your next turn, this weapon deals an additional 2d6 fire damage.",
                 "name": "Flaming Strike",
-                "sp": "4",
+                "slug": "Flaming Strike",
+                "sp": 4,
                 "activation_time": "1 action",
                 "affinity": "Fire",
                 "duration": "1 round",
-                "applicable_arms": " Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Spears, Great Spears, Halberds, Reapers, Fists, Claws",
-                "lore": "Skill that emits flame in a wide frontward arc. Follow up with a strong attack to perform a lunging, sweeping strike. This will also coat the armament in fire.\"",
-                "description": "You summon an arc of flame in a 20-foot cone in front of you. Each creature caught in the area must succeed on a Dexterity Saving Throw against your Affinity DC or take 5d6 fire damage. On a successful save, the creature takes half as much damage. Until the end of your next turn, this weapon deals an additional 2d6 fire damage."
+                "applicable_arms": "Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Spears, Great Spears, Halberds, Reapers, Fists, Claws",
+                "lore": "Skill that emits flame in a wide frontward arc. Follow up with a strong attack to perform a lunging, sweeping strike. This will also coat the armament in fire.\""
             },
             {
-                "name": "Lion\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s Claw",
-                "sp": "2",
+                "description": "You move into a somersaulting long jump without provoking attacks of opportunity, making a single attack at advantage at a creature within your reach when you land.",
+                "name": "Lion\u00e2\u20ac\u2122s Claw",
+                "slug": "Lion\u00e2\u20ac\u2122s Claw",
+                "sp": 2,
                 "activation_time": "1 action",
                 "affinity": "Heavy",
                 "duration": "Instantaneous",
-                "applicable_arms": "  Straight Swords, Greatswords, Colossal Swords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Hammers, Great Hammers, Axes, Greataxes, Flails, Colossal Weapons",
-                "lore": "Skill of the Redmanes, who fought alongside General Radahn. Somersault forwards, striking foes with armament.",
-                "description": "You move into a somersaulting long jump without provoking attacks of opportunity, making a single attack at advantage at a creature within your reach when you land."
+                "applicable_arms": "Straight Swords, Greatswords, Colossal Swords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Hammers, Great Hammers, Axes, Greataxes, Flails, Colossal Weapons",
+                "lore": "Skill of the Redmanes, who fought alongside General Radahn. Somersault forwards, striking foes with armament."
             },
             {
+                "description": "You collect wind with your blade and unleash it in a 30-foot line from yourself. Each creature caught in the line must succeed on a Dexterity saving throw against your Affinity DC. A target takes 4d6 slashing damage on a failed save, or half as much damage on a successful one.",
                 "name": "Vacuum Slice",
-                "sp": "2",
+                "slug": "Vacuum Slice",
+                "sp": 2,
                 "activation_time": "1 action",
                 "affinity": "Quality",
                 "duration": "Instantaneous",
                 "applicable_arms": "Daggers, Straight Swords, Greatswords, Colossal Swords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Axes, Greataxes",
-                "lore": "Lost skill of ancient heroes. Hold the armament aloft to surround it with a shearing vacuum, then launch it forwards as a blade-like projectile.",
-                "description": "You collect wind with your blade and unleash it in a 30-foot line from yourself. Each creature caught in the line must succeed on a Dexterity saving throw against your Affinity DC. A target takes 4d6 slashing damage on a failed save, or half as much damage on a successful one."
+                "lore": "Lost skill of ancient heroes. Hold the armament aloft to surround it with a shearing vacuum, then launch it forwards as a blade-like projectile."
             },
             {
+                "description": "Up to ten other creatures of your choice within 60 feet of you that can hear you gain advantage on attack rolls and saving throws until the start of your next turn.",
                 "name": "Golden Vow",
-                "sp": "3",
+                "slug": "Golden Vow",
+                "sp": 5,
                 "activation_time": "1 bonus action",
                 "affinity": "Sacred",
                 "duration": "1 round",
                 "applicable_arms": "All melee armaments",
-                "lore": "Skill passed down from antiquity among the knights of the capital. Raise armament aloft and pledge to honor the Erdtree in battle, granting self and nearby allies increased attack power and defense.",
-                "description": "Up to ten other creatures of your choice within 60 feet of you that can hear you gain advantage on attack rolls and saving throws until the start of your next turn."
+                "lore": "Skill passed down from antiquity among the knights of the capital. Raise armament aloft and pledge to honor the Erdtree in battle, granting self and nearby allies increased attack power and defense."
             },
             {
+                "description": "The next time you take the attack action this turn, you may move 5 feet in any direction without provoking attacks of opportunity. If you do so, the next weapon attack you make this turn has advantage.",
                 "name": "Piercing Fang",
-                "sp": "2",
+                "slug": "Piercing Fang",
+                "sp": 2,
                 "activation_time": "1 bonus action",
                 "affinity": "Keen",
                 "duration": "1 round",
                 "applicable_arms": "Straight Swords, Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Spears, Great Spears, Halberds",
-                "lore": "Skill used by Yura, the Bloody Finger Hunter. Starting with the blade held horizontally, make a powerful thrust that cannot be blocked.\"",
-                "description": "The next time you take the attack action this turn, you may move 5 feet in any direction without provoking attacks of opportunity. If you do so, the next weapon attack you make this turn has advantage."
+                "lore": "Skill used by Yura, the Bloody Finger Hunter. Starting with the blade held horizontally, make a powerful thrust that cannot be blocked.\""
             },
             {
+                "description": "You make an attack at a creature within your reach. Your reach increases by 5 feet for this attack. You take damage equal to one of your hit dice when you use this weapon skill.The attack also gains Bleed 2: When you hit a target with this weapon, they must make a Constitution saving throw against your Affinity DC at the end of the current turn. Each time you hit the target on the same turn increases the DC by 1. On a failure, the creature takes damage equal to 3 of their hit dice. If your weapon already has a Bleed effect, increase that weapon\u00e2\u20ac\u2122s bleed rating by 2 instead during this attack.",
                 "name": "Bloody Slash",
-                "sp": "2",
+                "slug": "Bloody Slash",
+                "sp": 2,
                 "activation_time": "1 action",
                 "affinity": "Blood",
                 "duration": "Instantaneous",
                 "applicable_arms": "Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords",
-                "lore": "Blood Oath skill granted by the Lord of Blood. From a low stance, coat the blade in your own blood to unleash a rending blood slash in a wide arc.\"",
-                "description": "The attack also gains Bleed 2: When you hit a target with this weapon, they must make a Constitution saving throw against your Affinity DC at the end of the current turn. Each time you hit the target on the same turn increases the DC by 1. On a failure, the creature takes damage equal to 3 of their hit dice. If your weapon already has a Bleed effect, increase that weapon\u00c3\u00a2\u00e2\u201a\u00ac\u00e2\u201e\u00a2s bleed rating by 2 instead during this attack."
+                "lore": "Blood Oath skill granted by the Lord of Blood. From a low stance, coat the blade in your own blood to unleash a rending blood slash in a wide arc.\""
             },
             {
+                "description": "You jump into the air and crash into the ground. Each creature within ten feet of you must succeed on a Strength saving throw against your affinity DC or take 2d8 bludgeoning damage. Large or smaller creatures that fail the save are also knocked prone. A creature that succeeds on the saving throw takes half damage and is not knocked prone.",
                 "name": "Ground Slam",
-                "sp": "2",
+                "slug": "Ground Slam",
+                "sp": 2,
                 "activation_time": "1 action",
                 "affinity": "Heavy",
                 "duration": "Instantaneous",
-                "applicable_arms": " Daggers, Straight Swords, Greatswords, Colossal Swords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Spears, Great Spears, Halberds, Reapers, Fists, Claws, Whips, Colossal Weapons",
-                "lore": "Jump up high into the air and crash down on the ground ahead. The resulting pratfall sends a powerful shockwave in all directions\"",
-                "description": "You jump into the air and crash into the ground. Each creature within ten feet of you must succeed on a Strength saving throw against your affinity DC or take 2d8 bludgeoning damage. Large or smaller creatures that fail the save are also knocked prone. A creature that succeeds on the saving throw takes half damage and is not knocked prone."
+                "applicable_arms": "Daggers, Straight Swords, Greatswords, Colossal Swords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords, Hammers, Great Hammers, Axes, Greataxes, Flails, Spears, Great Spears, Halberds, Reapers, Fists, Claws, Whips, Colossal Weapons",
+                "lore": "Jump up high into the air and crash down on the ground ahead. The resulting pratfall sends a powerful shockwave in all directions\""
+            },
+            {
+                "description": "Slam your foot into ground, kicking up a gust of wind in a 5-foot radius around you. Each creature of your choice in the area must succeed on a saving throw against your Affinity DC or be pushed 5 feet away from you.",
+                "name": "Storm Stomp",
+                "slug": "Storm Stomp",
+                "sp": 1,
+                "activation_time": "1 bonus action",
+                "affinity": "Standard",
+                "duration": "Instantaneous",
+                "applicable_arms": "All melee weapons",
+                "lore": "One of the skills that channel the tempests of Stormveil. Stomp hard on the ground to kick up a momentary storm."
+            },
+            {
+                "description": "You cast *carian greatsword* as a transluscent greatsword springs from your weapon to strike out at your foes.",
+                "name": "Carian Greatsword",
+                "slug": "Carian Greatsword",
+                "sp": 5,
+                "activation_time": "Varies",
+                "affinity": "Magic",
+                "duration": "Instantaneous",
+                "applicable_arms": "Daggers, Straight Swords, Greatswords, Curved Swords, Curved Greatswords, Katanas, Twinblades, Thrusting Swords, Heavy Thrusting Swords",
+                "lore": "Carian royal prestige embodied in a skill. Transform blade into a magical greatsword and swing it down. Can be charged to increase its power."
+            },
+            {
+                "description": "You hold your hands in front of you, levitating your weapon and spinning it around you until the end of your next turn. Any creature that begins its turn when a creature moves within five feet of you or starts their turn there, it must succeed on a Dexterity saving throw against your Affinity DC. A target takes 3d6 slashing damage on a failed save, and half damage on a successful one.",
+                "name": "Spinning Weapon",
+                "slug": "Spinning Weapon",
+                "sp": 3,
+                "activation_time": "1 action",
+                "affinity": "Magic",
+                "duration": "Instantaneous",
+                "applicable_arms": "Daggers, Straight Swords, Curved Swords, Katanas, Twinblades, Hammers, Axes, Flails, Spears, Halberds, Reapers",
+                "lore": "Defensive skill employed by Carian princesses. Lifts armament into mid-air, then makes it spin violently. Those it touches will suffer successive attacks."
             }
         ]
     },
