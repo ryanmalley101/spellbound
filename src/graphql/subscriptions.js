@@ -25,6 +25,7 @@ export const onCreateGame = /* GraphQL */ `
       messageList {
         items {
           id
+          gameId
           owner
           messageType
           advantage
@@ -303,6 +304,7 @@ export const onUpdateGame = /* GraphQL */ `
       messageList {
         items {
           id
+          gameId
           owner
           messageType
           advantage
@@ -581,6 +583,7 @@ export const onDeleteGame = /* GraphQL */ `
       messageList {
         items {
           id
+          gameId
           owner
           messageType
           advantage
@@ -1217,6 +1220,7 @@ export const onCreateMessage = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
+      gameId
       owner
       messageType
       advantage
@@ -1291,6 +1295,7 @@ export const onUpdateMessage = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
+      gameId
       owner
       messageType
       advantage
@@ -1365,6 +1370,7 @@ export const onDeleteMessage = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
+      gameId
       owner
       messageType
       advantage

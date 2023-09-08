@@ -66,6 +66,7 @@ type Message
 {
     id: ID! @primaryKey(sortKeyFields: ["createdAt"])
     game: Game @belongsTo
+    gameId: ID! @index(name: "byGameAndCreatedAt", sortKeyFields: ["createdAt"], queryField: "messageByGameAndCreatedAt")
     owner: ID!
     messageType: String
     advantage: String

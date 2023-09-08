@@ -42,6 +42,7 @@ const DraggableIcon = ({token, scale, x, y}) => {
     setHeight(parseInt(height));
     const resizedTokenDetails = {
       id: token.id,
+      key: token.key,
       width: parseInt(width),
       height: parseInt(height),
       positionX: position.x,

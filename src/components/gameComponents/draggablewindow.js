@@ -211,11 +211,11 @@ const DraggableConditionWindow = ({slug}) => {
 }
 
 const DraggableAshOfWarWindow = ({slug}) => {
-  const removeConditionCard = useBattlemapStore(state => state.removeConditionCard)
+  const removeAshOfWarCard = useBattlemapStore(state => state.removeAshOfWarCard)
 
   const onClose = () => {
     console.log(`Closing condition card ${slug}`)
-    removeConditionCard(slug)
+    removeAshOfWarCard(slug)
   }
 
   return <DraggableWindow content={<AshOfWarCard slug={slug}/>} onClose={onClose} title={slug}

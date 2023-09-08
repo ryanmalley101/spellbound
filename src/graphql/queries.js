@@ -25,6 +25,7 @@ export const getGame = /* GraphQL */ `
       messageList {
         items {
           id
+          gameId
           owner
           messageType
           advantage
@@ -567,6 +568,7 @@ export const getMessage = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
+      gameId
       owner
       messageType
       advantage
@@ -619,6 +621,63 @@ export const listMessages = /* GraphQL */ `
           gameSongQueueId
           __typename
         }
+        gameId
+        owner
+        messageType
+        advantage
+        damageDice
+        damageDiceResults
+        rolls
+        abilityName
+        saveAbility
+        saveScore
+        messageText
+        diceString
+        placeholder
+        createdAt
+        updatedAt
+        gameMessageListId
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const messageByGameAndCreatedAt = /* GraphQL */ `
+  query MessageByGameAndCreatedAt(
+    $gameId: ID!
+    $createdAt: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelMessageFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    messageByGameAndCreatedAt(
+      gameId: $gameId
+      createdAt: $createdAt
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        gameId
         owner
         messageType
         advantage

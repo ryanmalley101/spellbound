@@ -5,8 +5,10 @@ import {listMessages} from "@/graphql/queries";
 import {onCreateMessage, onUpdateGame} from "@/graphql/subscriptions";
 import Message from "@/components/gameComponents/message";
 import {createMessage, updateGame} from "@/graphql/mutations";
+import {messageByGameAndCreatedAt} from "@/graphql/queries"
 import useBattlemapStore from "@/stores/battlemapStore";
 import {DiceRoller, exportFormats} from '@dice-roller/rpg-dice-roller';
+import * as mutations from "@/graphql/mutations";
 
 const ChatRoom = ({user}) => {
   const [messages, setMessages] = useState([]);
@@ -15,40 +17,18 @@ const ChatRoom = ({user}) => {
   const playerID = useBattlemapStore((state) => state.playerID)
 
   useEffect(() => {
+
+
     const getMessages = async () => {
       const response = await API.graphql({
-        query: `
-        query GetGameMessageList($id: ID!) {
-          getGame(id: $id) {
-            messageList {
-              items {
-                id
-                messageType
-                messageText
-                createdAt
-                owner
-                advantage
-                damageDice
-                damageDiceResults
-                rolls
-                abilityName
-                saveAbility
-                saveScore
-                messageText
-                diceString
-                placeholder
-                createdAt
-              }
-            }
-          }
-        }
-      `,
+        query: messageByGameAndCreatedAt,
         variables: {
-          id: gameID,
-        },
+          gameId: gameID,
+          limit: 100
+        }
       });
       console.log(response)
-      setMessages(response.data.getGame.messageList.items)
+      setMessages(response.data.messageByGameAndCreatedAt.items)
     }
     getMessages()
 
@@ -63,7 +43,7 @@ const ChatRoom = ({user}) => {
     };
 
     const subscription = API.graphql(
-      graphqlOperation(onCreateMessage, {gameMessageList: gameID}),
+      graphqlOperation(onCreateMessage, {gameId: gameID}),
       {
         filter: {
           mutationType: {

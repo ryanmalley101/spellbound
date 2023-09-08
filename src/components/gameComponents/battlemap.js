@@ -635,7 +635,7 @@ const BattleMap = () => {
           >
 
             {mapTokens.map((token, index) => (
-              <DraggableIcon key={`${token.key}`} x={token.positionX} y={token.positionY} token={token}
+              <DraggableIcon key={token.key} x={token.positionX} y={token.positionY} token={token}
                              scale={scale.current}/>
             ))}
             <GridOverlay style={{

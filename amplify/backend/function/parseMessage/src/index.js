@@ -21,6 +21,7 @@ const query = `
       createMessage( input: $input ) {
                 id
                 gameMessageListId
+                gameId
                 createdAt
                 updatedAt
                 messageType
@@ -60,7 +61,7 @@ export const handler = async (event) => {
     gameMessageListId,
   } = event.arguments.input
 
-  const messageInput = {owner, messageType, gameMessageListId, advantage, messageText}
+  const messageInput = {owner, messageType, gameMessageListId, advantage, messageText, gameId: gameMessageListId}
 
   if (messageType === "ATTACK") {
     messageInput.abilityName = abilityName
