@@ -78,7 +78,7 @@ export const descAttack = (monsterData, attack) => {
         {getToHit()} to hit, {getRange()}, {attack.targets}.&nbsp;<em>Hit:&nbsp;</em> {getDamage()}. {attack.effect}</>
 }
 
-const MonsterSheet = ({slug, statblock}) => {
+const MonsterSheet = ({slug, statblock, printRef}) => {
     const [monsterData, setMonsterData] = useState(null);
 
     useEffect(() => {
@@ -374,7 +374,7 @@ const MonsterSheet = ({slug, statblock}) => {
         return null
     } else {
         return (
-            <div className={styles.monsterSheetContainer}>
+            <div className={styles.monsterSheetContainer} ref={printRef}>
                 <div className={styles.name}>{monsterData.name}</div>
                 <div
                     className={styles.description}>{monsterData.size} {monsterData.type} {monsterData.subtype ? monsterData.subtype : null}, {monsterData.alignment}</div>

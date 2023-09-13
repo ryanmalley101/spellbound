@@ -21,6 +21,7 @@
     "emotion": "^11.0.0",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
+    "html2canvas": "^1.4.1",
     "list-react-files": "^0.2.0",
     "lodash": "^4.17.21",
     "material": "^0.5.3",

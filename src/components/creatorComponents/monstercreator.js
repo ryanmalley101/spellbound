@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@/styles/CreateMonsterStatblock.module.css';
 import {
     Button, ButtonGroup,
@@ -17,8 +17,9 @@ import {API, graphqlOperation} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {getMonsterStatblock, listMonsterStatblocks} from "@/graphql/queries";
 import {AiOutlineSearch} from "react-icons/ai";
+import html2canvas from "html2canvas";
 
-const HeaderRow = ({monster, setMonster}) => {
+const HeaderRow = ({monster, setMonster, downloadFile}) => {
     const containsText = (text, searchText) =>
         text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || searchText === '';
 
@@ -127,7 +128,7 @@ const HeaderRow = ({monster, setMonster}) => {
         return m
     }
 
-    const downloadFile = () => {
+    const exportJSON = () => {
         const fileName = "my-file";
         const json = JSON.stringify(monster.monster, null, 2);
         const blob = new Blob([json], {type: "application/json"});
@@ -217,7 +218,9 @@ const HeaderRow = ({monster, setMonster}) => {
                 ))}
             </Select>
         </FormControl>
-        <Button variant={"contained"} style={{float: "right"}} onClick={downloadFile}>Export</Button>
+        <Button variant={"contained"} style={{float: "right"}} onClick={exportJSON}>Export JSON</Button>
+        <Button variant={"contained"} style={{marginRight: "10px", float: "right"}} onClick={downloadFile}>Download
+            PNG</Button>
 
     </div>
 }
@@ -399,7 +402,7 @@ const CreateMonsterStatblock = (monster) => {
 
         const initialValue = ""
     }
-    
+
     const getPassivePerception = () => {
         Object.entries(monsterStatblock.skill_proficiencies).forEach(([key, val]) => {
             if (!key === "perception") {
@@ -769,12 +772,33 @@ const CreateMonsterStatblock = (monster) => {
         }
     }, [monsterStatblock]);
 
+    const printRef = useRef()
+
+    const downloadFile = async () => {
+        const element = printRef.current;
+        const canvas = await html2canvas(element);
+
+        const data = canvas.toDataURL('image/jpg');
+        const link = document.createElement('a');
+
+        if (typeof link.download === 'string') {
+            link.href = data;
+            link.download = 'image.jpg';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            window.open(data);
+        }
+    }
+
 
     return (
         <div style={{minWidth: "1100px"}}>
-            <HeaderRow monster={monsterStatblock} setMonster={setMonsterStatblock}/>
+            <HeaderRow monster={monsterStatblock} setMonster={setMonsterStatblock} downloadFile={downloadFile}/>
             <div style={{margin: "100px"}}>
-                <MonsterSheet statblock={monsterStatblock} style={{margin: "100px"}}/>
+                <MonsterSheet statblock={monsterStatblock} printRef={printRef} style={{margin: "100px"}}/>
             </div>
             <div className={styles.container}>
                 <FormControl onSubmit={handleSubmit} className={styles.form} fullWidth>
