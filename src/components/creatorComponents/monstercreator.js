@@ -18,13 +18,16 @@ import * as mutations from "@/graphql/mutations";
 import {getMonsterStatblock, listMonsterStatblocks} from "@/graphql/queries";
 import {AiOutlineSearch} from "react-icons/ai";
 import html2canvas from "html2canvas";
+import {BsFillTrashFill} from "react-icons/bs";
 
 const HeaderRow = ({monster, setMonster, downloadFile}) => {
     const containsText = (text, searchText) =>
         text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || searchText === '';
 
     const newMonster = () => {
-        setMonster(newMonsterStats)
+        if (window.confirm("Creating a new monster will reset the current statblock")) {
+            setMonster(newMonsterStats)
+        }
     }
 
     const [selectedOption, setSelectedOption] = useState('');
@@ -152,19 +155,20 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
 
     const getMonster = async (id) => {
         console.log(id)
-        if (id) {
-            try {
-                const existingMonster = await API.graphql({
-                    query: getMonsterStatblock,
-                    variables: {id: id, ownerId: "spellbound"},
-                });
-                setMonster(cleanMonster(existingMonster.data.getMonsterStatblock))
-            } catch (e) {
-                console.error(e)
+        if (window.confirm("Fetching a new monster will overwrite the existing statblock")) {
+            if (id) {
+                try {
+                    const existingMonster = await API.graphql({
+                        query: getMonsterStatblock,
+                        variables: {id: id, ownerId: "spellbound"},
+                    });
+                    setMonster(cleanMonster(existingMonster.data.getMonsterStatblock))
+                } catch (e) {
+                    console.error(e)
+                }
             }
         }
     }
-
 
     return <div className={styles.stickyHeader}>
         <Button variant={"contained"} style={{marginRight: "10px"}} onClick={newMonster}>New</Button>
@@ -183,7 +187,7 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
                 // This prevents rendering empty string in Select's value
                 // if search text would exclude currently selected option.
                 renderValue={() => selectedOption}
-                style={{backgroundColor: "#1976d2"}}
+                style={{backgroundColor: "#1976d2", color: "white"}}
             >
                 {/* TextField is put into ListSubheader so that it doesn't
               act as a selectable item in the menu
@@ -349,6 +353,8 @@ const CreateMonsterStatblock = (monster) => {
             oldDamage.push(selectedDamage)
         }
         setDamageResistanceList(oldDamage)
+        setDamageVulnerabilityList(damageVulnerabilityList.filter((damage) => damage !== selectedDamage))
+        setDamageImmunityList(damageImmunityList.filter((damage) => damage !== selectedDamage))
     }
 
     const addDamageVulnerability = () => {
@@ -357,6 +363,8 @@ const CreateMonsterStatblock = (monster) => {
             oldDamage.push(selectedDamage)
         }
         setDamageVulnerabilityList(oldDamage)
+        setDamageResistanceList(damageResistanceList.filter((damage) => damage !== selectedDamage))
+        setDamageImmunityList(damageImmunityList.filter((damage) => damage !== selectedDamage))
     }
 
     const addDamageImmunity = () => {
@@ -365,6 +373,8 @@ const CreateMonsterStatblock = (monster) => {
             oldDamage.push(selectedDamage)
         }
         setDamageImmunityList(oldDamage)
+        setDamageVulnerabilityList(damageVulnerabilityList.filter((damage) => damage !== selectedDamage))
+        setDamageResistanceList(damageResistanceList.filter((damage) => damage !== selectedDamage))
     }
 
     const removeDamage = () => {
@@ -380,27 +390,7 @@ const CreateMonsterStatblock = (monster) => {
     }
 
     const addSkillProficiency = async (proficient) => {
-        const addSkill = async () => {
-            const skillExists = monsterStatblock.skill_proficiencies.some((s) => selectedSkill in s)
-            if (skillExists) {
-                const newSkills = monsterStatblock.skill_proficiencies.map((s) => {
-                    if (s.hasOwnProperty(selectedSkill)) {
-                        return {[selectedSkill]: proficient}
-                    }
-                    return s
-                })
-                setSkillList(newSkills)
-            } else {
-                console.log("Appending new skill", [...monsterStatblock.skill_proficiencies, {[selectedSkill]: proficient}])
-                const newSkills = [...monsterStatblock.skill_proficiencies, {[selectedSkill]: proficient}]
-                setSkillList(newSkills)
-                console.log(monsterStatblock)
-            }
-        }
-        await addSkill()
-        console.log(monsterStatblock)
-
-        const initialValue = ""
+        setSkillList({...skillList, [selectedSkill]: proficient})
     }
 
     const getPassivePerception = () => {
@@ -500,7 +490,7 @@ const CreateMonsterStatblock = (monster) => {
                 intelligence_save: intSave,
                 wisdom_save: wisSave,
                 charisma_save: chaSave,
-                condition_immunities: conditionImmunityList.length > 0 ? conditionImmunityList.length.join(", ") : "",
+                condition_immunities: conditionImmunityList.length > 0 ? conditionImmunityList.join(", ") : "",
                 condition_immunity_list: conditionImmunityList,
                 damage_vulnerabilities: damageVulnerabilityList.length > 0 ? damageVulnerabilityList.join(", ") : "",
                 damage_vulnerability_list: damageVulnerabilityList,
@@ -527,9 +517,7 @@ const CreateMonsterStatblock = (monster) => {
     }, [monsterStatblock.wisdom, monsterStatblock.skill_proficiencies]);
 
     const removeSkillProficiency = () => {
-        setSkillList((skills) => {
-            return skills.filter((s) => !(selectedSkill in s))
-        })
+        setSkillList({...skillList, [selectedSkill]: null})
     }
 
     const addConditionImmunity = () => {
@@ -1009,28 +997,7 @@ const CreateMonsterStatblock = (monster) => {
                                             type={"number"}/></Grid>
                     </Grid>
                     <Grid container spacing={2} marginY={rowSpacing}>
-                        <Grid xs><FormControl>
-                            <InputLabel id="save-label">Saving Throws</InputLabel>
-                            <Select
-                                id="type"
-                                labelId={"save-label"}
-                                value={selectedSave}
-                                label="Type"
-                                onChange={(e) => setSelectedSave(e.target.value)}
-                                style={{width: 157}}
-                            >
-                                <MenuItem value="strength">Strength</MenuItem>
-                                <MenuItem value="dexterity">Dexterity</MenuItem>
-                                <MenuItem value="constitution">Constitution</MenuItem>
-                                <MenuItem value="intelligence">Intelligence</MenuItem>
-                                <MenuItem value="wisdom">Wisdom</MenuItem>
-                                <MenuItem value="charisma">Charisma</MenuItem>
-                            </Select>
-                        </FormControl></Grid>
-                        <Grid xs><ButtonGroup>
-                            <Button type={"button"} onClick={addSaveProficiency}>Proficient</Button>
-                        </ButtonGroup></Grid>
-                        <Grid xs><FormControl>
+                        <Grid xs={2.2}><FormControl>
                             <InputLabel id="skill-label">Skills</InputLabel>
                             <Select
                                 id="type"
@@ -1060,30 +1027,59 @@ const CreateMonsterStatblock = (monster) => {
                                 <MenuItem value="survival">Survival</MenuItem>
                             </Select>
                         </FormControl></Grid>
-                        <Grid xs><ButtonGroup orientation={"vertical"}>
+                        <Grid xs={5}><ButtonGroup orientation={"horizontal"}>
                             <Button type={"button"}
                                     onClick={() => addSkillProficiency("proficient")}>Proficient</Button>
                             <Button type={"button"} onClick={() => addSkillProficiency("expertise")}>Expertise</Button>
                         </ButtonGroup></Grid>
+                        <Grid xs><FormControl>
+                            <InputLabel id="save-label">Saving Throws</InputLabel>
+                            <Select
+                                id="type"
+                                labelId={"save-label"}
+                                value={selectedSave}
+                                label="Type"
+                                onChange={(e) => setSelectedSave(e.target.value)}
+                                style={{width: 157}}
+                            >
+                                <MenuItem value="strength">Strength</MenuItem>
+                                <MenuItem value="dexterity">Dexterity</MenuItem>
+                                <MenuItem value="constitution">Constitution</MenuItem>
+                                <MenuItem value="intelligence">Intelligence</MenuItem>
+                                <MenuItem value="wisdom">Wisdom</MenuItem>
+                                <MenuItem value="charisma">Charisma</MenuItem>
+                            </Select>
+                        </FormControl></Grid>
+                        <Grid xs><ButtonGroup>
+                            <Button type={"button"} onClick={addSaveProficiency}
+                                    variant={"outlined"}>Proficient</Button>
+                        </ButtonGroup></Grid>
                     </Grid>
                     <Grid container spacing={2} marginY={rowSpacing}>
-                        <Grid xs>
-                            {monsterStatblock.save_proficiencies.map((save) => {
-                                return <Button key={save} name={save} onClick={removeSaveProficiency}>{save}</Button>
-                            })}
-                        </Grid>
-                        <Grid xs>
+                        <Grid xs={7.2}>
                             {Object.entries(monsterStatblock.skill_proficiencies).map(([key, val]) => {
                                 if (val) {
                                     const skillString = `${key} (${val})`
-                                    return <Button key={key} name={skill}
-                                                   onClick={removeSkillProficiency}>{skillString}</Button>
+                                    return <div key={key}><Button name={key}
+                                                                  onClick={removeSkillProficiency}
+                                                                  variant={"outlined"}>{skillString}&nbsp;
+                                        <BsFillTrashFill/></Button>
+                                    </div>
                                 }
                             })}
                         </Grid>
+                        <Grid xs>
+                            {monsterStatblock.save_proficiencies.map((save) => {
+                                return <div key={save}><Button name={save}
+                                                               onClick={removeSaveProficiency}
+                                                               variant={"outlined"}>{save}&nbsp;
+                                    <BsFillTrashFill/></Button>
+                                </div>
+                            })}
+                        </Grid>
                     </Grid>
-                    <Grid container spacing={2} marginY={rowSpacing}>
-                        <Grid xs><FormControl>
+                    <Grid container spacing={2} space={0} marginY={rowSpacing}>
+                        <Grid xs={2.2}><FormControl>
                             <InputLabel id="damage-label">Damage Types</InputLabel>
                             <Select
                                 id="type"
@@ -1108,13 +1104,13 @@ const CreateMonsterStatblock = (monster) => {
                                 <MenuItem value="thunder">Thunder</MenuItem>
                             </Select>
                         </FormControl></Grid>
-                        <Grid xs><ButtonGroup orientation={"vertical"}>
+                        <Grid xs={5}><ButtonGroup orientation={"horizontal"}>
                             <Button type={"button"} onClick={() => addDamageVulnerability()}>Vulnerable</Button>
                             <Button type={"button"} onClick={() => addDamageResistance()}>Resistant</Button>
                             <Button type={"button"} onClick={() => addDamageImmunity()}>Immune</Button>
                         </ButtonGroup></Grid>
                         {/*<div>*/}
-                        <Grid xs><FormControl>
+                        <Grid xs={2.2}><FormControl>
                             <InputLabel id="condition-label">Conditions</InputLabel>
                             <Select
                                 id="condition_immunities"
@@ -1150,28 +1146,36 @@ const CreateMonsterStatblock = (monster) => {
                     </Grid>
 
                     <Grid container spacing={2} marginY={rowSpacing}>
-                        <Grid xs>
+                        <Grid xs={7.2} orientation={"vertical"}>
                             {monsterStatblock.damage_vulnerability_list.map((damage) => {
-                                return <Button key={damage} name={damage} onClick={removeDamage}>
-                                    {damage} (Vulnerable)
-                                </Button>
+                                return <div key={damage}><Button name={damage} onClick={removeDamage}
+                                                                 variant={"outlined"}>
+                                    {damage} (Vulnerable)&nbsp;
+                                    <BsFillTrashFill/>
+                                </Button></div>
                             })}
                             {monsterStatblock.damage_resistance_list.map((damage) => {
-                                return <Button key={damage} name={damage} onClick={removeDamage}>
-                                    {damage} (Resistant)
-                                </Button>
+                                return <div key={damage}><Button name={damage} onClick={removeDamage}
+                                                                 variant={"outlined"}>
+                                    {damage} (Resistant)&nbsp;
+                                    <BsFillTrashFill/>
+                                </Button></div>
                             })}
                             {monsterStatblock.damage_immunity_list.map((damage) => {
-                                return <Button key={damage} name={damage} onClick={removeDamage}>
-                                    {damage} (Immune)
-                                </Button>
+                                return <div key={damage}><Button name={damage} onClick={removeDamage}
+                                                                 variant={"outlined"}>
+                                    {damage} (Immune)&nbsp;
+                                    <BsFillTrashFill/>
+                                </Button></div>
                             })}
                         </Grid>
                         <Grid xs>
                             {monsterStatblock.condition_immunity_list.map((condition) => {
-                                return <Button key={condition} name={condition} onClick={removeConditionImmunity}>
-                                    {condition}
-                                </Button>
+                                return <div key={condition}><Button name={condition} onClick={removeConditionImmunity}
+                                                                    variant={"outlined"}>
+                                    {condition}&nbsp;
+                                    <BsFillTrashFill/>
+                                </Button></div>
                             })}
                         </Grid>
                     </Grid>
