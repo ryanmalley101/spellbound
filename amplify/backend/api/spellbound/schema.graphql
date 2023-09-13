@@ -475,6 +475,7 @@ type MonsterStatblock
     armor_class: Int
     armor_desc: String
     hit_points: Int
+    hit_dice_num: Int,
     hit_dice: String
     speed: MovementSpeed
     strength: Int
@@ -501,16 +502,21 @@ type MonsterStatblock
     damage_immunity_list: [String]
     condition_immunities: String
     condition_immunity_list: [String]
+    blindsight: Int,
+    blindBeyond: Boolean,
+    darkvision: Int,
+    tremorsense: Int,
+    truesight: Int,
     senses: String
     languages: String
     challenge_rating: Int
     cr: Float
+    special_abilities: [MonsterAbility],
     actions: [MonsterAttack],
     bonus_actions: [MonsterAbility],
     reactions: [MonsterAbility],
     legendary_desc: String,
     legendary_actions: [MonsterAbility],
-    special_abilities: [MonsterAbility],
     mythic_desc: String,
     mythic_actions: [MonsterAbility]
 }
@@ -565,6 +571,11 @@ input MonsterStatblockInput
     reactions: [MonsterAbilityInput],
     legendary_desc: String,
     legendary_actions: [MonsterAbilityInput],
+    blindsight: Int,
+    blindBeyond: Boolean,
+    darkvision: Int,
+    tremorsense: Int,
+    truesight: Int,
     special_abilities: [MonsterAbilityInput],
     mythic_desc: String,
     mythic_actions: [MonsterAbilityInput],

@@ -1,7 +1,82 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/styles/MonsterSheet.module.css"
 import {crToXP, scoreToMod, getMonsterProf} from "@/5eReference/converters";
-import {DiceRoll} from "@dice-roller/rpg-dice-roller";
+import {DiceRoll, DiceRoller} from "@dice-roller/rpg-dice-roller";
+
+export const plusMinus = (save) => {
+    if (Number(save) >= 0) {
+        return (`+${save.toString()}`)
+    } else {
+        return `${save.toString()}`
+    }
+}
+
+export const descAttack = (monsterData, attack) => {
+    const getRange = () => {
+        switch (attack.type) {
+            case "Melee Weapon Attack":
+                return `reach ${attack.reach} ft.`
+            case "Melee Spell Attack":
+                return `reach ${attack.reach} ft.`
+            case "Ranged Weapon Attack":
+                return `ranged ${attack.short_range}/${attack.long_range} ft.`
+            case "Ranged Spell Attack":
+                return `ranged ${attack.short_range} ft.`
+            default:
+                console.error(`Invalid type for action ${attack}`)
+                return null
+        }
+    }
+
+    const getToHit = () => {
+        const bracket_pattern = /\[(.*?)\]/
+        const match = attack.attack_bonus.match(bracket_pattern)
+
+        if (match) {
+            const values = match[1].split(/\s+/)
+            const hit_bonus = 0
+            return plusMinus(values.reduce((accumulator, currentValue) => {
+                switch (currentValue) {
+                    case "STR":
+                        return accumulator + Number(scoreToMod(monsterData.strength))
+                    case "DEX":
+                        return accumulator + Number(scoreToMod(monsterData.dexterity))
+                    case "CON":
+                        return accumulator + Number(scoreToMod(monsterData.constitution))
+                    case "INT":
+                        return accumulator + Number(scoreToMod(monsterData.intelligence))
+                    case "WIS":
+                        return accumulator + Number(scoreToMod(monsterData.wisdom))
+                    case "CHA":
+                        return accumulator + Number(scoreToMod(monsterData.charisma))
+                    case "ATK":
+                        return accumulator + getMonsterProf(monsterData.cr)
+                    default:
+                        console.error("Invalid to hit identifier ")
+                }
+            }, hit_bonus))
+        }
+
+        return plusMinus(attack.attack_bonus)
+    }
+
+    const getDamage = () => {
+        const damage = [...attack.damage]
+        const initialText = ''
+        const roller = new DiceRoller()
+        const damageString = damage.reduce((accumulator, currentValue) => {
+            console.log(currentValue)
+            const diceRoll = roller.roll(currentValue.damage_dice)
+            accumulator += `${diceRoll.averageTotal} (${currentValue.damage_dice}) ${currentValue.damage_type} damage plus `
+            return accumulator
+        }, initialText)
+        return damageString.slice(0, -6)
+    }
+
+    return <>
+        <em><strong>{attack.name}.&nbsp;</strong>{attack.type}:&nbsp;</em>
+        {getToHit()} to hit, {getRange()}, {attack.targets}.&nbsp;<em>Hit:&nbsp;</em> {getDamage()}. {attack.effect}</>
+}
 
 const MonsterSheet = ({slug, statblock}) => {
     const [monsterData, setMonsterData] = useState(null);
@@ -27,15 +102,6 @@ const MonsterSheet = ({slug, statblock}) => {
             fetchData();
         }
     }, [slug, statblock]);
-
-    const plusMinus = (save) => {
-        if (Number(save) >= 0) {
-            console.log((`+${save.toString()}`))
-            return (`+${save.toString()}`)
-        } else {
-            return `${save.toString()}`
-        }
-    }
 
     const getSpeed = () => {
         if (!monsterData.speed) {
@@ -202,77 +268,13 @@ const MonsterSheet = ({slug, statblock}) => {
     }
 
     const getActions = () => {
-        const descAttack = (attack) => {
-            const getRange = () => {
-                switch (attack.type) {
-                    case "Melee Weapon Attack":
-                        return `reach ${attack.reach} ft.`
-                    case "Melee Spell Attack":
-                        return `reach ${attack.reach} ft.`
-                    case "Ranged Weapon Attack":
-                        return `ranged ${attack.short_range}/${attack.long_range} ft.`
-                    case "Ranged Spell Attack":
-                        return `ranged ${attack.short_range} ft.`
-                    default:
-                        console.error(`Invalid type for action ${attack}`)
-                        return null
-                }
-            }
-
-            const getToHit = () => {
-                const bracket_pattern = /\[(.*?)\]/
-                const match = attack.attack_bonus.match(bracket_pattern)
-
-                if (match) {
-                    const values = match[1].split(/\s+/)
-                    const hit_bonus = 0
-                    return plusMinus(values.reduce((accumulator, currentValue) => {
-                        switch (currentValue) {
-                            case "STR":
-                                return accumulator + Number(scoreToMod(monsterData.strength))
-                            case "DEX":
-                                return accumulator + Number(scoreToMod(monsterData.dexterity))
-                            case "CON":
-                                return accumulator + Number(scoreToMod(monsterData.constitution))
-                            case "INT":
-                                return accumulator + Number(scoreToMod(monsterData.intelligence))
-                            case "WIS":
-                                return accumulator + Number(scoreToMod(monsterData.wisdom))
-                            case "CHA":
-                                return accumulator + Number(scoreToMod(monsterData.charisma))
-                            case "ATK":
-                                return accumulator + getMonsterProf(monsterData.cr)
-                            default:
-                                console.error("Invalid to hit identifier ")
-                        }
-                    }, hit_bonus))
-                }
-
-                return plusMinus(attack.attack_bonus)
-            }
-
-            const getDamage = () => {
-                const damage = [...attack.damage]
-                const initialText = ''
-                const damageString = damage.reduce((accumulator, currentValue) => {
-                    const diceRoll = new DiceRoll(currentValue.damage_dice)
-                    accumulator += `${diceRoll.averageTotal} (${currentValue.damage_dice}) ${currentValue.damage_type} plus `
-                    return accumulator
-                }, initialText)
-                return damageString.slice(0, -5)
-            }
-
-            return <>
-                <em><strong>{attack.name}.&nbsp;</strong>{attack.type}:&nbsp;</em>
-                {getToHit()} to hit, {getRange()}, {attack.targets}. <em>Hit:</em> {getDamage()}. {attack.effect}</>
-        }
 
         if (!monsterData.actions) {
             return null
         }
         let actionList = []
         for (const action of monsterData.actions) {
-            console.log(action)
+            // console.log(action)
             if (action.type === "Ability") {
                 actionList.push(
                     <div key={action.name} className={styles.abilities}>
@@ -281,15 +283,13 @@ const MonsterSheet = ({slug, statblock}) => {
                     </div>
                 )
             } else {
-                const attack = descAttack(action)
+                const attack = descAttack(monsterData, action)
                 actionList.push(
                     <div key={name} className={styles.abilities}>
                         {attack}
                     </div>
                 )
             }
-
-
         }
         return actionList.map((action) => (action))
     }

@@ -17,7 +17,7 @@ const AbilityRow = ({ability, index, handleAbilityUpdate, handleAbilityRemove}) 
     return (
         <div>
             <div style={{display: "inline-block", width: "100%"}}>
-                <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}
+                <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex", width: "90%"}}
                         className={styles.abilityButton}>
                     <p><strong>{ability.name}&nbsp;</strong></p>
                     <p>{ability.desc}</p>
@@ -43,9 +43,7 @@ const AbilityDialog = ({open, ability, index, onClose, handleAbilityUpdate}) => 
             setAbilityDesc(ability.desc)
         }
     }, [ability]);
-
-    console.log(ability)
-
+    
     const confirm = () => {
         handleAbilityUpdate({name: abilityName, desc: abilityDesc}, index)
         onClose()

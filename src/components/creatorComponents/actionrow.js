@@ -13,21 +13,39 @@ import {
     TextField,
     Typography
 } from "@mui/material";
+import {descAttack} from "@/components/gameComponents/monstersheet";
 
 const ActionRow = ({
                        action,
                        index,
+                       monsterData,
                        handleActionUpdate,
                        handleActionRemove
                    }) => {
     const [open, setOpen] = useState(false);
 
+    if (action.type === "Ability") {
+        return (
+            <div className={styles.actionRow}>
+                <div style={{display: "inline-block", width: "90%"}}>
+                    <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
+                        <p><strong>{action.name}&nbsp;</strong></p>
+                        <p>{action.desc}</p>
+                    </button>
+                    <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                        <BsFillTrashFill/>
+                    </IconButton>
+                </div>
+                <ActionDialog open={open} action={action} index={index} onClose={() => setOpen(false)}
+                              handleActionUpdate={handleActionUpdate}/>
+            </div>
+        )
+    }
     return (
         <div className={styles.actionRow}>
-            <div style={{display: "inline-block", width: "100%"}}>
+            <div style={{display: "inline-block", width: "90%"}}>
                 <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
-                    <p><strong>{action.name}&nbsp;</strong></p>
-                    <p>{action.desc}</p>
+                    {descAttack(monsterData, action)}
                 </button>
                 <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
                     <BsFillTrashFill/>
@@ -36,13 +54,14 @@ const ActionRow = ({
             <ActionDialog open={open} action={action} index={index} onClose={() => setOpen(false)}
                           handleActionUpdate={handleActionUpdate}/>
         </div>
+
+
     )
 }
 
 const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
 
     const [name, setName] = useState('Attack Name')
-    const [desc, setDesc] = useState('')
     const [toHit, setToHit] = useState('[STR ATK]')
     const [type, setType] = useState('Melee Weapon Attack')
     const [reach, setReach] = useState(0)
@@ -62,17 +81,16 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
     }
 
     const handleDamageChange = (newDamage, newIndex) => {
-        setDamage((oldDamage) => {
-            oldDamage.map((oldDamage, oldIndex) => {
-                return newIndex === oldIndex ? newDamage : oldDamage
-            })
-        })
+        setDamage(damage.map((oldDamage, oldIndex) => {
+            return newIndex === oldIndex ? newDamage : oldDamage
+        }))
     }
+
 
     useEffect(() => {
         if (action) {
             setName(action.name)
-            setDesc(action.desc)
+            setEffect(action.desc)
             setToHit(action.attack_bonus)
             setType(action.type)
             setReach(action.reach)
@@ -83,13 +101,11 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
             setDamage(action.damage)
         }
     }, [action]);
-
-    console.log(action)
-
+    
     const confirm = () => {
         handleActionUpdate({
             name: name,
-            desc: desc,
+            desc: effect,
             attack_bonus: toHit,
             damage: damage,
             type: type,
@@ -195,11 +211,17 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                     label="Description"
                     variant="outlined"
                     fullWidth
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
+                    value={effect}
+                    onChange={(e) => setEffect(e.target.value)}
                     type="text"
                 />
             </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={confirm} color="primary">
+                    Update
+                </Button>
+            </DialogActions>
         </Dialog>
     }
     return <>
@@ -261,9 +283,9 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                                     label="Damage String"
                                     variant="outlined"
                                     fullWidth
-                                    value={d.damage_string}
+                                    value={d.damage_dice}
                                     onChange={(e) => handleDamageChange({
-                                        damage_string: e.target.value,
+                                        damage_dice: e.target.value,
                                         damage_type: d.damage_type
                                     }, dIndex)}
                                     type="text"
@@ -274,7 +296,7 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                                     fullWidth
                                     value={d.damage_type}
                                     onChange={(e) => handleDamageChange({
-                                        damage_string: d.damage_string,
+                                        damage_dice: d.damage_dice,
                                         damage_type: e.target.value
                                     }, dIndex)} type="text"
                                 />

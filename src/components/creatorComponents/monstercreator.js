@@ -17,11 +17,10 @@ import {API, graphqlOperation} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {getMonsterStatblock, listMonsterStatblocks} from "@/graphql/queries";
 import {AiOutlineSearch} from "react-icons/ai";
-import {listMonsterStatblocksByOwnerId} from "@/graphql/customQueries";
 
 const HeaderRow = ({monster, setMonster}) => {
     const containsText = (text, searchText) =>
-        text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+        text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || searchText === '';
 
     const newMonster = () => {
         setMonster(newMonsterStats)
@@ -60,18 +59,10 @@ const HeaderRow = ({monster, setMonster}) => {
     const saveMonster = async () => {
         const input = {...monster, ownerId: "spellbound"};
         delete input.__typename
-        console.log("saving monster", input)
-        let monsterExists = false
         let savedMonster = null
-        // // Call the createMap mutation
-        // const existingMonster = await API.graphql({
-        //     query: getMonsterStatblock,
-        //     variables: {id: input.id},
-        // });
-        // console.log(existingMonster)
-        // monsterExists = existingMonster.data.getMonsterStatblock
+
         if (monster.id) {
-            console.log("Updating a monster")
+            console.log("Updating a monster", input)
             try {
                 // Call the createMap mutation
                 const response = await API.graphql({
@@ -83,8 +74,7 @@ const HeaderRow = ({monster, setMonster}) => {
                 console.error("Error update creature:", e);
             }
         } else {
-            console.log("Creating a new monster")
-            console.log(input)
+            console.log("Creating a new monster", input)
             try {
                 // Call the createMap mutation
                 const response = await API.graphql({
@@ -98,16 +88,43 @@ const HeaderRow = ({monster, setMonster}) => {
         }
 
         if (savedMonster) {
-            console.log(savedMonster)
-            delete savedMonster.__typename
-            delete savedMonster.speed.__typename
-            delete savedMonster.skills.__typename
-            delete savedMonster.skill_proficiencies.__typename
-            delete savedMonster.updatedAt
-
-            // delete newMonster.actions.__typename
-            setMonster(savedMonster)
+            console.log("Saved monster", savedMonster)
+            setMonster(cleanMonster(savedMonster))
         }
+    }
+
+    // Get rid of __typenames just so I can stick with the auto generated mutations
+    const cleanMonster = (m) => {
+        delete m.__typename
+        delete m.speed.__typename
+        delete m.skills.__typename
+        delete m.skill_proficiencies.__typename
+        m.special_abilities = m.special_abilities.map((ability) => {
+            delete ability.__typename
+            return ability
+        })
+        m.actions = m.actions.map((action) => {
+            delete action.__typename
+            return action
+        })
+        m.reactions = m.reactions.map((ability) => {
+            delete ability.__typename
+            return ability
+        })
+        m.bonus_actions = m.bonus_actions.map((ability) => {
+            delete ability.__typename
+            return ability
+        })
+        m.legendary_actions = m.legendary_actions.map((ability) => {
+            delete ability.__typename
+            return ability
+        })
+        m.mythic_actions = m.mythic_actions.map((ability) => {
+            delete ability.__typename
+            return ability
+        })
+        delete m.updatedAt
+        return m
     }
 
     const downloadFile = () => {
@@ -128,6 +145,26 @@ const HeaderRow = ({monster, setMonster}) => {
         URL.revokeObjectURL(href);
     }
 
+    const handleSelectionChange = async (e) => {
+        setSelectedOption(e.target.value)
+    }
+
+    const getMonster = async (id) => {
+        console.log(id)
+        if (id) {
+            try {
+                const existingMonster = await API.graphql({
+                    query: getMonsterStatblock,
+                    variables: {id: id, ownerId: "spellbound"},
+                });
+                setMonster(cleanMonster(existingMonster.data.getMonsterStatblock))
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }
+
+
     return <div className={styles.stickyHeader}>
         <Button variant={"contained"} style={{marginRight: "10px"}} onClick={newMonster}>New</Button>
         <Button variant={"contained"} onClick={saveMonster}>Save</Button>
@@ -140,7 +177,7 @@ const HeaderRow = ({monster, setMonster}) => {
                 id="search-select"
                 value={selectedOption}
                 label="Monsters"
-                onChange={(e) => setSelectedOption(e.target.value)}
+                onChange={handleSelectionChange}
                 onClose={() => setSearchText("")}
                 // This prevents rendering empty string in Select's value
                 // if search text would exclude currently selected option.
@@ -174,7 +211,7 @@ const HeaderRow = ({monster, setMonster}) => {
                     />
                 </ListSubheader>
                 {displayedOptions.map((option, i) => (
-                    <MenuItem key={option.slug} value={option.slug}>
+                    <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id)}>
                         {option.name}
                     </MenuItem>
                 ))}
@@ -197,6 +234,7 @@ const newMonsterStats = {
     armor_desc: '',
     hit_points: 10,
     hit_dice: '1d10',
+    hit_dice_num: 1,
     speed: {
         walk: 30,
         swim: 0,
@@ -229,6 +267,11 @@ const newMonsterStats = {
     damage_immunity_list: [],
     condition_immunities: '',
     condition_immunity_list: [],
+    blindsight: 0,
+    blindBeyond: false,
+    darkvision: 0,
+    tremorsense: 0,
+    truesight: 0,
     senses: '',
     languages: '',
     challenge_rating: "0",
@@ -256,21 +299,13 @@ const CreateMonsterStatblock = (monster) => {
     const [damageImmunityList, setDamageImmunityList] = useState([])
     const [selectedCondition, setSelectedCondition] = useState("blinded")
     const [conditionImmunityList, setConditionImmunityList] = useState([])
-
-    const [tremorsense, setTremorsense] = useState(0)
-    const [blindsight, setBlindsight] = useState(0)
-    const [blindbeyond, setBlindbeyond] = useState(false)
-    const [darkvision, setDarkvision] = useState(0)
-    const [truesight, setTruesight] = useState(0)
     const [specialAbilities, setSpecialAbilities] = useState([])
     const [actions, setActions] = useState([])
     const [bonusActions, setBonusActions] = useState([])
     const [reactions, setReactions] = useState([])
     const [legendaryActions, setLegendaryActions] = useState([])
     const [mythicActions, setMythicActions] = useState([])
-
     const [hitDieSize, setHitDieSize] = useState("d8")
-    const [hitDieNum, setHitDieNum] = useState(0)
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
@@ -344,10 +379,8 @@ const CreateMonsterStatblock = (monster) => {
     const addSkillProficiency = async (proficient) => {
         const addSkill = async () => {
             const skillExists = monsterStatblock.skill_proficiencies.some((s) => selectedSkill in s)
-            console.log(`${selectedSkill} exists ${skillExists}`)
             if (skillExists) {
                 const newSkills = monsterStatblock.skill_proficiencies.map((s) => {
-                    console.log(s)
                     if (s.hasOwnProperty(selectedSkill)) {
                         return {[selectedSkill]: proficient}
                     }
@@ -361,11 +394,23 @@ const CreateMonsterStatblock = (monster) => {
                 console.log(monsterStatblock)
             }
         }
-        console.log("Adding skill proficiency")
         await addSkill()
         console.log(monsterStatblock)
 
         const initialValue = ""
+    }
+    
+    const getPassivePerception = () => {
+        Object.entries(monsterStatblock.skill_proficiencies).forEach(([key, val]) => {
+            if (!key === "perception") {
+                return null
+            }
+            if (val === "expertise") {
+                return monsterStatblock.wisdom + (getMonsterProf(monsterStatblock.cr) * 2)
+            }
+            return monsterStatblock.wisdom + getMonsterProf(monsterStatblock.cr)
+        })
+        return 10 + Number(scoreToMod(monsterStatblock.wisdom))
     }
 
     useEffect(() => {
@@ -373,8 +418,6 @@ const CreateMonsterStatblock = (monster) => {
             return word.charAt(0).toUpperCase()
                 + word.slice(1)
         }
-
-        console.log("Monster updated", monsterStatblock)
 
         const prof = getMonsterProf(monsterStatblock.cr)
 
@@ -385,8 +428,6 @@ const CreateMonsterStatblock = (monster) => {
         const wisMod = Number(scoreToMod(monsterStatblock.wisdom))
         const chaMod = Number(scoreToMod(monsterStatblock.charisma))
 
-        console.log(strMod, prof)
-
         const strSave = saveList.includes("strength") ? strMod + prof : null
         const dexSave = saveList.includes("dexterity") ? dexMod + prof : null
         const conSave = saveList.includes("constitution") ? conMod + prof : null
@@ -396,62 +437,50 @@ const CreateMonsterStatblock = (monster) => {
 
         const reduceSkills = () => {
             const skillObject = {}
-            Object.entries(skillList).forEach(({key, val}) => {
-                console.log(key, val)
-                let mod = 0
+            Object.entries(skillList).forEach(([key, val]) => {
+                if (val) {
+                    let mod = 0
 
-                if (val === "proficient") {
-                    mod = prof
-                } else if (val === "expertise") {
-                    mod = prof * 2
-                } else {
-                    console.error(`Invalid skill value for ${skill}: ${val}`)
-                }
+                    if (val === "proficient") {
+                        mod = prof
+                    } else if (val === "expertise") {
+                        mod = prof * 2
+                    } else {
+                        console.error(`Invalid skill value for ${skill}: ${val}`)
+                    }
 
-                if (key === "athletics") {
-                    skillObject[key] = (strMod + mod)
-                }
-                if (key === "acrobatics" || key === "sleight_of_hand" || key === "stealth")
-                    skillObject[key] = (dexMod + mod)
-                if (key === "arcana" || key === "history" || key === "investigation" || key === "nature" || key === "religion") {
-                    skillObject[key] = (intMod + mod)
-                }
-                if (key === "animal_handling" || key === "insight" || key === "medicine" || key === "perception" || key === "survival") {
-                    skillObject[key] = (wisMod + mod)
-                }
-                if (key === "deception" || key === "intimidation" || key === "performance" || key === "persuasion") {
-                    skillObject[key] = (chaMod + mod)
+                    if (key === "athletics") {
+                        skillObject[key] = (strMod + mod)
+                    }
+                    if (key === "acrobatics" || key === "sleight_of_hand" || key === "stealth")
+                        skillObject[key] = (dexMod + mod)
+                    if (key === "arcana" || key === "history" || key === "investigation" || key === "nature" || key === "religion") {
+                        skillObject[key] = (intMod + mod)
+                    }
+                    if (key === "animal_handling" || key === "insight" || key === "medicine" || key === "perception" || key === "survival") {
+                        skillObject[key] = (wisMod + mod)
+                    }
+                    if (key === "deception" || key === "intimidation" || key === "performance" || key === "persuasion") {
+                        skillObject[key] = (chaMod + mod)
+                    }
                 }
             })
             return skillObject
         }
 
-        const getPassivePerception = () => {
-            Object.entries(monsterStatblock.skill_proficiencies).forEach(({key, val}) => {
-                if (!key === "perception") {
-                    return null
-                }
-                if (val === "expertise") {
-                    return monsterStatblock.wisdom + (getMonsterProf(monsterStatblock.cr) * 2)
-                }
-                return monsterStatblock.wisdom + getMonsterProf(monsterStatblock.cr)
-            })
-            return monsterStatblock.wisdom
-        }
-
         const getSenses = () => {
             let sensesString = ""
-            if (blindsight) {
-                sensesString += `blindsight ${blindsight} ft.,`
+            if (monsterStatblock.blindsight !== 0) {
+                sensesString += `blindsight ${monsterStatblock.blindsight} ft.,`
             }
-            if (darkvision) {
-                sensesString += `darkvision ${darkvision} ft.,`
+            if (monsterStatblock.darkvision !== 0) {
+                sensesString += `darkvision ${monsterStatblock.darkvision} ft.,`
             }
-            if (tremorsense) {
-                sensesString += `tremorsense ${tremorsense} ft.,`
+            if (monsterStatblock.tremorsense !== 0) {
+                sensesString += `tremorsense ${monsterStatblock.tremorsense} ft.,`
             }
-            if (truesight) {
-                sensesString += `truesight ${tremorsense}`
+            if (monsterStatblock.truesight !== 0) {
+                sensesString += `truesight ${monsterStatblock.tremorsense}`
             }
             sensesString += `passive Perception ${getPassivePerception()}`
             return sensesString
@@ -488,8 +517,11 @@ const CreateMonsterStatblock = (monster) => {
             }
         )
     }, [saveList, skillList, damageVulnerabilityList, damageResistanceList, damageImmunityList,
-        conditionImmunityList, specialAbilities, actions, bonusActions, reactions, legendaryActions, mythicActions, blindsight, tremorsense, truesight, darkvision]);
+        conditionImmunityList, specialAbilities, actions, bonusActions, reactions, legendaryActions, mythicActions]);
 
+    useEffect(() => {
+        setMonsterStatblock({...monsterStatblock, perception: getPassivePerception()})
+    }, [monsterStatblock.wisdom, monsterStatblock.skill_proficiencies]);
 
     const removeSkillProficiency = () => {
         setSkillList((skills) => {
@@ -703,35 +735,40 @@ const CreateMonsterStatblock = (monster) => {
         }
     }
 
-    const handleHitDiceChange = (e) => {
-        setHitDieNum(e.target.value)
+    const handleHitDiceChange = (dieNum) => {
         setMonsterStatblock({
             ...monsterStatblock,
-            hit_dice: `${hitDieNum}${hitDieSize}+${hitDieNum * scoreToMod(monsterStatblock.constitution)}`
+            hit_dice_num: dieNum,
+            hit_dice: `${dieNum}${hitDieSize}+${dieNum * scoreToMod(monsterStatblock.constitution)}`
         })
     }
 
     useEffect(() => {
         const calcHitPoints = () => {
             const dieSize = Number(hitDieSize.split("d")[1])
-            return (Math.ceil(hitDieNum * (dieSize / 2 + .5) + hitDieNum * scoreToMod(monsterStatblock.constitution)))
+            return (Math.ceil(monsterStatblock.hit_dice_num * (dieSize / 2 + .5) + monsterStatblock.hit_dice_num * scoreToMod(monsterStatblock.constitution)))
         }
 
         setMonsterStatblock({...monsterStatblock, hit_points: calcHitPoints()})
-    }, [hitDieNum, monsterStatblock.constitution])
+    }, [monsterStatblock.hit_dice_num, monsterStatblock.constitution])
 
     useEffect(() => {
         if (monster) {
-            setMonsterStatblock({...monsterStatblock})
-            setSpecialAbilities(monsterStatblock.special_abilities)
+            setSaveList(monsterStatblock.save_proficiencies)
+            setSkillList(monsterStatblock.skill_proficiencies)
+            setDamageVulnerabilityList(monsterStatblock.damage_vulnerability_list)
+            setDamageResistanceList(monsterStatblock.damage_resistance_list)
+            setDamageImmunityList(monsterStatblock.damage_immunity_list)
             setSpecialAbilities(monsterStatblock.special_abilities)
             setActions(monsterStatblock.actions)
             setBonusActions(monsterStatblock.bonus_actions)
             setReactions(monsterStatblock.reactions)
             setLegendaryActions(monsterStatblock.legendary_actions)
             setMythicActions(monsterStatblock.mythic_actions)
+            setConditionImmunityList(monsterStatblock.condition_immunity_list)
         }
-    }, [monster]);
+    }, [monsterStatblock]);
+
 
     return (
         <div style={{minWidth: "1100px"}}>
@@ -918,7 +955,8 @@ const CreateMonsterStatblock = (monster) => {
                         <Grid xs>
                             <div style={{display: "inline-flex"}}>
                                 <TextField name="hit_dice_num" label="Hit Dice" variant="outlined"
-                                           value={hitDieNum} onChange={handleHitDiceChange}
+                                           value={monsterStatblock.hit_dice_num}
+                                           onChange={(e) => handleHitDiceChange(e.target.value)}
                                            type={"number"} style={{width: "70px"}}/>
                                 <Typography name="hit_dice_size" variant={"h5"}
                                             style={{position: "relative", top: "11px"}}>{hitDieSize}</Typography>
@@ -928,17 +966,22 @@ const CreateMonsterStatblock = (monster) => {
                     </Grid>
                     <Grid container spacing={2} marginY={rowSpacing}>
                         <Grid xs><TextField name="walk" label="Walk" variant="outlined"
-                                            value={monsterStatblock.speed.walk} onChange={handleSpeedChange}
+                                            value={monsterStatblock.speed.walk ? monsterStatblock.speed.walk : 0}
+                                            onChange={handleSpeedChange}
                                             type={"number"}/></Grid>
                         <Grid xs><TextField name="climb" label="Climb" variant="outlined"
-                                            value={monsterStatblock.climb} onChange={handleSpeedChange}
+                                            value={monsterStatblock.speed.climb ? monsterStatblock.speed.climb : 0}
+                                            onChange={handleSpeedChange}
                                             type={"number"}/></Grid>
                         <Grid xs><TextField name="swim" label="Swim" variant="outlined"
-                                            value={monsterStatblock.swim} onChange={handleSpeedChange} type={"number"}/></Grid>
+                                            value={monsterStatblock.speed.swim ? monsterStatblock.speed.swim : 0}
+                                            onChange={handleSpeedChange} type={"number"}/></Grid>
                         <Grid xs><TextField name="fly" label="Fly" variant="outlined"
-                                            value={monsterStatblock.fly} onChange={handleSpeedChange} type={"number"}/></Grid>
+                                            value={monsterStatblock.speed.fly} onChange={handleSpeedChange}
+                                            type={"number"}/></Grid>
                         <Grid xs><TextField name="burrow" label="Burrow" variant="outlined"
-                                            value={monsterStatblock.burrow} onChange={handleSpeedChange}
+                                            value={monsterStatblock.speed.burrow ? monsterStatblock.speed.burrow : 0}
+                                            onChange={handleSpeedChange}
                                             type={"number"}/></Grid>
                     </Grid>
                     <Grid container spacing={2} marginY={rowSpacing}>
@@ -1006,7 +1049,7 @@ const CreateMonsterStatblock = (monster) => {
                             })}
                         </Grid>
                         <Grid xs>
-                            {Object.entries(monsterStatblock.skill_proficiencies).map(({key, val}) => {
+                            {Object.entries(monsterStatblock.skill_proficiencies).map(([key, val]) => {
                                 if (val) {
                                     const skillString = `${key} (${val})`
                                     return <Button key={key} name={skill}
@@ -1115,19 +1158,19 @@ const CreateMonsterStatblock = (monster) => {
                         </Grid>
                         <Grid xs><TextField name="blindsight" label="Blindsight"
                                             variant="outlined"
-                                            value={blindsight} onChange={(e) => setBlindsight(e.target.value)}
+                                            value={monsterStatblock.blindsight} onChange={handleInputChange}
                                             type={"number"}/></Grid>
                         <Grid xs><TextField name="darkvision" label="Darkvision"
                                             variant="outlined"
-                                            value={darkvision} onChange={(e) => setDarkvision(e.target.value)}
+                                            value={monsterStatblock.darkvision} onChange={handleInputChange}
                                             type={"number"}/></Grid>
                         <Grid xs><TextField name="tremorsense" label="Tremorsense"
                                             variant="outlined"
-                                            value={tremorsense} onChange={(e) => setTremorsense(e.target.value)}
+                                            value={monsterStatblock.tremorsense} onChange={handleInputChange}
                                             type={"number"}/></Grid>
                         <Grid xs><TextField name="truesight" label="Truesight"
                                             variant="outlined"
-                                            value={truesight} onChange={(e) => setTruesight(e.target.value)}
+                                            value={monsterStatblock.truesight} onChange={handleInputChange}
                                             type={"number"}/></Grid>
                     </Grid>
                     <div style={{display: "flex"}}>
@@ -1151,7 +1194,7 @@ const CreateMonsterStatblock = (monster) => {
                         <Button type={"button"} onClick={addAction}>New Action</Button>
                     </div>
                     {actions.map((action, index) => {
-                        return <ActionRow action={action} key={action.name} index={index}
+                        return <ActionRow action={action} key={action.name} index={index} monsterData={monsterStatblock}
                                           handleActionUpdate={handleActionUpdate}
                                           handleActionRemove={() => removeAction(index)}/>
                     })}

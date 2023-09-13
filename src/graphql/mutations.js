@@ -4261,6 +4261,7 @@ export const createMonsterStatblock = /* GraphQL */ `
       armor_class
       armor_desc
       hit_points
+      hit_dice_num
       hit_dice
       speed {
         walk
@@ -4335,10 +4336,20 @@ export const createMonsterStatblock = /* GraphQL */ `
       damage_immunity_list
       condition_immunities
       condition_immunity_list
+      blindsight
+      blindBeyond
+      darkvision
+      tremorsense
+      truesight
       senses
       languages
       challenge_rating
       cr
+      special_abilities {
+        name
+        desc
+        __typename
+      }
       actions {
         name
         desc
@@ -4368,11 +4379,6 @@ export const createMonsterStatblock = /* GraphQL */ `
       }
       legendary_desc
       legendary_actions {
-        name
-        desc
-        __typename
-      }
-      special_abilities {
         name
         desc
         __typename
@@ -4407,6 +4413,7 @@ export const updateMonsterStatblock = /* GraphQL */ `
       armor_class
       armor_desc
       hit_points
+      hit_dice_num
       hit_dice
       speed {
         walk
@@ -4481,10 +4488,20 @@ export const updateMonsterStatblock = /* GraphQL */ `
       damage_immunity_list
       condition_immunities
       condition_immunity_list
+      blindsight
+      blindBeyond
+      darkvision
+      tremorsense
+      truesight
       senses
       languages
       challenge_rating
       cr
+      special_abilities {
+        name
+        desc
+        __typename
+      }
       actions {
         name
         desc
@@ -4514,11 +4531,6 @@ export const updateMonsterStatblock = /* GraphQL */ `
       }
       legendary_desc
       legendary_actions {
-        name
-        desc
-        __typename
-      }
-      special_abilities {
         name
         desc
         __typename
@@ -4553,6 +4565,7 @@ export const deleteMonsterStatblock = /* GraphQL */ `
       armor_class
       armor_desc
       hit_points
+      hit_dice_num
       hit_dice
       speed {
         walk
@@ -4627,10 +4640,20 @@ export const deleteMonsterStatblock = /* GraphQL */ `
       damage_immunity_list
       condition_immunities
       condition_immunity_list
+      blindsight
+      blindBeyond
+      darkvision
+      tremorsense
+      truesight
       senses
       languages
       challenge_rating
       cr
+      special_abilities {
+        name
+        desc
+        __typename
+      }
       actions {
         name
         desc
@@ -4660,11 +4683,6 @@ export const deleteMonsterStatblock = /* GraphQL */ `
       }
       legendary_desc
       legendary_actions {
-        name
-        desc
-        __typename
-      }
-      special_abilities {
         name
         desc
         __typename

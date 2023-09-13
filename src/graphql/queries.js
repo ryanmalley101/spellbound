@@ -2173,6 +2173,7 @@ export const getMonsterStatblock = /* GraphQL */ `
       armor_class
       armor_desc
       hit_points
+      hit_dice_num
       hit_dice
       speed {
         walk
@@ -2247,10 +2248,20 @@ export const getMonsterStatblock = /* GraphQL */ `
       damage_immunity_list
       condition_immunities
       condition_immunity_list
+      blindsight
+      blindBeyond
+      darkvision
+      tremorsense
+      truesight
       senses
       languages
       challenge_rating
       cr
+      special_abilities {
+        name
+        desc
+        __typename
+      }
       actions {
         name
         desc
@@ -2280,11 +2291,6 @@ export const getMonsterStatblock = /* GraphQL */ `
       }
       legendary_desc
       legendary_actions {
-        name
-        desc
-        __typename
-      }
-      special_abilities {
         name
         desc
         __typename
@@ -2331,6 +2337,7 @@ export const listMonsterStatblocks = /* GraphQL */ `
         armor_class
         armor_desc
         hit_points
+        hit_dice_num
         hit_dice
         speed {
           walk
@@ -2405,10 +2412,20 @@ export const listMonsterStatblocks = /* GraphQL */ `
         damage_immunity_list
         condition_immunities
         condition_immunity_list
+        blindsight
+        blindBeyond
+        darkvision
+        tremorsense
+        truesight
         senses
         languages
         challenge_rating
         cr
+        special_abilities {
+          name
+          desc
+          __typename
+        }
         actions {
           name
           desc
@@ -2433,11 +2450,6 @@ export const listMonsterStatblocks = /* GraphQL */ `
         }
         legendary_desc
         legendary_actions {
-          name
-          desc
-          __typename
-        }
-        special_abilities {
           name
           desc
           __typename
