@@ -4156,3 +4156,438 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
     }
   }
 `;
+export const onCreateMonsterStatblock = /* GraphQL */ `
+  subscription OnCreateMonsterStatblock(
+    $filter: ModelSubscriptionMonsterStatblockFilterInput
+  ) {
+    onCreateMonsterStatblock(filter: $filter) {
+      id
+      ownerId
+      name
+      createdAt
+      updatedAt
+      desc
+      size
+      type
+      subtype
+      group
+      alignment
+      armor_class
+      armor_desc
+      hit_points
+      hit_dice
+      speed {
+        walk
+        swim
+        fly
+        climb
+        burrow
+        hover
+        __typename
+      }
+      strength
+      dexterity
+      constitution
+      intelligence
+      wisdom
+      charisma
+      strength_save
+      dexterity_save
+      constitution_save
+      intelligence_save
+      wisdom_save
+      charisma_save
+      save_proficiencies
+      perception
+      skills {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      skill_proficiencies {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      damage_vulnerabilities
+      damage_vulnerability_list
+      damage_resistances
+      damage_resistance_list
+      damage_immunities
+      damage_immunity_list
+      condition_immunities
+      condition_immunity_list
+      senses
+      languages
+      challenge_rating
+      cr
+      actions {
+        name
+        desc
+        effect
+        type
+        attack_bonus
+        reach
+        short_range
+        long_range
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
+        targets
+        __typename
+      }
+      bonus_actions {
+        name
+        desc
+        __typename
+      }
+      reactions {
+        name
+        desc
+        __typename
+      }
+      legendary_desc
+      legendary_actions {
+        name
+        desc
+        __typename
+      }
+      special_abilities {
+        name
+        desc
+        __typename
+      }
+      mythic_desc
+      mythic_actions {
+        name
+        desc
+        __typename
+      }
+      __typename
+    }
+  }
+`;
+export const onUpdateMonsterStatblock = /* GraphQL */ `
+  subscription OnUpdateMonsterStatblock(
+    $filter: ModelSubscriptionMonsterStatblockFilterInput
+  ) {
+    onUpdateMonsterStatblock(filter: $filter) {
+      id
+      ownerId
+      name
+      createdAt
+      updatedAt
+      desc
+      size
+      type
+      subtype
+      group
+      alignment
+      armor_class
+      armor_desc
+      hit_points
+      hit_dice
+      speed {
+        walk
+        swim
+        fly
+        climb
+        burrow
+        hover
+        __typename
+      }
+      strength
+      dexterity
+      constitution
+      intelligence
+      wisdom
+      charisma
+      strength_save
+      dexterity_save
+      constitution_save
+      intelligence_save
+      wisdom_save
+      charisma_save
+      save_proficiencies
+      perception
+      skills {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      skill_proficiencies {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      damage_vulnerabilities
+      damage_vulnerability_list
+      damage_resistances
+      damage_resistance_list
+      damage_immunities
+      damage_immunity_list
+      condition_immunities
+      condition_immunity_list
+      senses
+      languages
+      challenge_rating
+      cr
+      actions {
+        name
+        desc
+        effect
+        type
+        attack_bonus
+        reach
+        short_range
+        long_range
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
+        targets
+        __typename
+      }
+      bonus_actions {
+        name
+        desc
+        __typename
+      }
+      reactions {
+        name
+        desc
+        __typename
+      }
+      legendary_desc
+      legendary_actions {
+        name
+        desc
+        __typename
+      }
+      special_abilities {
+        name
+        desc
+        __typename
+      }
+      mythic_desc
+      mythic_actions {
+        name
+        desc
+        __typename
+      }
+      __typename
+    }
+  }
+`;
+export const onDeleteMonsterStatblock = /* GraphQL */ `
+  subscription OnDeleteMonsterStatblock(
+    $filter: ModelSubscriptionMonsterStatblockFilterInput
+  ) {
+    onDeleteMonsterStatblock(filter: $filter) {
+      id
+      ownerId
+      name
+      createdAt
+      updatedAt
+      desc
+      size
+      type
+      subtype
+      group
+      alignment
+      armor_class
+      armor_desc
+      hit_points
+      hit_dice
+      speed {
+        walk
+        swim
+        fly
+        climb
+        burrow
+        hover
+        __typename
+      }
+      strength
+      dexterity
+      constitution
+      intelligence
+      wisdom
+      charisma
+      strength_save
+      dexterity_save
+      constitution_save
+      intelligence_save
+      wisdom_save
+      charisma_save
+      save_proficiencies
+      perception
+      skills {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      skill_proficiencies {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      damage_vulnerabilities
+      damage_vulnerability_list
+      damage_resistances
+      damage_resistance_list
+      damage_immunities
+      damage_immunity_list
+      condition_immunities
+      condition_immunity_list
+      senses
+      languages
+      challenge_rating
+      cr
+      actions {
+        name
+        desc
+        effect
+        type
+        attack_bonus
+        reach
+        short_range
+        long_range
+        damage {
+          damage_dice
+          damage_type
+          __typename
+        }
+        targets
+        __typename
+      }
+      bonus_actions {
+        name
+        desc
+        __typename
+      }
+      reactions {
+        name
+        desc
+        __typename
+      }
+      legendary_desc
+      legendary_actions {
+        name
+        desc
+        __typename
+      }
+      special_abilities {
+        name
+        desc
+        __typename
+      }
+      mythic_desc
+      mythic_actions {
+        name
+        desc
+        __typename
+      }
+      __typename
+    }
+  }
+`;

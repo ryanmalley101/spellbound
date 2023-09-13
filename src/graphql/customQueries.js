@@ -14,3 +14,14 @@ export const listGamesMetadata = /* GraphQL */ `
         }
     }
 `;
+
+export const listMonsterStatblocksByOwnerId = /* GraphQL */ `
+    query ListMonsterStatblocks($ownerId: String!) {
+        listMonsterStatblocks(ownerId: $ownerId) {
+            items {
+                id
+                name
+                ownerId
+            }
+        }
+    }`

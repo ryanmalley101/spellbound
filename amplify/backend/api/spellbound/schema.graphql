@@ -1,3 +1,13 @@
+#directive @belongsTo on FIELD_DEFINITION
+#directive @hasMany on FIELD_DEFINITION
+#directive @hasOne on FIELD_DEFINITION
+#directive @index on FIELD_DEFINITION
+#directive @primaryKey on FIELD_DEFINITION
+#directive @function on FIELD_DEFINITION
+#directive @model on OBJECT
+#directive @auth on OBJECT
+
+
 type Game
 @model
 @auth(rules: [{ allow: private, provider: iam}, { allow: private }])
@@ -446,3 +456,255 @@ input ItemInput {
     value: String
     notes: String
 }
+
+type MonsterStatblock
+@model
+@auth(rules: [{ allow: private }])
+{
+    id: ID! @primaryKey(sortKeyFields: ["ownerId"])
+    ownerId: String!
+    name: String!
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+    desc: String
+    size: String
+    type: String
+    subtype: String
+    group: String
+    alignment: String
+    armor_class: Int
+    armor_desc: String
+    hit_points: Int
+    hit_dice: String
+    speed: MovementSpeed
+    strength: Int
+    dexterity: Int
+    constitution: Int
+    intelligence: Int
+    wisdom: Int
+    charisma: Int
+    strength_save: Int
+    dexterity_save: Int
+    constitution_save: Int
+    intelligence_save: Int
+    wisdom_save: Int
+    charisma_save: Int
+    save_proficiencies: [String]
+    perception: Int
+    skills: MonsterSkillMods
+    skill_proficiencies: MonsterSkillProfs
+    damage_vulnerabilities: String
+    damage_vulnerability_list: [String]
+    damage_resistances: String
+    damage_resistance_list: [String]
+    damage_immunities: String
+    damage_immunity_list: [String]
+    condition_immunities: String
+    condition_immunity_list: [String]
+    senses: String
+    languages: String
+    challenge_rating: Int
+    cr: Float
+    actions: [MonsterAttack],
+    bonus_actions: [MonsterAbility],
+    reactions: [MonsterAbility],
+    legendary_desc: String,
+    legendary_actions: [MonsterAbility],
+    special_abilities: [MonsterAbility],
+    mythic_desc: String,
+    mythic_actions: [MonsterAbility]
+}
+
+input MonsterStatblockInput
+{
+    ownerId: String
+    name: ID
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+    desc: String
+    size: String
+    type: String
+    subtype: String
+    group: String
+    alignment: String
+    armor_class: Int
+    armor_desc: String
+    hit_points: Int
+    hit_dice: String
+    speed: MovementSpeedInput
+    strength: Int
+    dexterity: Int
+    constitution: Int
+    intelligence: Int
+    wisdom: Int
+    charisma: Int
+    strength_save: Int
+    dexterity_save: Int
+    constitution_save: Int
+    intelligence_save: Int
+    wisdom_save: Int
+    charisma_save: Int
+    save_proficiencies: [String]
+    perception: Int
+    skills: MonsterSkillModsInput
+    skill_proficiencies: MonsterSkillProfsInput
+    damage_vulnerabilities: String
+    damage_vulnerability_list: [String]
+    damage_resistances: String
+    damage_resistance_list: [String]
+    damage_immunities: String
+    damage_immunity_list: [String]
+    condition_immunities: String
+    condition_immunity_list: [String]
+    senses: String
+    languages: String
+    challenge_rating: String
+    cr: Float
+    actions: [MonsterAttackInput],
+    bonus_actions: [MonsterAbilityInput],
+    reactions: [MonsterAbilityInput],
+    legendary_desc: String,
+    legendary_actions: [MonsterAbilityInput],
+    special_abilities: [MonsterAbilityInput],
+    mythic_desc: String,
+    mythic_actions: [MonsterAbilityInput],
+}
+
+type MonsterAbility {
+    name: String
+    desc: String
+}
+
+input MonsterAbilityInput {
+    name: String
+    desc: String
+}
+
+type MovementSpeed {
+    walk: Int
+    swim: Int
+    fly: Int
+    climb: Int
+    burrow: Int
+    hover: Boolean
+}
+
+input MovementSpeedInput {
+    walk: Int
+    swim: Int
+    fly: Int
+    climb: Int
+    burrow: Int
+    hover: Boolean
+}
+
+type MonsterSkillMods {
+    acrobatics: Int
+    animal_handling: Int
+    arcana: Int
+    athletics: Int
+    deception: Int
+    history: Int
+    insight: Int
+    intimidation: Int
+    investigation: Int
+    medicine: Int
+    nature: Int
+    perception: Int
+    performance: Int
+    persuasion: Int
+    religion: Int
+    sleight_of_hand: Int
+    stealth: Int
+    survival: Int
+}
+
+input MonsterSkillModsInput {
+    acrobatics: Int
+    animal_handling: Int
+    arcana: Int
+    athletics: Int
+    deception: Int
+    history: Int
+    insight: Int
+    intimidation: Int
+    investigation: Int
+    medicine: Int
+    nature: Int
+    perception: Int
+    performance: Int
+    persuasion: Int
+    religion: Int
+    sleight_of_hand: Int
+    stealth: Int
+    survival: Int
+}
+
+type MonsterSkillProfs {
+    acrobatics: String
+    animal_handling: String
+    arcana: String
+    athletics: String
+    deception: String
+    history: String
+    insight: String
+    intimidation: String
+    investigation: String
+    medicine: String
+    nature: String
+    perception: String
+    performance: String
+    persuasion: String
+    religion: String
+    sleight_of_hand: String
+    stealth: String
+    survival: String
+}
+
+input MonsterSkillProfsInput {
+    acrobatics: String
+    animal_handling: String
+    arcana: String
+    athletics: String
+    deception: String
+    history: String
+    insight: String
+    intimidation: String
+    investigation: String
+    medicine: String
+    nature: String
+    perception: String
+    performance: String
+    persuasion: String
+    religion: String
+    sleight_of_hand: String
+    stealth: String
+    survival: String
+}
+
+type MonsterAttack {
+    name: String
+    desc: String
+    effect: String
+    type: String
+    attack_bonus: String
+    reach: Int
+    short_range: Int
+    long_range: Int
+    damage: [DamageDice]
+    targets: String
+}
+
+input MonsterAttackInput {
+    name: String
+    desc: String
+    effect: String
+    type: String
+    attack_bonus: String
+    reach: Int
+    short_range: Int
+    long_range: Int
+    damage: [DamageDiceInput]
+    targets: String
+}
+

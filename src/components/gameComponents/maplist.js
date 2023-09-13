@@ -60,17 +60,6 @@ function CreateMapDialog(props) {
   </>;
 }
 
-CreateMapDialog.propTypes = {
-  open: PropTypes.bool,
-  onClose: PropTypes.func,
-  value: PropTypes.string,
-  onChange: PropTypes.func,
-  value1: PropTypes.string,
-  onChange1: PropTypes.func,
-  value2: PropTypes.string,
-  onChange2: PropTypes.func,
-  onClick: PropTypes.func
-};
 const MapList = () => {
   const [mapList, setMapList] = useState([]);
   const {gameID, playerID, activeMap} = useBattlemapStore();
