@@ -45,6 +45,7 @@ export const rollAttack = async (attack, playerID, gameID, advantage) => {
         messageText: attack.notes,
         owner: playerID,
         gameMessageListId: gameID,
+        gameId: gameID,
         advantage: advantage,
     };
     // Call the createNewGame mutation

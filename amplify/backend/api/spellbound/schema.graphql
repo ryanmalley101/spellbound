@@ -119,6 +119,7 @@ input ParseMessageInput {
     messageText: String
     abilityName: String
     d20mod: Int
+    gameId: ID
     saveAbility: String
     saveScore: Int
     advantage: String
@@ -255,6 +256,12 @@ type CharacterSheet
     current_hd: Int!
     temp_hp: Int!
     speed: String!
+    strength: Int!
+    dexterity: Int!
+    consitution: Int!
+    intelligence: Int!
+    wisdom: Int!
+    charisma: Int!
     strength_score: Int!
     dexterity_score: Int!
     constitution_score: Int!
@@ -273,6 +280,9 @@ type CharacterSheet
     intelligence_save_prof: Boolean!
     wisdom_save_prof: Boolean!
     charisma_save_prof: Boolean!
+    skills: SkillMods
+    skill_proficiencies: SkillProfs
+    save_proficiencies: [String]
     passive_perception: Int!
     passive_investigation: Int!
     passive_insight: Int!
@@ -382,14 +392,14 @@ type CharacterSheet
 type Attack {
     name: String!
     notes: String!
-    attack_bonus: Int!
+    attack_bonus: String!
     damage: [DamageDice]!
 }
 
 input AttackInput {
     name: String
     notes: String
-    attack_bonus: Int
+    attack_bonus: String
     damage: [DamageDiceInput]
 }
 
@@ -474,6 +484,7 @@ type MonsterStatblock
     alignment: String
     armor_class: Int
     armor_desc: String
+    current_hit_points: Int
     hit_points: Int
     hit_dice_num: Int,
     hit_dice: String
@@ -492,8 +503,8 @@ type MonsterStatblock
     charisma_save: Int
     save_proficiencies: [String]
     perception: Int
-    skills: MonsterSkillMods
-    skill_proficiencies: MonsterSkillProfs
+    skills: SkillMods
+    skill_proficiencies: SkillProfs
     damage_vulnerabilities: String
     damage_vulnerability_list: [String]
     damage_resistances: String
@@ -509,7 +520,7 @@ type MonsterStatblock
     truesight: Int,
     senses: String
     languages: String
-    challenge_rating: Int
+    challenge_rating: String
     cr: Float
     special_abilities: [MonsterAbility],
     actions: [MonsterAttack],
@@ -553,8 +564,8 @@ input MonsterStatblockInput
     charisma_save: Int
     save_proficiencies: [String]
     perception: Int
-    skills: MonsterSkillModsInput
-    skill_proficiencies: MonsterSkillProfsInput
+    skills: SkillModsInput
+    skill_proficiencies: SkillProfsInput
     damage_vulnerabilities: String
     damage_vulnerability_list: [String]
     damage_resistances: String
@@ -599,6 +610,7 @@ type MovementSpeed {
     climb: Int
     burrow: Int
     hover: Boolean
+    notes: String
 }
 
 input MovementSpeedInput {
@@ -608,9 +620,10 @@ input MovementSpeedInput {
     climb: Int
     burrow: Int
     hover: Boolean
+    notes: String
 }
 
-type MonsterSkillMods {
+type SkillMods {
     acrobatics: Int
     animal_handling: Int
     arcana: Int
@@ -631,7 +644,7 @@ type MonsterSkillMods {
     survival: Int
 }
 
-input MonsterSkillModsInput {
+input SkillModsInput {
     acrobatics: Int
     animal_handling: Int
     arcana: Int
@@ -652,7 +665,7 @@ input MonsterSkillModsInput {
     survival: Int
 }
 
-type MonsterSkillProfs {
+type SkillProfs {
     acrobatics: String
     animal_handling: String
     arcana: String
@@ -673,7 +686,7 @@ type MonsterSkillProfs {
     survival: String
 }
 
-input MonsterSkillProfsInput {
+input SkillProfsInput {
     acrobatics: String
     animal_handling: String
     arcana: String

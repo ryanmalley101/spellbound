@@ -12,6 +12,20 @@ const ConvertSRDMonsters = () => {
     const [page, setPage] = useState("https://api.open5e.com/v1/monsters/?document__slug__iexact=wotc-srd&page=1")
 
     useEffect(() => {
+        const parseMonster = async () => {
+            for (const oldMonster of SRDList) {
+                // await new Promise(r => setTimeout(r, 1000));
+                console.log(oldMonster.name)
+                if (oldMonster.name !== "Druid" && oldMonster.name !== "Dryad" && oldMonster.name !== "Djinni" && oldMonster.name !== "Roper" && oldMonster.name !== "Vampire" && oldMonster.name !== "Vampire Spawn") {
+                    const newMonster = convertMonster(oldMonster)
+                    setConvertedList((list) => [...list, newMonster])
+                    console.log(newMonster)
+                    // const savedMonster = createStatblock(newMonster)
+                    // console.log(savedMonster)
+                }
+            }
+        }
+
         const fetchData = async (url) => {
             const response = await fetch(url);
             const data = await response.json()
@@ -23,16 +37,7 @@ const ConvertSRDMonsters = () => {
         if (page) {
             fetchData(page)
         } else {
-            SRDList.forEach((oldMonster) => {
-                console.log(oldMonster.name)
-                if (oldMonster.name !== "Druid" && oldMonster.name !== "Dryad" && oldMonster.name !== "Djinni" && oldMonster.name !== "Roper" && oldMonster.name !== "Vampire" && oldMonster.name !== "Vampire Spawn") {
-                    const newMonster = convertMonster(oldMonster)
-                    setConvertedList((list) => [...list, newMonster])
-                    console.log(newMonster)
-                    // const savedMonster = createStatblock(newMonster)
-                    // console.log(savedMonster)
-                }
-            })
+            parseMonster()
         }
     }, [page]);
 
@@ -221,8 +226,9 @@ const ConvertSRDMonsters = () => {
         const getActions = () => {
             if (monster.actions) {
                 return monster.actions.map((action) => {
-                    if (!action.attack_bonus) {
-                        return action
+                    if (!action.desc.split(', ')[2]) {
+                        console.log(`Attack for monster ${monster.name} is actually an ability: `, action)
+                        return {name: action.name, desc: action.desc, type: "Ability"}
                     }
                     const newAction = {
                         name: action.name,
@@ -234,22 +240,22 @@ const ConvertSRDMonsters = () => {
 
                     if (newAction.type === "Melee Weapon Attack" || newAction.type === "Melee Spell Attack") {
                         newAction.reach = Number(action.desc.split("to hit, reach")[1].split(" ft.")[0])
-                    }
-                    if (newAction.type === "Ranged Spell Attack") {
+                    } else if (newAction.type === "Ranged Spell Attack") {
                         newAction.short_range = Number(action.desc.split("to hit, range")[1].split(" ft.")[0])
-                    }
-                    if (newAction.type === "Ranged Weapon Attack") {
+                    } else if (newAction.type === "Ranged Weapon Attack") {
                         const range = action.desc.split("to hit, range")[1].split(" ft.")[0].split('/')
                         newAction.short_range = Number(range[0])
                         newAction.long_range = Number(range[1])
-                    }
-                    if (newAction.type === "Melee or Ranged Weapon Attack") {
+                    } else if (newAction.type === "Melee or Ranged Weapon Attack") {
                         console.log(newAction)
                         const totalrange = action.desc.split(", reach ")[1]
                         newAction.reach = Number(totalrange.split(' ft.'))
                         const rangedreach = totalrange.split('range ')[1].split(' ft.')[0].split('/')
                         newAction.short_range = Number(rangedreach[0])
                         newAction.long_range = Number(rangedreach[1])
+                    } else {
+                        console.log(`Attack for monster ${monster.name} is actually an ability: `, action)
+                        return {name: action.name, desc: action.desc, type: "Ability"}
                     }
 
                     // k: +6 to hit, reach undefined ft. or ranged undefined/undefined ft., one target.. Hit:  4 (1d4+2) piercing damage.
@@ -272,6 +278,18 @@ const ConvertSRDMonsters = () => {
             return []
         }
 
+        const getSpeed = () => {
+            const speed = monster.speed
+            Object.entries(monster.speed).forEach(([key, val]) => {
+                if (key !== "walk" && key !== "swim" && key !== "swim" && key !== "fly" && key !== "climb" && key !== "burrow" && key !== "hover" && key !== "notes") {
+                    console.error(`Speed ${key} for ${monster.name} is invalid`)
+
+                }
+            })
+            return speed
+        }
+
+
         const statblock = {
             ownerId: "wotc-srd",
             name: monster.name,
@@ -285,7 +303,7 @@ const ConvertSRDMonsters = () => {
             hit_points: monster.hit_points,
             hit_dice: monster.hit_dice,
             hit_dice_num: monster.hit_dice.split('d')[0],
-            speed: monster.speed,
+            speed: getSpeed(),
             strength: monster.strength,
             dexterity: monster.dexterity,
             constitution: monster.constitution,
@@ -314,19 +332,29 @@ const ConvertSRDMonsters = () => {
             languages: monster.languages,
             challenge_rating: monster.challenge_rating,
             cr: monster.cr,
-            special_abilities: monster.special_abilities ? monster.special_abilities : [],
+            special_abilities: monster.special_abilities ? monster.special_abilities.map((ability) => {
+                return {name: ability.name, desc: ability.desc}
+            }) : [],
             actions: getActions(),
-            bonus_actions: monster.bonus_actions ? monster.bonus_actions : [],
-            reactions: monster.reactions ? monster.reactions : [],
+            bonus_actions: monster.bonus_actions ? monster.bonus_actions.map((ability) => {
+                return {name: ability.name, desc: ability.desc}
+            }) : [],
+            reactions: monster.reactions ? monster.reactions.map((ability) => {
+                return {name: ability.name, desc: ability.desc}
+            }) : [],
             legendary_desc: monster.legendary_desc,
-            legendary_actions: monster.legendary_actions ? monster.legendary_actions : [],
+            legendary_actions: monster.legendary_actions ? monster.legendary_actions.map((ability) => {
+                return {name: ability.name, desc: ability.desc}
+            }) : [],
             blindsight: 0,
             blindBeyond: false,
             darkvision: 0,
             tremorsense: 0,
             truesight: 0,
             mythic_desc: monster.mythic_desc,
-            mythic_actions: monster.mythic_actions ? monster.mythic_actions : []
+            mythic_actions: monster.mythic_actions ? monster.mythic_actions.map((ability) => {
+                return {name: ability.name, desc: ability.desc}
+            }) : []
 
         }
         console.log(statblock)

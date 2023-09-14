@@ -17,80 +17,80 @@ import {CiMusicNote1} from "react-icons/ci";
 import SettingsMenu from "@/components/gameComponents/settingsmenu";
 import MusicLibrary from "@/components/gameComponents/musiclibrary";
 
-const TabMenu = ({user}) => {
-  const [selectedTab, setSelectedTab] = useState(0);
+const TabMenu = ({user, messages}) => {
+    const [selectedTab, setSelectedTab] = useState(0);
 
-  const handleTabSelect = (index) => {
-    setSelectedTab(index);
-  };
+    const handleTabSelect = (index) => {
+        setSelectedTab(index);
+    };
 
-  const song = {
-    "url": "music/test.mp3",
-    "title": "Bohemian Rhapsody",
-    "artist": "Queen"
-  }
+    const song = {
+        "url": "music/test.mp3",
+        "title": "Bohemian Rhapsody",
+        "artist": "Queen"
+    }
 
-  return (
-    <div className={styles.TabMenu}>
-      <Tabs selectedIndex={selectedTab} onSelect={handleTabSelect} className={styles.ReactTabs}>
-        <TabList className={styles.ReactTabsList}>
-          <Tab><BsChatLeftDots size={24}/></Tab>
-          <Tab><AiOutlinePicture size={24}/></Tab>
-          <Tab><BsBook size={24}/></Tab>
-          <Tab><GiCompass size={24}/></Tab>
-          <Tab><SiDungeonsanddragons size={24}/></Tab>
-          <Tab><CiMusicNote1 size={24}/></Tab>
-          <Tab><BsCodeSlash size={24}/></Tab>
-          <Tab><BsGear size={24}/></Tab>
-        </TabList>
+    return (
+        <div className={styles.TabMenu}>
+            <Tabs selectedIndex={selectedTab} onSelect={handleTabSelect} className={styles.ReactTabs}>
+                <TabList className={styles.ReactTabsList}>
+                    <Tab><BsChatLeftDots size={24}/></Tab>
+                    <Tab><AiOutlinePicture size={24}/></Tab>
+                    <Tab><BsBook size={24}/></Tab>
+                    <Tab><GiCompass size={24}/></Tab>
+                    <Tab><SiDungeonsanddragons size={24}/></Tab>
+                    <Tab><CiMusicNote1 size={24}/></Tab>
+                    <Tab><BsCodeSlash size={24}/></Tab>
+                    <Tab><BsGear size={24}/></Tab>
+                </TabList>
 
-        <TabPanel name={"Chatroom"} className={styles.ReactTabsPanel}>
-          <ChatRoom user={user}/>
-        </TabPanel>
+                <TabPanel name={"Chatroom"} className={styles.ReactTabsPanel}>
+                    <ChatRoom user={user} messages={messages}/>
+                </TabPanel>
 
-        <TabPanel name={"Art Library"} className={styles.ReactTabsPanel}>
-          <ArtLibrary artDirectory={artDirectory} user={user}/>
-        </TabPanel>
+                <TabPanel name={"Art Library"} className={styles.ReactTabsPanel}>
+                    <ArtLibrary artDirectory={artDirectory} user={user}/>
+                </TabPanel>
 
-        <TabPanel className={styles.ReactTabsPanel}>
-          {/* Content for the Journal */}
-          <h2>Journal Content</h2>
-          <JournalList/>
-          {/* Add your journal component here */}
-        </TabPanel>
+                <TabPanel className={styles.ReactTabsPanel}>
+                    {/* Content for the Journal */}
+                    <h2>Journal Content</h2>
+                    <JournalList/>
+                    {/* Add your journal component here */}
+                </TabPanel>
 
-        <TabPanel className={styles.ReactTabsPanel}>
-          {/* Content for the Journal */}
-          <MapList/>
-          {/* Add your journal component here */}
-        </TabPanel>
+                <TabPanel className={styles.ReactTabsPanel}>
+                    {/* Content for the Journal */}
+                    <MapList/>
+                    {/* Add your journal component here */}
+                </TabPanel>
 
-        <TabPanel className={styles.ReactTabsPanel}>
-          {/* Content for the Compendium */}
-          <SRDList/>
-          {/* Add your compendium component here */}
-        </TabPanel>
+                <TabPanel className={styles.ReactTabsPanel}>
+                    {/* Content for the Compendium */}
+                    <SRDList/>
+                    {/* Add your compendium component here */}
+                </TabPanel>
 
-        <TabPanel className={styles.ReactTabsPanel}>
-          <MusicLibrary/>
-        </TabPanel>
+                <TabPanel className={styles.ReactTabsPanel}>
+                    <MusicLibrary/>
+                </TabPanel>
 
-        <TabPanel className={styles.ReactTabsPanel}>
-          {/* Content for the Macros */}
-          <h2>Macros Content</h2>
-          {/* Add your macros component here */}
-        </TabPanel>
+                <TabPanel className={styles.ReactTabsPanel}>
+                    {/* Content for the Macros */}
+                    <h2>Macros Content</h2>
+                    {/* Add your macros component here */}
+                </TabPanel>
 
-        <TabPanel className={styles.ReactTabsPanel}>
-          {/* Content for the Settings */}
-          <h2>Settings Content</h2>
-          <SettingsMenu/>
-          {/* Add your settings component here */}
-        </TabPanel>
-      </Tabs>
-      <AudioPlayer autoPlay/>
-    </div>
-  );
+                <TabPanel className={styles.ReactTabsPanel}>
+                    {/* Content for the Settings */}
+                    <h2>Settings Content</h2>
+                    <SettingsMenu/>
+                    {/* Add your settings component here */}
+                </TabPanel>
+            </Tabs>
+            <AudioPlayer autoPlay/>
+        </div>
+    );
 };
 
 export default TabMenu;

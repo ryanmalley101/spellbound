@@ -102,6 +102,12 @@ export const getGame = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -120,6 +126,7 @@ export const getGame = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -1035,6 +1042,12 @@ export const getToken = /* GraphQL */ `
         current_hd
         temp_hp
         speed
+        strength
+        dexterity
+        consitution
+        intelligence
+        wisdom
+        charisma
         strength_score
         dexterity_score
         constitution_score
@@ -1053,6 +1066,49 @@ export const getToken = /* GraphQL */ `
         intelligence_save_prof
         wisdom_save_prof
         charisma_save_prof
+        skills {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        skill_proficiencies {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        save_proficiencies
         passive_perception
         passive_investigation
         passive_insight
@@ -1254,6 +1310,12 @@ export const listTokens = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -1272,6 +1334,7 @@ export const listTokens = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -1596,6 +1659,12 @@ export const getCharacterSheet = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -1614,6 +1683,7 @@ export const getCharacterSheet = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -1760,6 +1830,12 @@ export const getCharacterSheet = /* GraphQL */ `
       current_hd
       temp_hp
       speed
+      strength
+      dexterity
+      consitution
+      intelligence
+      wisdom
+      charisma
       strength_score
       dexterity_score
       constitution_score
@@ -1778,6 +1854,49 @@ export const getCharacterSheet = /* GraphQL */ `
       intelligence_save_prof
       wisdom_save_prof
       charisma_save_prof
+      skills {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      skill_proficiencies {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      save_proficiencies
       passive_perception
       passive_investigation
       passive_insight
@@ -1993,6 +2112,12 @@ export const listCharacterSheets = /* GraphQL */ `
         current_hd
         temp_hp
         speed
+        strength
+        dexterity
+        consitution
+        intelligence
+        wisdom
+        charisma
         strength_score
         dexterity_score
         constitution_score
@@ -2011,6 +2136,49 @@ export const listCharacterSheets = /* GraphQL */ `
         intelligence_save_prof
         wisdom_save_prof
         charisma_save_prof
+        skills {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        skill_proficiencies {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        save_proficiencies
         passive_perception
         passive_investigation
         passive_insight
@@ -2172,6 +2340,7 @@ export const getMonsterStatblock = /* GraphQL */ `
       alignment
       armor_class
       armor_desc
+      current_hit_points
       hit_points
       hit_dice_num
       hit_dice
@@ -2182,6 +2351,7 @@ export const getMonsterStatblock = /* GraphQL */ `
         climb
         burrow
         hover
+        notes
         __typename
       }
       strength
@@ -2336,6 +2506,7 @@ export const listMonsterStatblocks = /* GraphQL */ `
         alignment
         armor_class
         armor_desc
+        current_hit_points
         hit_points
         hit_dice_num
         hit_dice
@@ -2346,6 +2517,7 @@ export const listMonsterStatblocks = /* GraphQL */ `
           climb
           burrow
           hover
+          notes
           __typename
         }
         strength

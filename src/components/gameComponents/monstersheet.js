@@ -1,15 +1,44 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/styles/MonsterSheet.module.css"
-import {crToXP, scoreToMod, getMonsterProf} from "@/5eReference/converters";
+import {crToXP, scoreToMod, getMonsterProf, getToHit, plusMinus} from "@/5eReference/converters";
 import {DiceRoll, DiceRoller} from "@dice-roller/rpg-dice-roller";
 import {rollCheck, rollAttack} from "@/messageUtilities/mailroom";
+import {API} from "aws-amplify";
+import {getMonsterStatblock} from "@/graphql/queries";
 
-export const plusMinus = (save) => {
-    if (Number(save) >= 0) {
-        return (`+${save.toString()}`)
-    } else {
-        return `${save.toString()}`
-    }
+
+// Get rid of __typenames just so I can stick with the auto generated mutations
+export const cleanMonster = (m) => {
+    delete m.__typename
+    delete m.speed.__typename
+    delete m.skills.__typename
+    delete m.skill_proficiencies.__typename
+    m.special_abilities = m.special_abilities.map((ability) => {
+        delete ability.__typename
+        return ability
+    })
+    m.actions = m.actions.map((action) => {
+        delete action.__typename
+        return action
+    })
+    m.reactions = m.reactions.map((ability) => {
+        delete ability.__typename
+        return ability
+    })
+    m.bonus_actions = m.bonus_actions.map((ability) => {
+        delete ability.__typename
+        return ability
+    })
+    m.legendary_actions = m.legendary_actions.map((ability) => {
+        delete ability.__typename
+        return ability
+    })
+    m.mythic_actions = m.mythic_actions.map((ability) => {
+        delete ability.__typename
+        return ability
+    })
+    delete m.updatedAt
+    return m
 }
 
 export const descAttack = (monsterData, attack) => {
@@ -31,45 +60,12 @@ export const descAttack = (monsterData, attack) => {
         }
     }
 
-    const getToHit = () => {
-        console.log(attack)
-        const bracket_pattern = /\[(.*?)\]/
-        const match = attack.attack_bonus.toString().match(bracket_pattern)
-
-        if (match) {
-            const values = match[1].split(/\s+/)
-            const hit_bonus = 0
-            return plusMinus(values.reduce((accumulator, currentValue) => {
-                switch (currentValue) {
-                    case "STR":
-                        return accumulator + Number(scoreToMod(monsterData.strength))
-                    case "DEX":
-                        return accumulator + Number(scoreToMod(monsterData.dexterity))
-                    case "CON":
-                        return accumulator + Number(scoreToMod(monsterData.constitution))
-                    case "INT":
-                        return accumulator + Number(scoreToMod(monsterData.intelligence))
-                    case "WIS":
-                        return accumulator + Number(scoreToMod(monsterData.wisdom))
-                    case "CHA":
-                        return accumulator + Number(scoreToMod(monsterData.charisma))
-                    case "ATK":
-                        return accumulator + getMonsterProf(monsterData.cr)
-                    default:
-                        console.error("Invalid to hit identifier ")
-                }
-            }, hit_bonus))
-        }
-
-        return plusMinus(attack.attack_bonus)
-    }
-
     const getDamage = () => {
         const damage = [...attack.damage]
         const initialText = ''
         const roller = new DiceRoller()
         const damageString = damage.reduce((accumulator, currentValue) => {
-            console.log(currentValue)
+            // console.log(currentValue)
             if (currentValue.damage_dice !== 0) {
                 const diceRoll = roller.roll(currentValue.damage_dice)
                 accumulator += `${Math.floor(diceRoll.averageTotal)} (${currentValue.damage_dice}) ${currentValue.damage_type} damage plus `
@@ -79,9 +75,12 @@ export const descAttack = (monsterData, attack) => {
         return damageString.slice(0, -6)
     }
 
-    return <>
+
+    if (attack && monsterData) return <>
         <em><strong>{attack.name}.&nbsp;</strong>{attack.type}:&nbsp;</em>
-        {getToHit()} to hit, {getRange()}, {attack.targets}.&nbsp;<em>Hit:&nbsp;</em> {getDamage()}. {attack.effect}</>
+        {getToHit(monsterData, attack)} to hit, {getRange()}, {attack.targets}.&nbsp;
+        <em>Hit:&nbsp;</em> {getDamage()}. {attack.effect}
+    </>
 }
 
 const MonsterSheet = ({slug, statblock, printRef, rollable, playerId, gameId}) => {
@@ -90,16 +89,25 @@ const MonsterSheet = ({slug, statblock, printRef, rollable, playerId, gameId}) =
     useEffect(() => {
         async function fetchData() {
             console.log(slug)
-            const response = await fetch(`https://api.open5e.com/v1/monsters/?slug__in=&slug__iexact=${slug}`);
-            const data = await response.json()
-            console.log(data.results[0])
 
-            // Validate the API response against the schema
-            // const isValid = validate(data, Monster);
-            const isValid = true
-            if (isValid) {
-                setMonsterData(data.results[0]);
-            }
+            const existingMonster = await API.graphql({
+                query: getMonsterStatblock,
+                variables: {id: slug, ownerId: "wotc-srd"},
+            });
+
+            console.log(existingMonster)
+            setMonsterData(cleanMonster(existingMonster.data.getMonsterStatblock))
+            //
+            // const response = await fetch(`https://api.open5e.com/v1/monsters/?slug__in=&slug__iexact=${slug}`);
+            // const data = await response.json()
+            // console.log(data.results[0])
+            //
+            // // Validate the API response against the schema
+            // // const isValid = validate(data, Monster);
+            // const isValid = true
+            // if (isValid) {
+            //     setMonsterData(data.results[0]);
+            // }
         }
 
         if (statblock) {
@@ -310,7 +318,7 @@ const MonsterSheet = ({slug, statblock, printRef, rollable, playerId, gameId}) =
         }
         let actionList = []
         for (const action of monsterData.actions) {
-            console.log(action)
+            // console.log(action)
             if (action.type === "Ability" || !action.attack_bonus) {
                 actionList.push(
                     <div key={monsterData.name + action.name} className={styles.abilities}>
@@ -323,7 +331,7 @@ const MonsterSheet = ({slug, statblock, printRef, rollable, playerId, gameId}) =
                 actionList.push(
                     <div key={monsterData.name + action.name} className={styles.abilities}>
                         <label style={{width: "120px"}}
-                               className={styles.labelButton} onClick={() => handleAttackRoll(attack)}>{attack}</label>
+                               className={styles.labelButton} onClick={() => handleAttackRoll(action)}>{attack}</label>
                     </div>
                 )
             }

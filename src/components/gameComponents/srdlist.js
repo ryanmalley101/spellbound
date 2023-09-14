@@ -9,7 +9,8 @@ import useBattlemapStore from "@/stores/battlemapStore";
 import {API} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {shallow} from "zustand/shallow";
-import er_spells from '../../../public/elden_ring.json'
+import elden_ring from '../../../public/elden_ring.json'
+import {listMonsterStatblocks} from "@/graphql/queries";
 
 const CategoryMenu = ({categories, filter, user}) => {
     console.log(categories)
@@ -170,12 +171,35 @@ const Item = ({category_name, item, filter}) => {
 const SRDList = () => {
     const [filter, setFilter] = useState(""); // State variable to store the filter value
     const gameMode = useBattlemapStore(state => state.gameMode)
-    let list
-    if (gameMode === "Elden Ring") {
-        list = er_spells
-    } else {
-        list = srd
-    }
+    const [list, setList] = useState([])
+
+    useEffect(() => {
+        const fetchSRDMonsters = async () => {
+
+            if (gameMode === "Elden Ring") {
+                setList(elden_ring)
+            } else {
+                const input = {filter: {ownerId: {eq: "wotc-srd"}}}
+                const response = await API.graphql({
+                    query: listMonsterStatblocks,
+                    variables: {input: input},
+                });
+                const monsterList = response.data.listMonsterStatblocks.items.map((monster) => {
+                    return {name: monster.name, slug: monster.id}
+                })
+
+                setList(srd.map((section) => {
+                    if (section.name === "Monsters") {
+                        return {name: "Monsters", items: monsterList}
+                    }
+                    return section
+                }))
+            }
+        }
+
+        fetchSRDMonsters()
+    }, []);
+
 
     console.log(gameMode, list)
 

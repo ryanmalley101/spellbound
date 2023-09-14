@@ -9,7 +9,7 @@ import {
     Typography
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"
-import MonsterSheet from "@/components/gameComponents/monstersheet";
+import MonsterSheet, {cleanMonster} from "@/components/gameComponents/monstersheet";
 import {scoreToMod, getMonsterProf} from "@/5eReference/converters";
 import ActionRow from "@/components/creatorComponents/actionrow";
 import AbilityRow from "@/components/creatorComponents/abilityrow";
@@ -95,40 +95,6 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
             console.log("Saved monster", savedMonster)
             setMonster(cleanMonster(savedMonster))
         }
-    }
-
-    // Get rid of __typenames just so I can stick with the auto generated mutations
-    const cleanMonster = (m) => {
-        delete m.__typename
-        delete m.speed.__typename
-        delete m.skills.__typename
-        delete m.skill_proficiencies.__typename
-        m.special_abilities = m.special_abilities.map((ability) => {
-            delete ability.__typename
-            return ability
-        })
-        m.actions = m.actions.map((action) => {
-            delete action.__typename
-            return action
-        })
-        m.reactions = m.reactions.map((ability) => {
-            delete ability.__typename
-            return ability
-        })
-        m.bonus_actions = m.bonus_actions.map((ability) => {
-            delete ability.__typename
-            return ability
-        })
-        m.legendary_actions = m.legendary_actions.map((ability) => {
-            delete ability.__typename
-            return ability
-        })
-        m.mythic_actions = m.mythic_actions.map((ability) => {
-            delete ability.__typename
-            return ability
-        })
-        delete m.updatedAt
-        return m
     }
 
     const exportJSON = () => {

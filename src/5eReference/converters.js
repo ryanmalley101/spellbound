@@ -1,3 +1,11 @@
+export const plusMinus = (save) => {
+    if (Number(save) >= 0) {
+        return (`+${save.toString()}`)
+    } else {
+        return `${save.toString()}`
+    }
+}
+
 const scoreToMod = (score) => {
     const mod = Math.floor((Number(score) - 10) / 2)
     if (mod < 0) {
@@ -52,5 +60,45 @@ const crToXP = (cr) => {
     return CR_TO_XP_TABLE[cr.toString()]
 }
 
+const getToHit = (monsterData, attack) => {
+    console.log(attack)
 
-export {crToXP, scoreToMod, getMonsterProf}
+    if (Number(attack.attack_bonus)) {
+        return plusMinus(Number(attack.attack_bonus))
+    }
+
+    const prof = monsterData.proficiency_bonus ? monsterData.proficiency_bonus : getMonsterProf(monsterData.cr)
+
+    const bracket_pattern = /\[(.*?)\]/
+    const match = attack.attack_bonus.toString().match(bracket_pattern)
+    console.log(match)
+    if (match) {
+        const values = match[1].split(/\s+/)
+        const hit_bonus = 0
+        return plusMinus(values.reduce((accumulator, currentValue) => {
+            switch (currentValue) {
+                case "STR":
+                    return accumulator + Number(scoreToMod(monsterData.strength))
+                case "DEX":
+                    return accumulator + Number(scoreToMod(monsterData.dexterity))
+                case "CON":
+                    return accumulator + Number(scoreToMod(monsterData.constitution))
+                case "INT":
+                    return accumulator + Number(scoreToMod(monsterData.intelligence))
+                case "WIS":
+                    return accumulator + Number(scoreToMod(monsterData.wisdom))
+                case "CHA":
+                    return accumulator + Number(scoreToMod(monsterData.charisma))
+                case "ATK":
+                    return accumulator + prof
+                default:
+                    console.error("Invalid to hit identifier ")
+            }
+        }, hit_bonus))
+    }
+
+    console.error("Attack bonus is neither an integer nor a valid shorthand like [STR ATK]")
+}
+
+
+export {crToXP, scoreToMod, getMonsterProf, getToHit}

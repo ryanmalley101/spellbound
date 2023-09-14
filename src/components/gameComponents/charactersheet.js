@@ -7,6 +7,7 @@ import * as mutations from "@/graphql/mutations";
 import {getCharacterSheet, getGame} from "@/graphql/queries";
 import useBattlemapStore from "@/stores/battlemapStore";
 import {rollAttack, rollCheck} from "@/messageUtilities/mailroom";
+import {getToHit} from "@/5eReference/converters";
 
 const scoreToMod = (score) => {
     return Math.floor((Number(score) - 10) / 2)
@@ -177,6 +178,7 @@ function AttackList(props) {
 }
 
 const AttackRow = ({
+                       character,
                        attack,
                        index,
                        handleInputChange,
@@ -208,13 +210,8 @@ const AttackRow = ({
     };
 
     const handleAttackRoll = () => {
-        rollAttack(attack, playerId, gameId, advantage)
+        rollAttack({...attack, attack_bonus: getToHit(character, attack)}, playerId, gameId, advantage)
     }
-
-    // useEffect(() => {
-    //   setNumDamageDice(attack.damage_dice.length)
-    // }, [attack])
-
 
     return (
         <div className={styles.attackRow}>
@@ -223,7 +220,7 @@ const AttackRow = ({
                 <label style={{width: "120px"}}
                        className={styles.labelButton} onClick={handleAttackRoll}>{attack.name}</label>
                 <label className={styles.itemLabel}
-                       style={{paddingLeft: "20px", width: "57px"}}>{attack.attack_bonus}</label>
+                       style={{paddingLeft: "20px", width: "57px"}}>{getToHit(character, attack)}</label>
                 <div style={{width: "172px", overflowX: "hidden"}}>
                     {attack.damage.map((damage, index) => {
                         if (index < 5) {
@@ -1751,6 +1748,7 @@ const CharacterSheet = ({characterSheetInput}) => {
                 <AttackList character={character} callbackfn={(attack, index) => (
                     <AttackRow
                         key={index}
+                        character={character}
                         attack={attack}
                         index={index}
                         handleInputChange={handleInputChange}

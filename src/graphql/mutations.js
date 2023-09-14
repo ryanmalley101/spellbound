@@ -121,6 +121,12 @@ export const createGame = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -139,6 +145,7 @@ export const createGame = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -403,6 +410,12 @@ export const updateGame = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -421,6 +434,7 @@ export const updateGame = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -685,6 +699,12 @@ export const deleteGame = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -703,6 +723,7 @@ export const deleteGame = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -2039,6 +2060,12 @@ export const createToken = /* GraphQL */ `
         current_hd
         temp_hp
         speed
+        strength
+        dexterity
+        consitution
+        intelligence
+        wisdom
+        charisma
         strength_score
         dexterity_score
         constitution_score
@@ -2057,6 +2084,49 @@ export const createToken = /* GraphQL */ `
         intelligence_save_prof
         wisdom_save_prof
         charisma_save_prof
+        skills {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        skill_proficiencies {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        save_proficiencies
         passive_perception
         passive_investigation
         passive_insight
@@ -2304,6 +2374,12 @@ export const updateToken = /* GraphQL */ `
         current_hd
         temp_hp
         speed
+        strength
+        dexterity
+        consitution
+        intelligence
+        wisdom
+        charisma
         strength_score
         dexterity_score
         constitution_score
@@ -2322,6 +2398,49 @@ export const updateToken = /* GraphQL */ `
         intelligence_save_prof
         wisdom_save_prof
         charisma_save_prof
+        skills {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        skill_proficiencies {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        save_proficiencies
         passive_perception
         passive_investigation
         passive_insight
@@ -2569,6 +2688,12 @@ export const deleteToken = /* GraphQL */ `
         current_hd
         temp_hp
         speed
+        strength
+        dexterity
+        consitution
+        intelligence
+        wisdom
+        charisma
         strength_score
         dexterity_score
         constitution_score
@@ -2587,6 +2712,49 @@ export const deleteToken = /* GraphQL */ `
         intelligence_save_prof
         wisdom_save_prof
         charisma_save_prof
+        skills {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        skill_proficiencies {
+          acrobatics
+          animal_handling
+          arcana
+          athletics
+          deception
+          history
+          insight
+          intimidation
+          investigation
+          medicine
+          nature
+          perception
+          performance
+          persuasion
+          religion
+          sleight_of_hand
+          stealth
+          survival
+          __typename
+        }
+        save_proficiencies
         passive_perception
         passive_investigation
         passive_insight
@@ -3047,6 +3215,12 @@ export const createCharacterSheet = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -3065,6 +3239,7 @@ export const createCharacterSheet = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -3211,6 +3386,12 @@ export const createCharacterSheet = /* GraphQL */ `
       current_hd
       temp_hp
       speed
+      strength
+      dexterity
+      consitution
+      intelligence
+      wisdom
+      charisma
       strength_score
       dexterity_score
       constitution_score
@@ -3229,6 +3410,49 @@ export const createCharacterSheet = /* GraphQL */ `
       intelligence_save_prof
       wisdom_save_prof
       charisma_save_prof
+      skills {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      skill_proficiencies {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      save_proficiencies
       passive_perception
       passive_investigation
       passive_insight
@@ -3477,6 +3701,12 @@ export const updateCharacterSheet = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -3495,6 +3725,7 @@ export const updateCharacterSheet = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -3641,6 +3872,12 @@ export const updateCharacterSheet = /* GraphQL */ `
       current_hd
       temp_hp
       speed
+      strength
+      dexterity
+      consitution
+      intelligence
+      wisdom
+      charisma
       strength_score
       dexterity_score
       constitution_score
@@ -3659,6 +3896,49 @@ export const updateCharacterSheet = /* GraphQL */ `
       intelligence_save_prof
       wisdom_save_prof
       charisma_save_prof
+      skills {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      skill_proficiencies {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      save_proficiencies
       passive_perception
       passive_investigation
       passive_insight
@@ -3907,6 +4187,12 @@ export const deleteCharacterSheet = /* GraphQL */ `
           current_hd
           temp_hp
           speed
+          strength
+          dexterity
+          consitution
+          intelligence
+          wisdom
+          charisma
           strength_score
           dexterity_score
           constitution_score
@@ -3925,6 +4211,7 @@ export const deleteCharacterSheet = /* GraphQL */ `
           intelligence_save_prof
           wisdom_save_prof
           charisma_save_prof
+          save_proficiencies
           passive_perception
           passive_investigation
           passive_insight
@@ -4071,6 +4358,12 @@ export const deleteCharacterSheet = /* GraphQL */ `
       current_hd
       temp_hp
       speed
+      strength
+      dexterity
+      consitution
+      intelligence
+      wisdom
+      charisma
       strength_score
       dexterity_score
       constitution_score
@@ -4089,6 +4382,49 @@ export const deleteCharacterSheet = /* GraphQL */ `
       intelligence_save_prof
       wisdom_save_prof
       charisma_save_prof
+      skills {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      skill_proficiencies {
+        acrobatics
+        animal_handling
+        arcana
+        athletics
+        deception
+        history
+        insight
+        intimidation
+        investigation
+        medicine
+        nature
+        perception
+        performance
+        persuasion
+        religion
+        sleight_of_hand
+        stealth
+        survival
+        __typename
+      }
+      save_proficiencies
       passive_perception
       passive_investigation
       passive_insight
@@ -4260,6 +4596,7 @@ export const createMonsterStatblock = /* GraphQL */ `
       alignment
       armor_class
       armor_desc
+      current_hit_points
       hit_points
       hit_dice_num
       hit_dice
@@ -4270,6 +4607,7 @@ export const createMonsterStatblock = /* GraphQL */ `
         climb
         burrow
         hover
+        notes
         __typename
       }
       strength
@@ -4412,6 +4750,7 @@ export const updateMonsterStatblock = /* GraphQL */ `
       alignment
       armor_class
       armor_desc
+      current_hit_points
       hit_points
       hit_dice_num
       hit_dice
@@ -4422,6 +4761,7 @@ export const updateMonsterStatblock = /* GraphQL */ `
         climb
         burrow
         hover
+        notes
         __typename
       }
       strength
@@ -4564,6 +4904,7 @@ export const deleteMonsterStatblock = /* GraphQL */ `
       alignment
       armor_class
       armor_desc
+      current_hit_points
       hit_points
       hit_dice_num
       hit_dice
@@ -4574,6 +4915,7 @@ export const deleteMonsterStatblock = /* GraphQL */ `
         climb
         burrow
         hover
+        notes
         __typename
       }
       strength
