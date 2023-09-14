@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import styles from "@/styles/MonsterSheet.module.css"
 import {crToXP, scoreToMod, getMonsterProf} from "@/5eReference/converters";
 import {DiceRoll, DiceRoller} from "@dice-roller/rpg-dice-roller";
+import {rollCheck, rollAttack} from "@/messageUtilities/mailroom";
 
 export const plusMinus = (save) => {
     if (Number(save) >= 0) {
@@ -22,6 +23,8 @@ export const descAttack = (monsterData, attack) => {
                 return `ranged ${attack.short_range}/${attack.long_range} ft.`
             case "Ranged Spell Attack":
                 return `ranged ${attack.short_range} ft.`
+            case "Melee or Ranged Weapon Attack":
+                return `reach ${attack.reach} ft. or ranged ${attack.short_range}/${attack.long_range} ft.`
             default:
                 console.error(`Invalid type for action ${attack}`)
                 return null
@@ -29,8 +32,9 @@ export const descAttack = (monsterData, attack) => {
     }
 
     const getToHit = () => {
+        console.log(attack)
         const bracket_pattern = /\[(.*?)\]/
-        const match = attack.attack_bonus.match(bracket_pattern)
+        const match = attack.attack_bonus.toString().match(bracket_pattern)
 
         if (match) {
             const values = match[1].split(/\s+/)
@@ -66,8 +70,10 @@ export const descAttack = (monsterData, attack) => {
         const roller = new DiceRoller()
         const damageString = damage.reduce((accumulator, currentValue) => {
             console.log(currentValue)
-            const diceRoll = roller.roll(currentValue.damage_dice)
-            accumulator += `${diceRoll.averageTotal} (${currentValue.damage_dice}) ${currentValue.damage_type} damage plus `
+            if (currentValue.damage_dice !== 0) {
+                const diceRoll = roller.roll(currentValue.damage_dice)
+                accumulator += `${Math.floor(diceRoll.averageTotal)} (${currentValue.damage_dice}) ${currentValue.damage_type} damage plus `
+            }
             return accumulator
         }, initialText)
         return damageString.slice(0, -6)
@@ -78,7 +84,7 @@ export const descAttack = (monsterData, attack) => {
         {getToHit()} to hit, {getRange()}, {attack.targets}.&nbsp;<em>Hit:&nbsp;</em> {getDamage()}. {attack.effect}</>
 }
 
-const MonsterSheet = ({slug, statblock, printRef}) => {
+const MonsterSheet = ({slug, statblock, printRef, rollable, playerId, gameId}) => {
     const [monsterData, setMonsterData] = useState(null);
 
     useEffect(() => {
@@ -120,6 +126,32 @@ const MonsterSheet = ({slug, statblock, printRef}) => {
     }
 
     const getAbilityScores = () => {
+
+        if (rollable) {
+            return (
+                <table className={styles.attributes}>
+                    <tbody>
+                    <tr>
+                        <th>STR</th>
+                        <th>DEX</th>
+                        <th>CON</th>
+                        <th>INT</th>
+                        <th>WIS</th>
+                        <th>CHA</th>
+                    </tr>
+                    <tr>
+                        <td>{monsterData.strength} ({scoreToMod(monsterData.strength)})</td>
+                        <td>{monsterData.dexterity} ({scoreToMod(monsterData.dexterity)})</td>
+                        <td>{monsterData.constitution} ({scoreToMod(monsterData.constitution)})</td>
+                        <td>{monsterData.intelligence} ({scoreToMod(monsterData.intelligence)})</td>
+                        <td>{monsterData.wisdom} ({scoreToMod(monsterData.wisdom)})</td>
+                        <td>{monsterData.charisma} ({scoreToMod(monsterData.charisma)})</td>
+                    </tr>
+                    </tbody>
+                </table>
+            )
+        }
+
         return (
             <table className={styles.attributes}>
                 <tbody>
@@ -260,11 +292,15 @@ const MonsterSheet = ({slug, statblock, printRef}) => {
         }
         return (
             abilityList.map((ability) => (
-                <div key={ability.name} className={styles.abilities}>
+                <div key={monsterData.name + ability.name} className={styles.abilities}>
                     <span className={styles.abilityname}>{ability.name}. </span>
                     <span>{ability.desc}</span>
                 </div>
             )))
+    }
+
+    const handleAttackRoll = (attack) => {
+        rollAttack(attack, playerId, gameId, false)
     }
 
     const getActions = () => {
@@ -274,10 +310,10 @@ const MonsterSheet = ({slug, statblock, printRef}) => {
         }
         let actionList = []
         for (const action of monsterData.actions) {
-            // console.log(action)
-            if (action.type === "Ability") {
+            console.log(action)
+            if (action.type === "Ability" || !action.attack_bonus) {
                 actionList.push(
-                    <div key={action.name} className={styles.abilities}>
+                    <div key={monsterData.name + action.name} className={styles.abilities}>
                         <span className={styles.abilityname}>{action.name}. </span>
                         <span>{action.desc}</span>
                     </div>
@@ -285,8 +321,9 @@ const MonsterSheet = ({slug, statblock, printRef}) => {
             } else {
                 const attack = descAttack(monsterData, action)
                 actionList.push(
-                    <div key={name} className={styles.abilities}>
-                        {attack}
+                    <div key={monsterData.name + action.name} className={styles.abilities}>
+                        <label style={{width: "120px"}}
+                               className={styles.labelButton} onClick={() => handleAttackRoll(attack)}>{attack}</label>
                     </div>
                 )
             }

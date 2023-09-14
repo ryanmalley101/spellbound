@@ -537,6 +537,7 @@ input MonsterStatblockInput
     armor_desc: String
     hit_points: Int
     hit_dice: String
+    hit_dice_num: Int,
     speed: MovementSpeedInput
     strength: Int
     dexterity: Int

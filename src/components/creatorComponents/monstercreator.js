@@ -1060,19 +1060,19 @@ const CreateMonsterStatblock = (monster) => {
                             {Object.entries(monsterStatblock.skill_proficiencies).map(([key, val]) => {
                                 if (val) {
                                     const skillString = `${key} (${val})`
-                                    return <div key={key}><Button name={key}
-                                                                  onClick={removeSkillProficiency}
-                                                                  variant={"outlined"}>{skillString}&nbsp;
+                                    return <div key={key + val}><Button name={key}
+                                                                        onClick={removeSkillProficiency}
+                                                                        variant={"outlined"}>{skillString}&nbsp;
                                         <BsFillTrashFill/></Button>
                                     </div>
                                 }
                             })}
                         </Grid>
                         <Grid xs>
-                            {monsterStatblock.save_proficiencies.map((save) => {
-                                return <div key={save}><Button name={save}
-                                                               onClick={removeSaveProficiency}
-                                                               variant={"outlined"}>{save}&nbsp;
+                            {monsterStatblock.save_proficiencies.map((save, i) => {
+                                return <div key={save + i}><Button name={save}
+                                                                   onClick={removeSaveProficiency}
+                                                                   variant={"outlined"}>{save}&nbsp;
                                     <BsFillTrashFill/></Button>
                                 </div>
                             })}
@@ -1102,6 +1102,16 @@ const CreateMonsterStatblock = (monster) => {
                                 <MenuItem value="radiant">Radiant</MenuItem>
                                 <MenuItem value="slashing">Slashing</MenuItem>
                                 <MenuItem value="thunder">Thunder</MenuItem>
+                                <MenuItem value="bludgeoning, piercing, and slashing from nonmagical attacks">
+                                    Nonmagical BPS</MenuItem>
+                                <MenuItem
+                                    value="bludgeoning, piercing, and slashing from nonmagical attacks that aren't Silvered.">
+                                    Nonsilver BPS
+                                </MenuItem>
+                                <MenuItem
+                                    value="bludgeoning, piercing, and slashing from nonmagical attacks not made with Adamantine">
+                                    Nonadamantine BPS
+                                </MenuItem>
                             </Select>
                         </FormControl></Grid>
                         <Grid xs={5}><ButtonGroup orientation={"horizontal"}>
@@ -1147,32 +1157,33 @@ const CreateMonsterStatblock = (monster) => {
 
                     <Grid container spacing={2} marginY={rowSpacing}>
                         <Grid xs={7.2} orientation={"vertical"}>
-                            {monsterStatblock.damage_vulnerability_list.map((damage) => {
-                                return <div key={damage}><Button name={damage} onClick={removeDamage}
-                                                                 variant={"outlined"}>
+                            {monsterStatblock.damage_vulnerability_list.map((damage, i) => {
+                                return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                                                     variant={"outlined"}>
                                     {damage} (Vulnerable)&nbsp;
                                     <BsFillTrashFill/>
                                 </Button></div>
                             })}
-                            {monsterStatblock.damage_resistance_list.map((damage) => {
-                                return <div key={damage}><Button name={damage} onClick={removeDamage}
-                                                                 variant={"outlined"}>
+                            {monsterStatblock.damage_resistance_list.map((damage, i) => {
+                                return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                                                     variant={"outlined"}>
                                     {damage} (Resistant)&nbsp;
                                     <BsFillTrashFill/>
                                 </Button></div>
                             })}
-                            {monsterStatblock.damage_immunity_list.map((damage) => {
-                                return <div key={damage}><Button name={damage} onClick={removeDamage}
-                                                                 variant={"outlined"}>
+                            {monsterStatblock.damage_immunity_list.map((damage, i) => {
+                                return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                                                     variant={"outlined"}>
                                     {damage} (Immune)&nbsp;
                                     <BsFillTrashFill/>
                                 </Button></div>
                             })}
                         </Grid>
                         <Grid xs>
-                            {monsterStatblock.condition_immunity_list.map((condition) => {
-                                return <div key={condition}><Button name={condition} onClick={removeConditionImmunity}
-                                                                    variant={"outlined"}>
+                            {monsterStatblock.condition_immunity_list.map((condition, i) => {
+                                return <div key={condition + i}><Button name={condition}
+                                                                        onClick={removeConditionImmunity}
+                                                                        variant={"outlined"}>
                                     {condition}&nbsp;
                                     <BsFillTrashFill/>
                                 </Button></div>
@@ -1209,7 +1220,7 @@ const CreateMonsterStatblock = (monster) => {
                     </div>
                     <Grid xs>
                         {specialAbilities.map((ability, index) => {
-                            return <AbilityRow ability={ability} key={ability.name} index={index}
+                            return <AbilityRow ability={ability} key={ability.name + index} index={index}
                                                handleAbilityUpdate={handleSpecialAbilityUpdate}
                                                handleAbilityRemove={() => removeSpecialAbility(index)}/>
                         })}
@@ -1222,7 +1233,8 @@ const CreateMonsterStatblock = (monster) => {
                         <Button type={"button"} onClick={addAction}>New Action</Button>
                     </div>
                     {actions.map((action, index) => {
-                        return <ActionRow action={action} key={action.name} index={index} monsterData={monsterStatblock}
+                        return <ActionRow action={action} key={action.name + index} index={index}
+                                          monsterData={monsterStatblock}
                                           handleActionUpdate={handleActionUpdate}
                                           handleActionRemove={() => removeAction(index)}/>
                     })}
@@ -1236,7 +1248,7 @@ const CreateMonsterStatblock = (monster) => {
                     </div>
                     <div>
                         {bonusActions.map((bonus_action, index) => {
-                            return <AbilityRow ability={bonus_action} key={bonus_action.name} index={index}
+                            return <AbilityRow ability={bonus_action} key={bonus_action.name + index} index={index}
                                                handleAbilityUpdate={handleBonusActionUpdate}
                                                handleAbilityRemove={() => removeBonusAction(index)}/>
                         })}
@@ -1250,7 +1262,7 @@ const CreateMonsterStatblock = (monster) => {
                     </div>
 
                     {reactions.map((reaction, index) => {
-                        return <AbilityRow ability={reaction} key={reaction.name} index={index}
+                        return <AbilityRow ability={reaction} key={reaction.name + index} index={index}
                                            handleAbilityUpdate={handleReactionUpdate}
                                            handleAbilityRemove={() => removeReaction(index)}/>
                     })}
@@ -1271,7 +1283,7 @@ const CreateMonsterStatblock = (monster) => {
                     </div>
 
                     {legendaryActions.map((legendary_action, index) => {
-                        return <AbilityRow ability={legendary_action} key={legendary_action.name} index={index}
+                        return <AbilityRow ability={legendary_action} key={legendary_action.name + index} index={index}
                                            handleAbilityUpdate={handleLegendaryActionUpdate}
                                            handleAbilityRemove={() => removeLegendaryAction(index)}/>
                     })}
@@ -1292,7 +1304,7 @@ const CreateMonsterStatblock = (monster) => {
                     </div>
 
                     {mythicActions.map((mythic_action, index) => {
-                        return <AbilityRow ability={mythic_action} key={mythic_action.name} index={index}
+                        return <AbilityRow ability={mythic_action} key={mythic_action.name + index} index={index}
                                            handleAbilityUpdate={handleMythicActionUpdate}
                                            handleAbilityRemove={() => removeMythicAction(index)}/>
                     })}

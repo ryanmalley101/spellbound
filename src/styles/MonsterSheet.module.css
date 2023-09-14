@@ -73,3 +73,15 @@
     font-weight: bold;
     font-style: italic;
 }
+
+.labelButton {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    color: black;
+}
+
+.labelButton:hover {
+    color: blue
+}

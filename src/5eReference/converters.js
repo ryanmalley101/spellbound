@@ -8,7 +8,7 @@ const scoreToMod = (score) => {
 }
 
 const getMonsterProf = (cr) => {
-    return Math.max(Math.floor(Number(cr) - 1) / 4, 0) + 2
+    return Math.max(Math.floor((Number(cr) - 1) / 4), 0) + 2
 }
 
 const crToXP = (cr) => {
