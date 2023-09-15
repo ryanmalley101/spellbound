@@ -12,8 +12,10 @@ import {v4} from "uuid";
 import {FileUploader} from "react-drag-drop-files";
 import {useDropzone} from 'react-dropzone'
 import {messageByGameAndCreatedAt} from "@/graphql/queries";
+import DrawingCanvas from "@/components/gameComponents/drawingcanvas";
+import {Layer, Stage} from "react-konva";
 
-const GRID_SIZE = 25
+const GRID_SIZE = 70
 
 
 const BattleMap = () => {
@@ -610,6 +612,13 @@ const BattleMap = () => {
             </>
         );
     };
+    const checkDeselect = (e) => {
+        // deselect when clicked on empty area
+        const clickedOnEmpty = e.target === e.target.getStage();
+        if (clickedOnEmpty) {
+            setSelectedTokenID(null);
+        }
+    };
 
     return (
         <div id={"Battlemap Start"} style={{height: '100%', width: '100%', position: 'relative'}}>
@@ -618,8 +627,8 @@ const BattleMap = () => {
                               onTransformed={(ref) => {
                                   windowPositionRef.current = {x: ref.state.positionX, y: ref.state.positionY}
                                   scale.current = ref.state.scale
-                              }}
-            >
+                              }} limitToBounds={false}>
+
                 {pings.map((ping) => (
                     <Ping key={v4()} x={ping.positionX} y={ping.positionY}/>
                 ))}
@@ -632,21 +641,43 @@ const BattleMap = () => {
                     width: '100%',
                 }} disabled={draggingDisabled} minScale={0.1}>
                     <div
-                        style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE, margin: "50px"}}
+                        style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE, flex: "none"}}
                     >
+                        <Stage width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE} draggable="true"
+                               onMouseDown={checkDeselect} onTouchStart={checkDeselect}
+                        >
+                            <Layer>
+                                {mapTokens.map((token, index) => {
+                                    if (token.layer === "MAP") {
+                                        return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
+                                                              token={token}
+                                                              scale={scale.current}/>
+                                    }
+                                })}
+                                <GridOverlay width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE}
+                                             gridSize={GRID_SIZE}/>
+                                {mapTokens.map((token, index) => {
+                                    if (token.layer === "TOKEN") {
+                                        return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
+                                                              token={token}
+                                                              scale={scale.current}/>
+                                    }
+                                })}
+                                {mapTokens.map((token, index) => {
+                                    if (token.layer === "GM") {
+                                        return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
+                                                              token={token}
+                                                              scale={scale.current}/>
+                                    }
+                                })}
+                            </Layer>
+                        </Stage>
 
-                        {mapTokens.map((token, index) => (
-                            <DraggableIcon key={token.key} x={token.positionX} y={token.positionY} token={token}
-                                           scale={scale.current}/>
-                        ))}
-                        <GridOverlay style={{
-                            zIndex: -100, height: '100%',
-                            width: '100%',
-                        }} gridSize={GRID_SIZE}/>
-                        <div className={styles.fileDropZone}
-                             style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>
-                            <input {...getInputProps()} />
-                        </div>
+                        {/*<div className={styles.fileDropZone}*/}
+                        {/*     style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>*/}
+                        {/*    <input {...getInputProps()} />*/}
+                        {/*</div>*/}
+                        {/*<DrawingCanvas windowPositionRef={windowPositionRef} scale={scale}/>*/}
                     </div>
                 </TransformComponent>
             </TransformWrapper>

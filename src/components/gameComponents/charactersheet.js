@@ -459,15 +459,6 @@ const SpellRow = ({
                         />
                     </div>
                     <div>
-                        <label><b>Description: </b></label>
-                        <input
-                            type="text"
-                            name={`spells[${index}].description`}
-                            value={spell.description}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div>
                         <label><b>Attack Bonus / Save DC: </b></label>
                         <input
                             type="number"
@@ -1488,8 +1479,8 @@ const CharacterSheet = ({characterSheetInput}) => {
                 setCharacterPreUpdate({})
             }
         }
-        console.log("Character pre update changed")
-        console.log(characterPreUpdate)
+        // console.log("Character pre update changed")
+        // console.log(characterPreUpdate)
         if (characterPreUpdate.id) {
             sendSheetUpdate()
         }

@@ -72,7 +72,6 @@ export default function Message({message, isMe}) {
         }
         case "DICEROLL": {
             const rolls = JSON.parse(message.rolls)
-            console.log(rolls)
 
             const content = <div>
                 <strong>Rolling {rolls.notation}</strong>
@@ -143,7 +142,6 @@ export default function Message({message, isMe}) {
             const rolls = JSON.parse(message.rolls).rolls
             let checkRoll
             if (message.advantage === "disadvantage") {
-                console.log(rolls)
                 if (rolls[1].total < rolls[0].total) {
                     checkRoll =
                         <p>Total: {rolls[0].total} | <strong> {rolls[1].total} {critCheck(rolls[1])}</strong></p>

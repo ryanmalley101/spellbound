@@ -10,9 +10,9 @@
     /* Remove position: relative; */
     display: inline-block;
     /* position: relative; */
-    z-index: 2;
-    width: 100%; /* Add width: 100%; */
-    height: 100%; /* Add height: 100%; */
+    z-index: 5;
+    /*width: 100%; !* Add width: 100%; *!*/
+    /*height: 100%; !* Add height: 100%; *!*/
 }
 
 .draggable-icon img {
@@ -76,14 +76,14 @@
 }
 
 .gridOverlay {
-    position: relative;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 2;
-    width: 100%;
-    height: 100%;
+    width: inherit;
+    height: inherit;
 }
 
 .resize-handle-wrapper {
@@ -131,12 +131,20 @@
 
 .fileDropZone {
     z-index: 15;
-    width: 100%;
-    height: 100%;
+    width: inherit;
+    height: inherit;
     /*pointer-events: none;*/
-    position: relative;
+    position: absolute;
 }
 
 .user-is-dragging #dropzone {
     /*pointer-events: all !important;*/
+}
+
+.canvas {
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    z-index: 10;
+    /*pointer-events: none;*/
 }
