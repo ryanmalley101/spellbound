@@ -24,7 +24,7 @@ const BattleMap = () => {
 
     const [widthUnits, setWidthUnits] = useState(25);
     const [heightUnits, setHeightUnits] = useState(25);
-    const [mapTokens, setMapTokens] = useState([])
+    const [mapTokens, setMapTokens] = useState(['debug'])
     const [isDraggingFile, setIsDraggingFile] = useState(false)
 
     const windowPositionRef = useRef({x: 0, y: 0})
@@ -225,22 +225,20 @@ const BattleMap = () => {
 
     const updateMapToken = (updatedToken) => {
         console.log("Updating map tokens");
-        console.log(mapTokens);
-
-        setMapTokens((prevTokens) =>
-            prevTokens.map((token) => {
-                    if (token.id === updatedToken.id) {
-                        console.log(token, updatedToken)
-                        // return {...updatedToken, key: `${updatedToken.id}_${Date.now()}`}
-                        return {...updatedToken}
-                    }
-                    return token
+        // console.log(mapTokens);
+        console.log(updatedToken)
+        console.log(mapTokens)
+        setMapTokens((oldTokens) => {
+            return oldTokens.map((token) => {
+                if (token.id === updatedToken.id) {
+                    console.log(token, updatedToken)
+                    return {...updatedToken}
                 }
-            )
-        );
-
-        // You can access the updated mapTokens directly here:
-        console.log("Updated Map Tokens", mapTokens);
+                return token
+            })
+        })
+        // // You can access the updated mapTokens directly here:
+        // console.log("Updated Map Tokens", mapTokens);
     };
 
     const deleteSelectedToken = async (tokenID) => {
@@ -336,6 +334,7 @@ const BattleMap = () => {
             tokens {
               items {
                 id
+                key
                 imageURL
                 width
                 height
@@ -418,6 +417,7 @@ const BattleMap = () => {
         subscription OnMapTokenUpdate($filter: ModelSubscriptionTokenFilterInput) {
           onUpdateToken(filter: $filter) {
             id
+            key
             imageURL
             width
             height
@@ -649,6 +649,7 @@ const BattleMap = () => {
                             <Layer>
                                 {mapTokens.map((token, index) => {
                                     if (token.layer === "MAP") {
+                                        console.log(token.key)
                                         return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
                                                               token={token}
                                                               scale={scale.current}/>
@@ -658,6 +659,7 @@ const BattleMap = () => {
                                              gridSize={GRID_SIZE}/>
                                 {mapTokens.map((token, index) => {
                                     if (token.layer === "TOKEN") {
+                                        console.log(token.key)
                                         return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
                                                               token={token}
                                                               scale={scale.current}/>
@@ -665,6 +667,7 @@ const BattleMap = () => {
                                 })}
                                 {mapTokens.map((token, index) => {
                                     if (token.layer === "GM") {
+                                        console.log(token.key)
                                         return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
                                                               token={token}
                                                               scale={scale.current}/>

@@ -19,39 +19,79 @@ const URLImage = ({url, token, shapeProps, onSelect, onChange}) => {
     const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID);
     const isSelected = selectedTokenID === token.id
 
-    React.useEffect(() => {
+    const handleDragStop = async (e) => {
+        console.log('Handling drag stop')
+
+        onChange({
+            ...shapeProps,
+            x: e.target.x(),
+            y: e.target.y(),
+        });
+
+        const draggedTokenDetails = {
+            id: token.id,
+            key: token.key,
+            positionX: e.target.x(),
+            positionY: e.target.y()
+        };
+
+        const updatedToken = await API.graphql({
+            query: mutations.updateToken,
+            variables: {input: draggedTokenDetails}
+        });
+
+        console.log(updatedToken)
+    }
+
+
+    const handleResizeStop = async (e, direction, ref, delta, position) => {
+
+        // transformer is changing scale of the node
+        // and NOT its width or height
+        // but in the store we have only width and height
+        // to match the data better we will reset scale on transform end
+        const node = shapeRef.current;
+        const scaleX = node.scaleX();
+        const scaleY = node.scaleY();
+
+        // we will reset it back
+        node.scaleX(1);
+        node.scaleY(1);
+        onChange({
+            ...shapeProps,
+            x: node.x(),
+            y: node.y(),
+            // set minimal value
+            width: Math.max(5, node.width() * scaleX),
+            height: Math.max(node.height() * scaleY),
+        });
+
+        const resizedTokenDetails = {
+            id: token.id,
+            key: token.key,
+            positionX: node.x(),
+            positionY: node.y(),
+            // set minimal value
+            width: Math.max(5, node.width()),
+            height: Math.max(node.height()),
+        };
+
+        console.log("Updating token", resizedTokenDetails)
+        const updatedToken = await API.graphql({
+            query: mutations.updateToken,
+            variables: {input: resizedTokenDetails}
+        });
+        console.log(updatedToken)
+    };
+
+
+    useEffect(() => {
         if (isSelected) {
             // we need to attach transformer manually
             trRef.current.nodes([shapeRef.current]);
             trRef.current.getLayer().batchDraw();
         }
     }, [isSelected]);
-
-    //
-    // const handleLoad = () => {
-    //     // after setState react-konva will update canvas and redraw the layer
-    //     // because "image" property is changed
-    //     setImage(image)
-    //     // if you keep same image object during source updates
-    //     // you will have to update layer manually:
-    //     // this.imageNode.getLayer().batchDraw();
-    // };
-
-    // const loadImage() {
-    //     // save to "this" to remove "load" handler on unmount
-    //     setImage (new window.Image())
-    //     this.image.src = this.props.src;
-    //     this.image.addEventListener('load', this.handleLoad);
-    // }
-    // handleLoad = () => {
-    //     // after setState react-konva will update canvas and redraw the layer
-    //     // because "image" property is changed
-    //     this.setState({
-    //         image: this.image,
-    //     });
-    //     // if you keep same image object during source updates
-    //     // you will have to update layer manually:
-    //     // this.imageNode.getLayer().batchDraw();
 
     return (
         <>
@@ -63,35 +103,9 @@ const URLImage = ({url, token, shapeProps, onSelect, onChange}) => {
                    ref={shapeRef}
                    {...shapeProps}
                    draggable
-                   onDragEnd={(e) => {
-                       onChange({
-                           ...shapeProps,
-                           x: e.target.x(),
-                           y: e.target.y(),
-                       });
-                   }}
+                   onDragEnd={handleDragStop}
                    isSelected={isSelected}
-                   onTransformEnd={(e) => {
-                       // transformer is changing scale of the node
-                       // and NOT its width or height
-                       // but in the store we have only width and height
-                       // to match the data better we will reset scale on transform end
-                       const node = shapeRef.current;
-                       const scaleX = node.scaleX();
-                       const scaleY = node.scaleY();
-
-                       // we will reset it back
-                       node.scaleX(1);
-                       node.scaleY(1);
-                       onChange({
-                           ...shapeProps,
-                           x: node.x(),
-                           y: node.y(),
-                           // set minimal value
-                           width: Math.max(5, node.width() * scaleX),
-                           height: Math.max(node.height() * scaleY),
-                       });
-                   }}
+                   onTransformEnd={handleResizeStop}
                    className={styles.draggableicon}/>
             {isSelected && (<Transformer
                     ref={trRef}
@@ -125,65 +139,7 @@ const DraggableIcon = ({token, scale, x, y}) => {
     //     setWidth(parseInt(width));
     //     setHeight(parseInt(height));
     // };
-    //
-    // const handleResizeStop = async (e, direction, ref, delta, position) => {
-    //     console.log("handling resize stop")
-    //     console.log(e, direction, ref, delta, position)
-    //     const {width, height} = ref.style;
-    //
-    //     setIconPosition({
-    //         x: parseFloat(((position.x) / zoomLevel).toFixed(1)),
-    //         y: parseFloat(((position.y) / zoomLevel).toFixed(1)),
-    //     });
-    //
-    //     setWidth(parseInt(width));
-    //     setHeight(parseInt(height));
-    //     const resizedTokenDetails = {
-    //         id: token.id,
-    //         key: token.key,
-    //         width: parseInt(width),
-    //         height: parseInt(height),
-    //         positionX: position.x,
-    //         positionY: position.y
-    //     };
-    //
-    //     const updatedToken = await API.graphql({
-    //         query: mutations.updateToken,
-    //         variables: {input: resizedTokenDetails}
-    //     });
-    // };
-    //
-    // const handleDragStart = () => {
-    //     dragStartRef.current = {x: (iconPosition.x) / zoomLevel, y: (iconPosition.y) / zoomLevel};
-    //     console.log('Handling drag start')
-    // };
-    //
-    //
-    // const handleDragStop = async (e, d) => {
-    //     console.log('Handling drag stop')
-    //     const {x, y} = d;
-    //     const dragStart = dragStartRef.current;
-    //
-    //     if (dragStart && (Math.abs(x - dragStart.x) > 2 || Math.abs(y - dragStart.y) > 2)) {
-    //
-    //         const adjustedX = parseFloat((x).toFixed(1))
-    //         const adjustedY = parseFloat((y).toFixed(1))
-    //         setIconPosition({x: adjustedX, y: adjustedY});
-    //         const draggedTokenDetails = {
-    //             id: token.id,
-    //             positionX: adjustedX,
-    //             positionY: adjustedY
-    //         };
-    //
-    //         const updatedToken = await API.graphql({
-    //             query: mutations.updateToken,
-    //             variables: {input: draggedTokenDetails}
-    //         });
-    //     }
-    //
-    //     dragStartRef.current = null;
-    // };
-    //
+
     useEffect(() => {
         console.log(token)
         setIconPosition({x: token.positionX, y: token.positionY})
@@ -279,14 +235,6 @@ const DraggableIcon = ({token, scale, x, y}) => {
     //     };
     // }, [showContextMenu]);
     //
-    // let tokenZIndex = 10
-    // if (token.layer === 'MAP') {
-    //     tokenZIndex = 10
-    // } else if (token.layer === 'TOKEN') {
-    //     tokenZIndex = 11
-    // } else {
-    //     tokenZIndex = 12
-    // }
     //
 //     if (imgsrc) {
 //         // Define the appearance and behavior of the draggable icon
@@ -372,41 +320,31 @@ const DraggableIcon = ({token, scale, x, y}) => {
 // }
 
     const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID);
-    let zIndex
-    if (token.layer === "MAP") {
-        zIndex = 0
-    } else if (token.layer === "TOKEN") {
-        zIndex = 2
-    } else {
-        zIndex = 5
-    }
 
     if (imgsrc) {
         return (
-            <div style={{zIndex}}>
-                <URLImage
-                    url={imgsrc}
-                    token={token}
-                    shapeProps={{
-                        x: iconPosition.x,
-                        y: iconPosition.y,
-                        width: width,
-                        height: height,
-                        id: token.id,
-                    }}
-                    onSelect={() => {
-                        console.log(`Selected token ${token.id}`)
-                        setSelectedTokenID(token.id);
-                    }}
-                    onChange={(newAttrs) => {
-                        setIconPosition({x: newAttrs.x, y: newAttrs.y})
-                        setWidth(newAttrs.width)
-                        setHeight(newAttrs.height)
-                    }}
-                    style={{zIndex}}>
-                </URLImage>
-            </div>
-
+            <URLImage
+                url={imgsrc}
+                token={token}
+                shapeProps={{
+                    x: iconPosition.x,
+                    y: iconPosition.y,
+                    width: width,
+                    height: height,
+                    id: token.id,
+                }}
+                onSelect={() => {
+                    console.log(`Selected token ${token.id}`)
+                    setSelectedTokenID(token.id);
+                }}
+                onChange={(newAttrs) => {
+                    console.log(newAttrs)
+                    setIconPosition({x: newAttrs.x, y: newAttrs.y})
+                    setWidth(newAttrs.width)
+                    setHeight(newAttrs.height)
+                }}
+            >
+            </URLImage>
         )
     }
 }
