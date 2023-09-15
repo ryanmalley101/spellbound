@@ -97,7 +97,7 @@ const getToHit = (monsterData, attack) => {
         }, hit_bonus))
     }
 
-    console.error("Attack bonus is neither an integer nor a valid shorthand like [STR ATK]")
+    // console.error("Attack bonus is neither an integer nor a valid shorthand like [STR ATK]")
 }
 
 

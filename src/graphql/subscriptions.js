@@ -104,7 +104,7 @@ export const onCreateGame = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -390,7 +390,7 @@ export const onUpdateGame = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -676,7 +676,7 @@ export const onDeleteGame = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -1995,7 +1995,7 @@ export const onCreateToken = /* GraphQL */ `
         speed
         strength
         dexterity
-        consitution
+        constitution
         intelligence
         wisdom
         charisma
@@ -2306,7 +2306,7 @@ export const onUpdateToken = /* GraphQL */ `
         speed
         strength
         dexterity
-        consitution
+        constitution
         intelligence
         wisdom
         charisma
@@ -2617,7 +2617,7 @@ export const onDeleteToken = /* GraphQL */ `
         speed
         strength
         dexterity
-        consitution
+        constitution
         intelligence
         wisdom
         charisma
@@ -3134,7 +3134,7 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -3305,7 +3305,7 @@ export const onCreateCharacterSheet = /* GraphQL */ `
       speed
       strength
       dexterity
-      consitution
+      constitution
       intelligence
       wisdom
       charisma
@@ -3619,7 +3619,7 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -3790,7 +3790,7 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
       speed
       strength
       dexterity
-      consitution
+      constitution
       intelligence
       wisdom
       charisma
@@ -4104,7 +4104,7 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -4275,7 +4275,7 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
       speed
       strength
       dexterity
-      consitution
+      constitution
       intelligence
       wisdom
       charisma

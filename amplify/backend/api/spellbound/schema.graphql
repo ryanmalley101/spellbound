@@ -256,12 +256,12 @@ type CharacterSheet
     current_hd: Int!
     temp_hp: Int!
     speed: String!
-    strength: Int!
-    dexterity: Int!
-    consitution: Int!
-    intelligence: Int!
-    wisdom: Int!
-    charisma: Int!
+    strength: Int
+    dexterity: Int
+    constitution: Int
+    intelligence: Int
+    wisdom: Int
+    charisma: Int
     strength_score: Int!
     dexterity_score: Int!
     constitution_score: Int!
@@ -286,42 +286,42 @@ type CharacterSheet
     passive_perception: Int!
     passive_investigation: Int!
     passive_insight: Int!
-    acrobatics_prof: Boolean!
-    animal_handling_prof: Boolean!
-    arcana_prof: Boolean!
-    athletics_prof: Boolean!
-    deception_prof: Boolean!
-    history_prof: Boolean!
-    insight_prof: Boolean!
-    intimidation_prof: Boolean!
-    investigation_prof: Boolean!
-    medicine_prof: Boolean!
-    nature_prof: Boolean!
-    perception_prof: Boolean!
-    performance_prof: Boolean!
-    persuasion_prof: Boolean!
-    religion_prof: Boolean!
-    sleight_of_hand_prof: Boolean!
-    stealth_prof: Boolean!
-    survival_prof: Boolean!
-    acrobatics_mod: Int!
-    animal_handling_mod: Int!
-    arcana_mod: Int!
-    athletics_mod: Int!
-    deception_mod: Int!
-    history_mod: Int!
-    insight_mod: Int!
-    intimidation_mod: Int!
-    investigation_mod: Int!
-    medicine_mod: Int!
-    nature_mod: Int!
-    perception_mod: Int!
-    performance_mod: Int!
-    persuasion_mod: Int!
-    religion_mod: Int!
-    sleight_of_hand_mod: Int!
-    stealth_mod: Int!
-    survival_mod: Int!
+    acrobatics_prof: Boolean
+    animal_handling_prof: Boolean
+    arcana_prof: Boolean
+    athletics_prof: Boolean
+    deception_prof: Boolean
+    history_prof: Boolean
+    insight_prof: Boolean
+    intimidation_prof: Boolean
+    investigation_prof: Boolean
+    medicine_prof: Boolean
+    nature_prof: Boolean
+    perception_prof: Boolean
+    performance_prof: Boolean
+    persuasion_prof: Boolean
+    religion_prof: Boolean
+    sleight_of_hand_prof: Boolean
+    stealth_prof: Boolean
+    survival_prof: Boolean
+    acrobatics_mod: Int
+    animal_handling_mod: Int
+    arcana_mod: Int
+    athletics_mod: Int
+    deception_mod: Int
+    history_mod: Int
+    insight_mod: Int
+    intimidation_mod: Int
+    investigation_mod: Int
+    medicine_mod: Int
+    nature_mod: Int
+    perception_mod: Int
+    performance_mod: Int
+    persuasion_mod: Int
+    religion_mod: Int
+    sleight_of_hand_mod: Int
+    stealth_mod: Int
+    survival_mod: Int
     initiative: Int!
     defenses: String!
     senses: String!
@@ -423,7 +423,7 @@ type Spell {
     source: String!
     save_ability: String
     attack_save: Int!
-    damage: [DamageDice]!
+    damage: [DamageDice]
     cast_time: String!
     range_shape: String!
     duration: String!

@@ -8,28 +8,31 @@ import {getCharacterSheet, getGame} from "@/graphql/queries";
 import useBattlemapStore from "@/stores/battlemapStore";
 import {rollAttack, rollCheck} from "@/messageUtilities/mailroom";
 import {getToHit} from "@/5eReference/converters";
+import NewWindow from 'react-new-window'
 
 const scoreToMod = (score) => {
     return Math.floor((Number(score) - 10) / 2)
 }
 
 const AbilityScoreComponent = ({abilityName, score, handleInputChange, handleInputBlur}) => {
-    const scoreField = `${abilityName.toLowerCase()}_score`
+    const scoreField = `${abilityName.toLowerCase()}`
     return <li>
         <div className={styles.score}>
             <label className={styles.labelButton} form={abilityName}
                    onClick={() => rollCheck(abilityName, scoreToMod(score))}>
                 {abilityName}
-            </label><input key={`${abilityName}_input`} name={scoreField} placeholder={"10"}
-                           value={score}
-                           onChange={handleInputChange}
-                           onBlur={handleInputBlur}
-                           className={styles.stat}
-                           type="text"/>
+            </label>
+            <div>
+                <label placeholder={"+0"} className={styles.statmod}>{scoreToMod(score)}</label>
+            </div>
         </div>
         <div className={styles.modifier}>
-            <input name={`mod`} placeholder={"+0"} className={styles.statmod}
-                   value={scoreToMod(score)} readOnly={true}/>
+            <input key={`${abilityName}_input`} name={scoreField} placeholder={"10"}
+                   value={score}
+                   onChange={handleInputChange}
+                   onBlur={handleInputBlur}
+                   className={styles.stat}
+                   type="text"/>
         </div>
     </li>
 }
@@ -39,16 +42,20 @@ const SaveSkillComponent = ({
                                 checkScore,
                                 checkProf,
                                 isSave,
-                                handleInputChange,
+                                handleToggleSaveProf,
+                                handleToggleSkillProf,
+                                handleChangeSaveMod,
+                                handleChangeSkillMod,
                                 handleInputBlur,
-                                handleCheckboxClick,
                                 advantage,
                                 playerId,
                                 gameId
                             }) => {
 
-    const modField = isSave ? `${checkName.toLowerCase().replaceAll(" ", "_")}_save_mod` : `${checkName.toLowerCase().replaceAll(" ", "_")}_mod`
-    const profField = isSave ? `${checkName.toLowerCase().replaceAll(" ", "_")}_save_prof` : `${checkName.toLowerCase().replaceAll(" ", "_")}_prof`
+    const underscoreName = checkName.toLowerCase().replaceAll(" ", "_")
+
+    const modField = isSave ? `${underscoreName}_save_mod` : `[skills][${underscoreName}`
+    // const profField = isSave ? `${underscoreName}` : `${underscoreName}`
 
     const handleCheckRoll = (name) => {
         rollCheck(name, checkScore, playerId, gameId, advantage)
@@ -59,14 +66,14 @@ const SaveSkillComponent = ({
                onClick={() => handleCheckRoll(isSave ? `${checkName} Save` : checkName)}>
             {checkName}
         </label>
-        <input name={modField}
-               placeholder={"+0"}
+        <input placeholder={"+0"}
                type="text"
                value={checkScore}
-               onChange={handleInputChange}
+               onChange={isSave ? (e) => handleChangeSaveMod(underscoreName, e.target.value) : (e) => handleChangeSkillMod(underscoreName, e.target.value)}
                onBlur={handleInputBlur}/>
-        <input name={profField} type="checkbox" onChange={handleCheckboxClick}
-               checked={checkProf}/>
+        <input type="checkbox"
+               onChange={isSave ? (e) => handleToggleSaveProf(underscoreName, e.target.checked) : (e) => handleToggleSkillProf(underscoreName, e.target.checked)}
+               checked={!!checkProf}/>
     </li>;
 }
 
@@ -85,21 +92,23 @@ function Skills(props) {
                 <SaveSkillComponent
                     key={skillName} // Unique key for each skill component
                     checkName={skillName}
-                    checkScore={props.character[`${skillName.toLowerCase()}_mod`]}
-                    checkProf={props.character[`${skillName.toLowerCase()}_prof`]}
+                    checkScore={props.character.skills[skillName.toLowerCase().replaceAll(' ', '_')]}
+                    checkProf={!!props.character.skill_proficiencies[skillName.toLowerCase().replaceAll(' ', '_')]}
                     isSave={false}
                     handleInputChange={props.handleInputChange}
                     handleInputBlur={props.handleInputBlur}
                     handleCheckboxClick={props.handleCheckboxClick}
                     playerId={props.playerId}
                     gameId={props.gameId}
+                    handleToggleSkillProf={props.handleToggleSkillProf}
+                    handleChangeSkillMod={props.handleChangeSkillMod}
                 />
             ))}
         </ul>
     );
 }
 
-function Saves({character, handleInputChange, handleInputBlur, handleCheckboxClick, playerId, gameId}) {
+function Saves({character, handleChangeSaveMod, handleToggleSaveProf, handleInputBlur, playerId, gameId}) {
     const savingThrowNames = [
         'Strength', 'Dexterity', 'Constitution',
         'Intelligence', 'Wisdom', 'Charisma'
@@ -113,11 +122,11 @@ function Saves({character, handleInputChange, handleInputBlur, handleCheckboxCli
                         key={savingThrow}
                         checkName={savingThrow}
                         checkScore={character[`${savingThrow.toLowerCase()}_save_mod`]}
-                        checkProf={character[`${savingThrow.toLowerCase()}_save_prof`]}
+                        checkProf={character.save_proficiencies.includes(savingThrow.toLowerCase())}
                         isSave={true}
-                        handleInputChange={handleInputChange}
+                        handleToggleSaveProf={handleToggleSaveProf}
+                        handleChangeSaveMod={handleChangeSaveMod}
                         handleInputBlur={handleInputBlur}
-                        handleCheckboxClick={handleCheckboxClick}
                         playerId={playerId}
                         gameId={gameId}
                     />
@@ -130,22 +139,22 @@ function Saves({character, handleInputChange, handleInputBlur, handleCheckboxCli
 
 function AbilityScores(props) {
     return <ul>
-        <AbilityScoreComponent abilityName={"Strength"} score={props.character.strength_score}
+        <AbilityScoreComponent abilityName={"Strength"} score={props.character.strength}
                                handleInputChange={props.handleInputChange}
                                handleInputBlur={props.handleInputBlur}/>
-        <AbilityScoreComponent abilityName={"Dexterity"} score={props.character.dexterity_score}
+        <AbilityScoreComponent abilityName={"Dexterity"} score={props.character.dexterity}
                                handleInputChange={props.handleInputChange}
                                handleInputBlur={props.handleInputBlur}/>
         <AbilityScoreComponent abilityName={"Constitution"}
-                               score={props.character.constitution_score}
+                               score={props.character.constitution}
                                handleInputChange={props.handleInputChange} handleInputBlur={props.handleInputBlur}/>
         <AbilityScoreComponent abilityName={"Intelligence"}
-                               score={props.character.intelligence_score}
+                               score={props.character.intelligence}
                                handleInputChange={props.handleInputChange} handleInputBlur={props.handleInputBlur}/>
-        <AbilityScoreComponent abilityName={"Wisdom"} score={props.character.wisdom_score}
+        <AbilityScoreComponent abilityName={"Wisdom"} score={props.character.wisdom}
                                handleInputChange={props.handleInputChange}
                                handleInputBlur={props.handleInputBlur}/>
-        <AbilityScoreComponent abilityName={"Charisma"} score={props.character.charisma_score}
+        <AbilityScoreComponent abilityName={"Charisma"} score={props.character.charisma}
                                handleInputChange={props.handleInputChange}
                                handleInputBlur={props.handleInputBlur}/>
     </ul>;
@@ -273,7 +282,7 @@ const AttackRow = ({
                                                 type="text"
                                                 name={`attacks[${index}].damage[${dIndex}].damage_dice`}
                                                 value={damage.damage_dice}
-                                                onChange={handleDamageChange}
+                                                onChange={(e) => handleDamageChange("damage_dice", index, dIndex, e.target.value)}
                                             />
                                         </td>
                                         <td>
@@ -281,7 +290,7 @@ const AttackRow = ({
                                                 type="text"
                                                 name={`attacks[${index}].damage[${dIndex}].damage_type`}
                                                 value={damage.damage_type}
-                                                onChange={handleDamageChange}
+                                                onChange={(e) => handleDamageChange("damage_type", index, dIndex, e.target.value)}
                                             />
                                         </td>
                                     </tr>
@@ -1340,13 +1349,18 @@ function Modifiers(props) {
                 <Saves character={props.character}
                        handleInputChange={props.handleInputChange}
                        handleInputBlur={props.handleInputBlur} handleCheckboxClick={props.handleCheckboxClick}
-                       playerId={props.playerId} gameId={props.gameId}/>
+                       playerId={props.playerId} gameId={props.gameId} handleToggleSaveProf={props.handleToggleSaveProf}
+                       handleChangeSaveMod={props.handleChangeSaveMod}/>
 
                 <div className={styles.skills + " " + styles.listSection + " " + styles.box}>
                     <Skills character={props.character}
                             handleInputChange={props.handleInputChange}
-                            handleInputBlur={props.handleInputBlur} handleCheckboxClick={props.handleCheckboxClick}
-                            playerId={props.playerId} gameId={props.gameId}/>
+                            handleInputBlur={props.handleInputBlur}
+                            handleCheckboxClick={props.handleCheckboxClick}
+                            playerId={props.playerId}
+                            gameId={props.gameId}
+                            handleToggleSkillProf={props.handleToggleSkillProf}
+                            handleChangeSkillMod={props.handleChangeSkillMod}/>
                     <div className={styles.label}>
                         Skills
                     </div>
@@ -1518,35 +1532,13 @@ const CharacterSheet = ({characterSheetInput}) => {
         }
     }
 
-    const handleDamageChange = (e) => {
-        const separateString = (inputString) => {
-            const diceRegex = /(.*)\[(\d+)\]\.damage\[(\d+)\]\.damage_dice/;
-            const diceMatches = inputString.match(diceRegex);
-            if (diceMatches) {
-                const characterCopy = {...character}
-                characterCopy[diceMatches[1]][diceMatches[2]].damage[diceMatches[3]].damage_dice = e.target.value
-                setCharacter({...character, [diceMatches[1]]: characterCopy[diceMatches[1]]});
-                setCharacterPreUpdate({...characterPreUpdate, [diceMatches[1]]: characterCopy[diceMatches[1]]});
-                return
-            }
-
-            const typeRegex = /(.*)\[(\d+)\]\.damage\[(\d+)\]\.damage_type/;
-            const typeMatches = inputString.match(typeRegex);
-            if (typeMatches) {
-                const characterCopy = {...character}
-                characterCopy[diceMatches[1]][typeMatches[2]].damage[typeMatches[3]].damage_type = e.target.value
-                setCharacter({...character, [diceMatches[1]]: characterCopy[diceMatches[1]]});
-                setCharacterPreUpdate({...characterPreUpdate, [diceMatches[1]]: characterCopy[diceMatches[1]]});
-                return
-            }
-
-            return null;
-        }
-
-        let {name, value} = e.target;
-        // console.log(name, value)
-        const chunkString = separateString(name)
+    const handleDamageChange = (field, index, dIndex, value) => {
+        const attacks = character.attacks
+        const damage = attacks[index].damage[dIndex]
+        damage[field] = value
+        setCharacter({...character, attacks})
     }
+
     const handleInputBlur = async () => {
         // Perform backend update here
         // You can access the updated character sheet using 'editableCharacterSheet'
@@ -1598,6 +1590,35 @@ const CharacterSheet = ({characterSheetInput}) => {
             console.log(e.target.name)
         }
     }
+
+    const handleToggleSaveProf = (save, prof) => {
+        let save_proficiences = character.save_proficiencies
+        if (prof) {
+            save_proficiences = save_proficiences.filter((s) => s !== save)
+        } else {
+            if (!save_proficiences.includes(save)) save_proficiences.push(save)
+        }
+        setCharacter({...character, save_proficiences})
+        setCharacterPreUpdate({...characterPreUpdate, save_proficiences})
+    }
+
+    const handleToggleSkillProf = (skill, prof) => {
+        let skill_proficiences = character.skill_proficiencies
+        prof ? skill_proficiences[skill] = 'proficient' : skill_proficiences[skill] = ''
+        setCharacter(...character, skill_proficiences)
+        setCharacterPreUpdate({...characterPreUpdate, skill_proficiences})
+    }
+
+    const handleChangeSaveMod = (save, mod) => {
+        setCharacter({...character, [`${save}_save_mod`]: mod})
+        setCharacterPreUpdate({...characterPreUpdate, [`${save}_save_mod`]: mod})
+    }
+
+    const handleChangeSkillMod = (skill, mod) => {
+        setCharacter({...character, skills: {...character.skills, skill: mod}})
+        setCharacterPreUpdate({...characterPreUpdate, skills: {...character.skills, skill: mod}})
+    }
+
 
     const addInventory = () => {
         setCharacter({
@@ -1736,10 +1757,11 @@ const CharacterSheet = ({characterSheetInput}) => {
                 <NameBackground character={character} onChange={handleInputChange} onBlur={handleInputBlur}/>
                 <main>
                     <Modifiers key={"Charisma"} character={character}
-
-                               handleInputChange={handleInputChange}
-                               handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}
-                               playerId={playerID} gameId={gameID}/>
+                               handleInputBlur={handleInputBlur}
+                               playerId={playerID} gameId={gameID} handleToggleSaveProf={handleToggleSaveProf}
+                               handleChangeSaveMod={handleChangeSaveMod}
+                               handleToggleSkillProf={handleToggleSkillProf}
+                               handleChangeSkillMod={handleChangeSkillMod} handleInputChange={handleInputChange}/>
                     <CombatValues character={character} onChange={handleInputChange} onBlur={handleInputBlur}
                                   onChange1={handleCheckboxClick}/>
                     <Attributes character={character} onChange={handleInputChange} onBlur={handleInputBlur}
@@ -1765,7 +1787,8 @@ const CharacterSheet = ({characterSheetInput}) => {
                 <hr className={styles.pageborder}/>
                 <SpellList character={character} onChange={handleInputChange} onBlur={handleInputBlur}
                            callbackfn={(attack, index) => (
-                               <SpellRow key={index} spell={attack} index={index} handleInputChange={handleInputChange}
+                               <SpellRow key={index} spell={attack} index={index}
+                                         handleInputChange={handleInputChange}
                                          handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}
                                          addDamage={addSpellDamage} removeSpell={removeSpell}
                                          handleDamageChange={handleDamageChange}/>

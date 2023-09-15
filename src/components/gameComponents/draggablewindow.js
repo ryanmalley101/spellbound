@@ -12,16 +12,32 @@ import WeaponCard from "@/components/gameComponents/weaponcard";
 import ArmorCard from "@/components/gameComponents/armorcard";
 import ConditionCard from "@/components/gameComponents/conditioncard";
 import AshOfWarCard from "@/components/gameComponents/ashofwarcard";
+import NewWindow from "react-new-window";
+import {BiWindows} from "react-icons/bi";
+
+const ConditionalWrapper = ({condition, wrapper, children}) => {
+    console.log(condition, wrapper, children)
+    if (condition) {
+        return wrapper(children)
+    }
+    return children
+}
 
 const DraggableWindow = ({initialPosition, content, onClose, title, initialWidth, initialHeight}) => {
     const [windowPosition, setWindowPosition] = useState({x: 0, y: 0});
     const [containerWidth, setContainerWidth] = useState(initialWidth ? initialWidth : 820);
     const [containerHeight, setContainerHeight] = useState(initialHeight ? initialHeight : 800);
     const [headerWidth, setHeaderWidth] = useState(initialWidth ? initialWidth : 820)
+    const [portal, setPortal] = useState(false)
     // const [headerHeight, setHeaderHeight] = useState(45)
     const dragStartRef = useRef(null); // Define the dragStartRef using useRef
     const [isHidden, setIsHidden] = useState(false);
     const headerHeight = 45; // Adjust this value based on your header's actual height
+    const [ready, setReady] = useState(false)
+
+    const togglePortal = () => {
+        portal ? setPortal(false) : setPortal(true)
+    }
 
     const handleDoubleClick = () => {
         setIsHidden((prevState) => !prevState);
@@ -60,6 +76,10 @@ const DraggableWindow = ({initialPosition, content, onClose, title, initialWidth
         if (initialPosition) {
             setWindowPosition({x: initialPosition.x, y: initialPosition.y})
         }
+        window.addEventListener("beforeunload", (ev) => {
+            ev.preventDefault();
+            setPortal(false)
+        });
     }, []); // Empty dependency array to run the effect only once
 
     const closeWindow = () => {
@@ -67,10 +87,86 @@ const DraggableWindow = ({initialPosition, content, onClose, title, initialWidth
         onClose()
     }
 
+    if (portal) {
+        return (
+            <ConditionalWrapper condition={portal}
+                                wrapper={children => <NewWindow onUnload={onClose}>{children}</NewWindow>}>
+                <Rnd
+                    size={{
+                        width: isHidden ? headerWidth : containerWidth,
+                        height: isHidden ? headerHeight : containerHeight
+                    }}
+                    position={{
+                        x: windowPosition.x,
+                        y: windowPosition.y
+                    }} // Set the initial position of the component
+                    onDragStart={handleDragStart}
+                    onDragStop={handleDragStop}
+                    style={{
+                        zIndex: 20,
+                        backgroundColor: 'white'
+                    }}
+                    onResizeStop={(e, direction, ref, delta, position) => {
+                        setWindowPosition({
+                            x: parseFloat((position.x).toFixed(1)),
+                            y: parseFloat((position.y).toFixed(1)),
+                        });
+                    }}
+                    onResize={handleResize}
+                    bounds="parent"
+                    enableResizing={{
+                        top: true,
+                        right: true,
+                        bottom: true,
+                        left: true,
+                        topRight: true,
+                        bottomRight: true,
+                        bottomLeft: true,
+                        topLeft: true,
+                    }}
+                    resizeHandleStyles={{
+                        top: {cursor: 'n-resize'},
+                        right: {cursor: 'e-resize'},
+                        bottom: {cursor: 's-resize'},
+                        left: {cursor: 'w-resize'},
+                        topRight: {cursor: 'ne-resize'},
+                        bottomRight: {cursor: 'se-resize'},
+                        bottomLeft: {cursor: 'sw-resize'},
+                        topLeft: {cursor: 'nw-resize'},
+                    }}
+                    resizeHandleWrapperClass="resize-handle-wrapper"
+                    dragHandleClassName={styles.header}
+                >
+                    <div className={styles.windowContainer}>
+                        <div className={styles.header} onDoubleClick={handleDoubleClick}>
+                            <div className={styles.headerTitle}>{title}</div>
+                            <div className={styles.headerClose}>
+                                <button className={styles.closeButton} onClick={togglePortal}>
+                                    <BiWindows/>
+                                </button>
+                                <button className={styles.closeButton} onClick={closeWindow}>
+                                    <BsX className={styles.closeIcon}/>
+                                </button>
+                            </div>
+                        </div>
+                        <div className={styles.subContainer} style={{display: isHidden ? 'none' : 'block'}}>
+                            {content}
+                        </div>
+                    </div>
+                </Rnd>
+            </ConditionalWrapper>
+        );
+    }
     return (
         <Rnd
-            size={{width: isHidden ? headerWidth : containerWidth, height: isHidden ? headerHeight : containerHeight}}
-            position={{x: windowPosition.x, y: windowPosition.y}} // Set the initial position of the component
+            size={{
+                width: isHidden ? headerWidth : containerWidth,
+                height: isHidden ? headerHeight : containerHeight
+            }}
+            position={{
+                x: windowPosition.x,
+                y: windowPosition.y
+            }} // Set the initial position of the component
             onDragStart={handleDragStart}
             onDragStop={handleDragStop}
             style={{
@@ -112,6 +208,9 @@ const DraggableWindow = ({initialPosition, content, onClose, title, initialWidth
                 <div className={styles.header} onDoubleClick={handleDoubleClick}>
                     <div className={styles.headerTitle}>{title}</div>
                     <div className={styles.headerClose}>
+                        <button className={styles.closeButton} onClick={togglePortal}>
+                            <BiWindows/>
+                        </button>
                         <button className={styles.closeButton} onClick={closeWindow}>
                             <BsX className={styles.closeIcon}/>
                         </button>
@@ -122,7 +221,7 @@ const DraggableWindow = ({initialPosition, content, onClose, title, initialWidth
                 </div>
             </div>
         </Rnd>
-    );
+    )
 }
 
 const DraggableCharacterWindow = ({characterSheet}) => {

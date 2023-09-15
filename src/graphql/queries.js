@@ -104,7 +104,7 @@ export const getGame = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -1044,7 +1044,7 @@ export const getToken = /* GraphQL */ `
         speed
         strength
         dexterity
-        consitution
+        constitution
         intelligence
         wisdom
         charisma
@@ -1312,7 +1312,7 @@ export const listTokens = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -1661,7 +1661,7 @@ export const getCharacterSheet = /* GraphQL */ `
           speed
           strength
           dexterity
-          consitution
+          constitution
           intelligence
           wisdom
           charisma
@@ -1832,7 +1832,7 @@ export const getCharacterSheet = /* GraphQL */ `
       speed
       strength
       dexterity
-      consitution
+      constitution
       intelligence
       wisdom
       charisma
@@ -2114,7 +2114,7 @@ export const listCharacterSheets = /* GraphQL */ `
         speed
         strength
         dexterity
-        consitution
+        constitution
         intelligence
         wisdom
         charisma
