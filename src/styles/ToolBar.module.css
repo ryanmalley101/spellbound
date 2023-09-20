@@ -27,6 +27,16 @@
     align-content: center;
     align-items: center;
     width: 75px;
+    padding: 5px 5px 5px 5px;
+    display: inline-block;
+    /*margin: 5px;*/
+}
+
+.SubContainer {
+    text-align: center;
+    align-content: center;
+    align-items: center;
+    width: 50px;
     padding: 5px 5px 5px 5px
 
     /*margin: 5px;*/

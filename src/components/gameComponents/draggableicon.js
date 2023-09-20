@@ -11,7 +11,7 @@ import * as url from "url";
 import {Transformer, Image} from "react-konva";
 import useImage from 'use-image';
 
-const URLImage = ({url, token, shapeProps, onSelect, onChange}) => {
+const URLImage = ({url, token, shapeProps, onSelect, onChange, draggable}) => {
     // const [src, setSrc] = useState("")
     const shapeRef = useRef();
     const trRef = useRef();
@@ -102,7 +102,7 @@ const URLImage = ({url, token, shapeProps, onSelect, onChange}) => {
                    onClick={onSelect}
                    ref={shapeRef}
                    {...shapeProps}
-                   draggable
+                   draggable={draggable}
                    onDragEnd={handleDragStop}
                    isSelected={isSelected}
                    onTransformEnd={handleResizeStop}
@@ -128,8 +128,8 @@ const DraggableIcon = ({token, scale, x, y}) => {
     const [width, setWidth] = useState(50);
     const [height, setHeight] = useState(50);
     const [imgsrc, setImgsrc] = useState(null);
-    // const dragStartRef = useRef(null); // Define the dragStartRef using useRef
     const selectedTool = useBattlemapStore((state) => state.selectedTool);
+    // const dragStartRef = useRef(null); // Define the dragStartRef using useRef
     // const mapLayer = useBattlemapStore((state) => state.mapLayer);
     // const [showContextMenu, setShowContextMenu] = useState(false);
     // const [contextMenuPosition, setContextMenuPosition] = useState({x: 0, y: 0});
@@ -326,6 +326,7 @@ const DraggableIcon = ({token, scale, x, y}) => {
             <URLImage
                 url={imgsrc}
                 token={token}
+                draggable={selectedTool === TOOL_ENUM.SELECT}
                 shapeProps={{
                     x: iconPosition.x,
                     y: iconPosition.y,

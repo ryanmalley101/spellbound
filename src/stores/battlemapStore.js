@@ -10,6 +10,15 @@ export const TOOL_ENUM = {
     TEXT: "TEXT"
 }
 
+export const DRAW_ENUM = {
+    PEN: "PEN",
+    CIRCLE: "CIRCLE",
+    RECTANGLE: "RECTANGLE",
+    TRIANGLE: "TRIANGLE",
+    TEXT: "TEXT",
+    POLYGON: "POLYGON"
+}
+
 const useBattlemapStore = create((set) => ({
     zoomLevel: 1,
     setZoomLevel: (newZoom) =>
@@ -99,6 +108,10 @@ const useBattlemapStore = create((set) => ({
     mapLayer: "TOKEN",
     setMapLayer: (layer) =>
         set((state) => ({mapLayer: layer})),
+
+    drawTool: "PEN",
+    setDrawTool: (tool) =>
+        set((state) => ({drawTool: tool})),
 
     gamePlayers: [],
     setGamePlayers: (players) =>

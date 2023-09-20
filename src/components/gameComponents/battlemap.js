@@ -21,7 +21,7 @@ const GRID_SIZE = 70
 const BattleMap = () => {
 
     const [draggingDisabled, setDraggingDisabled] = useState(true);
-
+    const [selectingDisabled, setSelectingDisabled] = useState(false)
     const [widthUnits, setWidthUnits] = useState(25);
     const [heightUnits, setHeightUnits] = useState(25);
     const [mapTokens, setMapTokens] = useState(['debug'])
@@ -596,10 +596,9 @@ const BattleMap = () => {
     }, [activeMap]);
 
     useEffect(() => {
-
+        console.log(selectedTool)
         setDraggingDisabled(selectedTool !== TOOL_ENUM.DRAG)
-
-
+        setSelectingDisabled(selectedTool !== TOOL_ENUM.SELECT)
     }, [selectedTool])
 
     const Controls = () => {
@@ -639,17 +638,19 @@ const BattleMap = () => {
                 }} contentStyle={{
                     height: '100%',
                     width: '100%',
-                }} disabled={draggingDisabled} minScale={0.1}>
+                }} minScale={0.1}>
                     <div
                         style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE, flex: "none"}}
                     >
-                        <Stage width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE} draggable="true"
+                        <DrawingCanvas windowPositionRef={windowPositionRef} scale={scale}/>
+                        <Stage width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE}
                                onMouseDown={checkDeselect} onTouchStart={checkDeselect}
+                            // style={{pointerEvents: selectingDisabled ? "none" : "auto"}}
                         >
                             <Layer>
                                 {mapTokens.map((token, index) => {
                                     if (token.layer === "MAP") {
-                                        console.log(token.key)
+                                        // console.log(token.key)
                                         return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
                                                               token={token}
                                                               scale={scale.current}/>
@@ -659,7 +660,6 @@ const BattleMap = () => {
                                              gridSize={GRID_SIZE}/>
                                 {mapTokens.map((token, index) => {
                                     if (token.layer === "TOKEN") {
-                                        console.log(token.key)
                                         return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
                                                               token={token}
                                                               scale={scale.current}/>
@@ -667,7 +667,6 @@ const BattleMap = () => {
                                 })}
                                 {mapTokens.map((token, index) => {
                                     if (token.layer === "GM") {
-                                        console.log(token.key)
                                         return <DraggableIcon key={token.key} x={token.positionX} y={token.positionY}
                                                               token={token}
                                                               scale={scale.current}/>
@@ -680,11 +679,9 @@ const BattleMap = () => {
                         {/*     style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>*/}
                         {/*    <input {...getInputProps()} />*/}
                         {/*</div>*/}
-                        {/*<DrawingCanvas windowPositionRef={windowPositionRef} scale={scale}/>*/}
                     </div>
                 </TransformComponent>
             </TransformWrapper>
-
         </div>
     );
 
