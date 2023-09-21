@@ -7,7 +7,7 @@ import React, {useEffect, useState} from "react";
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
 import {BsPencilFill, BsTriangle} from "react-icons/bs";
 import {GrCheckbox} from "react-icons/gr";
-import {BiCheckbox, BiCircle, BiPencil, BiShapePolygon, BiUpArrow} from "react-icons/bi";
+import {BiCheckbox, BiCircle, BiPencil, BiShapePolygon, BiUpArrow, BiText} from "react-icons/bi";
 
 const ToolBar = () => {
     const {selectedTool, setSelectedTool} = useBattlemapStore()
@@ -84,7 +84,7 @@ const ToolBar = () => {
                             flexGrow: 0,
                             display: 'block',
                             minWidth: 'auto',
-                            backgroundColor: drawTool === DRAW_ENUM.RECTANGLE ? '#ccc' : 'transparent',
+                            backgroundColor: drawTool === DRAW_ENUM.PEN ? '#ccc' : 'transparent',
                             width: 69
                         }}
                         className={styles.ToolContainer}
@@ -148,6 +148,20 @@ const ToolBar = () => {
                         onClick={() => setDrawTool(DRAW_ENUM.POLYGON)} // Set the selected tool when the "Map" button is clicked
                     >
                         <BiShapePolygon size={30}/>
+                    </ListItemButton>
+                    <ListItemButton
+                        sx={{
+                            flexGrow: 0,
+                            display: 'block',
+                            minWidth: 'auto',
+                            backgroundColor: drawTool === DRAW_ENUM.LABEL ? '#ccc' : 'transparent',
+                            width: 69
+                        }}
+                        className={styles.ToolContainer}
+                        edge="end"
+                        onClick={() => setDrawTool(DRAW_ENUM.LABEL)} // Set the selected tool when the "Map" button is clicked
+                    >
+                        <BiText size={30}/>
                     </ListItemButton>
                 </div>
             )}

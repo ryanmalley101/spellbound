@@ -15,7 +15,7 @@ export const DRAW_ENUM = {
     CIRCLE: "CIRCLE",
     RECTANGLE: "RECTANGLE",
     TRIANGLE: "TRIANGLE",
-    TEXT: "TEXT",
+    LABEL: "TEXT",
     POLYGON: "POLYGON"
 }
 
