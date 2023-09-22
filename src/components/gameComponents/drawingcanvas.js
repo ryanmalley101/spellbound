@@ -6,8 +6,110 @@ import styles from '../../styles/Battlemap.module.css'
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
 import {v4 as uuidv4} from 'uuid';
 
-const Drawing = ({shape}) => {
-
+const Drawing = ({shape, index, onShapeDragEnd, onLineDragEnd, editing, handleTextDblClick, selectedLabelId}) => {
+    if (shape.type === DRAW_ENUM.PEN) {
+        return <>
+            <Line
+                points={shape.points}
+                stroke="black"
+                strokeWidth={2}
+                tension={0.5}
+                lineCap="round"
+                lineJoin="round"
+                draggable
+                onDragEnd={(e) => onLineDragEnd(e, index)}
+                className="shape"
+            />
+        </>
+    }
+    if (shape.type === "RECTANGLE") {
+        return <>
+            <Rect
+                key={index}
+                x={shape.x}
+                y={shape.y}
+                width={shape.width}
+                height={shape.height}
+                stroke={'black'}
+                strokeWidth={4}
+                draggable
+                onDragEnd={(e) => onShapeDragEnd(e, index)}
+                className="shape"
+            />
+        </>
+    }
+    if (shape.type === DRAW_ENUM.CIRCLE) {
+        return <>
+            <Circle
+                key={index}
+                x={shape.x}
+                y={shape.y}
+                radius={shape.radius}
+                stroke={'black'}
+                strokeWidth={4}
+                draggable
+                onDragEnd={(e) => onShapeDragEnd(e, index)}
+                className="shape"
+            />
+        </>
+    }
+    if (shape.type === DRAW_ENUM.TRIANGLE) {
+        return <>
+            <Line
+                key={index}
+                closed={true}
+                points={shape.points}
+                stroke={'black'}
+                strokeWidth={4}
+                draggable
+                onDragEnd={(e) => onShapeDragEnd(e, index)}
+                className="shape"
+            />
+        </>
+    }
+    if (shape.type === DRAW_ENUM.POLYGON) {
+        return <>
+            <Line
+                closed={true}
+                points={shape.points}
+                stroke={'black'}
+                strokeWidth={4}
+                draggable
+                onDragEnd={(e) => onLineDragEnd(e, index)}
+                className="shape"
+            />
+        </>
+    }
+    if (shape.type === DRAW_ENUM.LABEL) {
+        return <>
+            <Text
+                x={shape.x}
+                y={shape.y}
+                text={shape.text}
+                fontSize={shape.fontSize}
+                draggable={!editing}
+                onDblClick={(e) => handleTextDblClick(e, shape.id)}
+                onClick={(e) => {
+                    // Prevent selecting the stage when clicking on text
+                    e.cancelBubble = true;
+                }}
+                onDragEnd={(e) => onShapeDragEnd(e, index)}
+                className="shape"
+            />
+            {selectedLabelId === shape.id && (
+                <Transformer
+                    // ref={textInputRef}
+                    attachTo={shape}
+                    visible={true}
+                    onClick={(e) => {
+                        // Prevent selecting the stage when clicking on text
+                        e.cancelBubble = true;
+                    }}
+                    rotationEnabled={false}
+                />
+            )}
+        </>
+    }
 }
 
 const DrawingCanvas = ({windowPositionRef, scale}) => {
@@ -16,26 +118,17 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         zoomLevel, selectedTool, drawTool
     } = useBattlemapStore();
 
-    const [lines, setLines] = useState([])
-    const lastLineRef = useRef();
+    const [selectionRect, setSelectionRect] = useState(null);
+    const [selectedShapes, setSelectedShapes] = useState([]);
+    const stageRef = useRef();
 
-    const [rectangles, setRectangles] = useState([])
-    const lastRectangleRef = useRef();
+    const [shapes, setShapes] = useState([])
+    const lastShapeRef = useRef(0)
 
-    const [circles, setCircles] = useState([])
-    const lastCircleRef = useRef();
-
-    const [triangles, setTriangles] = useState([])
-    const lastTriangleRef = useRef();
     const [selectedLabelId, setSelectedLabelId] = useState("");
     const [editing, setEditing] = useState(false);
     const textInputRef = useRef();
 
-    const [labels, setLabels] = useState([])
-    const lastLabelRef = useRef();
-
-    const [polygons, setPolygons] = useState([])
-    const lastPolygonRef = useRef(-1)
     const currentPolyPoint = useRef()
 
     const [isDrawing, setIsDrawing] = useState(false)
@@ -44,6 +137,15 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
     const [initialPoint, setInitialPoint] = useState({x: 0, y: 0})
 
     const clickTimeout = useRef(null);
+
+    // const handleShapeClick = (e, shape) => {
+    //     setSelectedShapes([]);
+    // };
+
+    const handleStageClick = (e) => {
+        // Clear selection when clicking on the stage
+        setSelectedShapes([]);
+    };
 
     const getPoint = (e) => {
         return {
@@ -62,13 +164,13 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
     }
 
     const handleTextChange = (e) => {
-        const updatedTextObjects = labels.map((textObj) => {
-            if (textObj.id === selectedLabelId) {
-                return {...textObj, text: e.target.value};
+        const updatedTextObjects = shapes.map((shape) => {
+            if (shape.id === selectedLabelId) {
+                return {...shape, text: e.target.value};
             }
-            return textObj;
+            return shape;
         });
-        setLabels(updatedTextObjects);
+        setShapes(updatedTextObjects);
     };
 
     const handleTextKeyPress = (e) => {
@@ -96,102 +198,129 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
     }, [editing])
 
     const handleMouseDown = (e) => {
-        console.log(e)
-        setIsDrawing(true);
-        const point = getPoint(e)
+        if (selectedTool === TOOL_ENUM.DRAW) {
+            if (drawTool === DRAW_ENUM.POLYGON) {
+                return
+            }
 
-        if (drawTool === DRAW_ENUM.PEN) {
-            const newLines = [...lines, []]
-            lastLineRef.current = newLines.length - 1
-            newLines[lastLineRef.current].push(point);
-            setLines([...newLines]);
-        }
-        if (drawTool === DRAW_ENUM.RECTANGLE) {
-            const newRects = [...rectangles, {x: point.x, y: point.y, width: 0, height: 0}]
-            lastRectangleRef.current = newRects.length - 1
-            setInitialPoint(point)
-            setRectangles(newRects)
-        }
-        if (drawTool === DRAW_ENUM.CIRCLE) {
-            const newCircles = [...circles, {x: point.x, y: point.y, radius: 0}]
-            lastCircleRef.current = newCircles.length - 1
-            setInitialPoint(point)
-            setCircles(newCircles)
-        }
+            setIsDrawing(true);
+            const point = getPoint(e)
 
-        if (drawTool === DRAW_ENUM.TRIANGLE) {
-            const newTriangles = [...triangles, [point.x, point.y]]
-            lastTriangleRef.current = newTriangles.length - 1
-            setInitialPoint(point)
-            setTriangles(newTriangles)
-        }
+            if (drawTool === DRAW_ENUM.PEN) {
+                const newShapes = [...shapes, {type: DRAW_ENUM.PEN, points: [point.x, point.y]}]
+                lastShapeRef.current = newShapes.length - 1
+                console.log(newShapes)
+                setShapes(newShapes);
+            }
+            if (drawTool === DRAW_ENUM.RECTANGLE) {
+                const newShapes = [...shapes, {type: DRAW_ENUM.RECTANGLE, x: point.x, y: point.y, width: 0, height: 0}]
+                lastShapeRef.current = newShapes.length - 1
+                setInitialPoint(point)
+                setShapes(newShapes);
+            }
+            if (drawTool === DRAW_ENUM.CIRCLE) {
+                const newShapes = [...shapes, {type: DRAW_ENUM.CIRCLE, x: point.x, y: point.y, radius: 0}]
+                lastShapeRef.current = newShapes.length - 1
+                setInitialPoint(point)
+                setShapes(newShapes);
+            }
 
-        if (drawTool === DRAW_ENUM.LABEL) {
-            if (!editing) {
-                // Check if it's a double-click (within a certain time frame)
-                if (clickTimeout.current) {
-                    console.log(labels)
-                    clearTimeout(clickTimeout.current)
-                    clickTimeout.current = null
-                    handleTextDblClick(e, e.target.id)
-                } else {
-                    clickTimeout.current = setTimeout(() => {
+            if (drawTool === DRAW_ENUM.TRIANGLE) {
+                const newShapes = [...shapes, {type: DRAW_ENUM.TRIANGLE, points: [point.x, point.y]}]
+                lastShapeRef.current = newShapes.length - 1
+                setInitialPoint(point)
+                setShapes(newShapes);
+            }
+
+            if (drawTool === DRAW_ENUM.LABEL) {
+                if (!editing) {
+                    // Check if it's a double-click (within a certain time frame)
+                    if (clickTimeout.current) {
+                        clearTimeout(clickTimeout.current)
                         clickTimeout.current = null
-                        console.log("Creating new label")
-                        const newLabelId = uuidv4()
-                        const newLabels = [...labels, {
-                            text: "THISISTESTTEXT",
-                            x: point.x,
-                            y: point.y,
-                            fontSize: 32,
-                            id: newLabelId
-                        }]
-                        lastLabelRef.current = newLabels.length - 1
-                        setTimeout(() => {
-                            // Stops the click event itself from removing focus from the newly editable label
-                            setEditing(true)
-                        }, 100);
-                        setSelectedLabelId(newLabelId)
-                        setLabels(newLabels)
-                    }, 500)
+                        handleTextDblClick(e, e.target.id)
+                    } else {
+                        clickTimeout.current = setTimeout(() => {
+                            clickTimeout.current = null
+                            console.log("Creating new label")
+                            const newLabelId = uuidv4()
+                            const newShapes = [...shapes, {
+                                type: DRAW_ENUM.LABEL,
+                                text: "NEW LABEL",
+                                x: point.x,
+                                y: point.y,
+                                fontSize: 32,
+                                id: newLabelId
+                            }]
+                            lastShapeRef.current = newShapes.length - 1
+                            setTimeout(() => {
+                                // Stops the click event itself from removing focus from the newly editable label
+                                setEditing(true)
+                            }, 100);
+                            setSelectedLabelId(newLabelId)
+                            setShapes(newShapes);
+                        }, 500)
+                    }
                 }
             }
+        } else if (selectedTool === TOOL_ENUM.SELECT) {
+            const {x, y} = getPoint(e)
+            setSelectionRect({
+                x1: x,
+                y1: y,
+                x2: x,
+                y2: y,
+            });
         }
     };
 
     const handleMouseMove = (e) => {
+
+        if (selectedTool === TOOL_ENUM.SELECT) {
+            if (selectionRect) {
+                const {x, y} = getPoint(e)
+                setSelectionRect({
+                    ...selectionRect,
+                    x2: x,
+                    y2: y,
+                });
+            }
+            return
+        }
+
         if (!isDrawing || new Date().getTime() - drawTimer < 50) return
+
         // setDrawTimer(new Date().getTime())
         const point = getPoint(e)
 
         if (drawTool === DRAW_ENUM.PEN) {
-            lines[lastLineRef.current].push(point);
-            setLines([...lines]);
+            const updatedLine = [...shapes]
+            updatedLine[lastShapeRef.current].points = updatedLine[lastShapeRef.current].points.concat([point.x, point.y]);
+            setShapes(updatedLine)
         }
         if (drawTool === DRAW_ENUM.RECTANGLE) {
             const rect = {
+                type: DRAW_ENUM.RECTANGLE,
                 x: Math.min(point.x, initialPoint.x),
                 y: Math.min(point.y, initialPoint.y),
                 width: Math.abs(point.x - initialPoint.x),
                 height: Math.abs(point.y - initialPoint.y)
             }
-            const oldRects = [...rectangles]
-            oldRects[lastRectangleRef.current] = rect
-            setRectangles(oldRects)
+            const oldShapes = [...shapes]
+            oldShapes[lastShapeRef.current] = rect
+            setShapes(oldShapes)
         }
         if (drawTool === DRAW_ENUM.CIRCLE) {
             const deltaX = Math.abs(point.x - initialPoint.x)
             const deltaY = Math.abs(point.y - initialPoint.y)
             const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2)
 
-            const circle = {x: initialPoint.x, y: initialPoint.y, radius: distance}
-            const oldCircles = [...circles]
-            oldCircles[lastCircleRef.current] = circle
-            setCircles(oldCircles)
+            const circle = {type: DRAW_ENUM.CIRCLE, x: initialPoint.x, y: initialPoint.y, radius: distance}
+            const oldShapes = [...shapes]
+            oldShapes[lastShapeRef.current] = circle
+            setShapes(oldShapes)
         }
         if (drawTool === DRAW_ENUM.TRIANGLE) {
-            const deltaX = Math.abs(point.x - initialPoint.x)
-            const deltaY = Math.abs(point.y - initialPoint.y)
             const height = Math.sqrt(Math.pow(point.x - initialPoint.x, 2) + Math.pow(point.y - initialPoint.y, 2));
 
             // Calculate the length of the equilateral triangle's sides
@@ -207,52 +336,82 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
             const bottomX = initialPoint.x + sideLength * Math.cos(angle2);
             const bottomY = initialPoint.y + sideLength * Math.sin(angle2);
 
-            const triangle = [initialPoint.x, initialPoint.y, topX, topY, bottomX, bottomY]
-            const oldTriangles = [...triangles]
-            oldTriangles[lastTriangleRef.current] = triangle
-            setTriangles(oldTriangles)
+            const trianglePoints = [initialPoint.x, initialPoint.y, topX, topY, bottomX, bottomY]
+            const oldShapes = [...shapes]
+            oldShapes[lastShapeRef.current].points = trianglePoints
+            setShapes(oldShapes)
         }
 
         if (drawTool === DRAW_ENUM.POLYGON) {
-            const currentPolygons = [...polygons]
-            currentPolygons[lastPolygonRef.current][currentPolyPoint.current] = point.x
-            currentPolygons[lastPolygonRef.current][currentPolyPoint.current + 1] = point.y
-            setPolygons(currentPolygons)
+            const oldShapes = [...shapes]
+            const oldPolygon = oldShapes[lastShapeRef.current]
+            oldPolygon.points[currentPolyPoint.current] = point.x
+            oldPolygon.points[currentPolyPoint.current + 1] = point.y
+            oldShapes[lastShapeRef.current] = oldPolygon
+            setShapes(oldShapes)
         }
     };
 
     const handleMouseUp = (e) => {
+        if (selectedTool === TOOL_ENUM.SELECT) {
+            if (selectionRect) {
+                const shapes = stageRef.current.find(".shape"); // Adjust the class name as needed
+                console.log(shapes)
+                const newlySelectedShapes = shapes.filter((shape) =>
+                    isInsideSelection(shape.getClientRect(), selectionRect)
+                );
+                console.log("Selected Shapes:", newlySelectedShapes);
+
+
+                setSelectedShapes(newlySelectedShapes);
+                setSelectionRect(null);
+            }
+            return
+        }
+
         const point = getPoint(e)
 
         if (drawTool === DRAW_ENUM.POLYGON) {
-            console.log(polygons)
-            if (lastPolygonRef.current === -1) {
+            if (!isDrawing) {
                 setIsDrawing(true);
-                const newPolygons = [...polygons, [point.x, point.y, point.x, point.y]]
-                lastPolygonRef.current = newPolygons.length - 1
+                const oldShapes = [...shapes, {type: DRAW_ENUM.POLYGON, points: [point.x, point.y, point.x, point.y]}]
+                lastShapeRef.current = oldShapes.length - 1
                 currentPolyPoint.current = 2
                 setInitialPoint(point)
-                setPolygons(newPolygons)
+                setShapes(oldShapes)
                 return
             }
 
-            const currentPolygon = polygons[lastPolygonRef.current]
-            const deltaX = Math.abs(currentPolygon[currentPolyPoint.current - 2] - point.x)
-            const deltaY = Math.abs(currentPolygon[currentPolyPoint.current - 1] - point.y)
+            lastShapeRef.current = shapes.length - 1
+            console.log(shapes)
+            const currentPolygon = shapes[lastShapeRef.current]
+            const deltaX = Math.abs(currentPolygon.points[currentPolyPoint.current - 2] - point.x)
+            const deltaY = Math.abs(currentPolygon.points[currentPolyPoint.current - 1] - point.y)
+            console.log(deltaX, deltaY)
             if (deltaX < 2 && deltaY < 2) {
                 setIsDrawing(false);
-                lastPolygonRef.current = -1
+                lastShapeRef.current = -1
                 return
             } else {
-                const oldPolygons = [...polygons]
-                oldPolygons[lastPolygonRef.current].push(point.x, point.y)
-                setPolygons(oldPolygons)
+                const oldShapes = [...shapes]
+                oldShapes[lastShapeRef.current].points = oldShapes[lastShapeRef.current].points.concat([point.x, point.y])
+                setShapes(oldShapes)
                 currentPolyPoint.current = currentPolyPoint.current + 2
                 return
             }
         }
-
         setIsDrawing(false);
+    };
+
+    const isInsideSelection = (rect, selection) => {
+        const x1 = Math.min(selection.x1, selection.x2);
+        const x2 = Math.max(selection.x1, selection.x2);
+        const y1 = Math.min(selection.y1, selection.y2);
+        const y2 = Math.max(selection.y1, selection.y2);
+
+        return (
+            rect.x >= x1 && rect.x + rect.width <= x2 && rect.y >= y1 && rect.y + rect.height <= y2
+        );
     };
 
     const divRef = useRef(null)
@@ -272,6 +431,36 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         }
     }, [])
 
+    const onShapeDragEnd = (e, index) => {
+        console.log(e, index)
+        setShapes(prevState => {
+            return prevState.map((r, i) => {
+                if (i === index) {
+                    r.x = e.target.x()
+                    r.y = e.target.y()
+                }
+                return r
+            })
+        })
+    }
+
+    const onLineDragEnd = (e, index) => {
+        console.log(e, index)
+        setShapes(prevState => {
+            return prevState.map((r, i) => {
+                if (i === index) {
+                    r.points = r.points.map((point, index) => {
+                        if (index % 2 === 0) {
+                            return point + e.target.x()
+                        }
+                        return point + e.target.y()
+                    })
+                }
+                return r
+            })
+        })
+    }
+
     return (
         <div
             onMouseDown={handleMouseDown}
@@ -282,110 +471,71 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                 position: "absolute",
                 width: "inherit",
                 height: "inherit",
-                pointerEvents: selectedTool === TOOL_ENUM.DRAW ? 'auto' : "none"
+                pointerEvents: selectedTool === TOOL_ENUM.DRAW || selectedTool === TOOL_ENUM.SELECT ? 'auto' : "none"
             }}
             ref={divRef}
         >
             <Stage
                 className={styles.canvas}
                 width={dimensions.width} height={dimensions.height}
+                ref={stageRef}
+                onClick={handleStageClick} // Clear selection when clicking on the stage
             >
                 <Layer>
-                    {lines.map((line, i) => (
-                        <Line
-                            key={i}
-                            points={line.flatMap((point) => [point.x, point.y])}
-                            stroke="black"
-                            strokeWidth={2}
-                            tension={0.5}
-                            lineCap="round"
-                            lineJoin="round"
-                        />
-                    ))}
-                    {rectangles.map((rect, i) => (
-                        <Rect
-                            key={i}
-                            x={rect.x}
-                            y={rect.y}
-                            width={rect.width}
-                            height={rect.height}
-                            stroke={'black'}
-                            strokeWidth={4}
-                        />
-                    ))}
-                    {circles.map((circle, i) => (
-                        <Circle
-                            key={i}
-                            x={circle.x}
-                            y={circle.y}
-                            radius={circle.radius}
-                            stroke={'black'}
-                            strokeWidth={4}
-                        />
-                    ))}
-                    {triangles.map((triangle, i) => (
-                        <Line
-                            key={i}
-                            closed={true}
-                            points={triangle}
-                            stroke={'black'}
-                            strokeWidth={4}
-                        />
-                    ))}
-                    {polygons.map((polygon, i) => (
-                        <Line
-                            key={`${i}+${polygon.length}+${polygon[polygon.length - 2]}+${polygon[polygon.length - 1]}`}
-                            closed={true}
-                            points={polygon}
-                            stroke={'black'}
-                            strokeWidth={4}
-                        />
-                    ))}
-                    {labels.map((text, index) => (
-                        <Fragment key={text.id}>
-                            <Text
-                                x={text.x}
-                                y={text.y}
-                                text={text.text}
-                                fontSize={text.fontSize}
-                                draggable={!editing}
-                                onDblClick={(e) => handleTextDblClick(e, text.id)}
-                                onClick={(e) => {
-                                    // Prevent selecting the stage when clicking on text
-                                    e.cancelBubble = true;
-                                }}
+                    {shapes.map((shape, index) => {
+                        return <Fragment key={JSON.stringify(shape)}>
+                            <Drawing
+                                shape={shape}
+                                index={index}
+                                editing={editing}
+                                handleTextDblClick={handleTextDblClick}
+                                selectedLabelId={selectedLabelId}
+                                onShapeDragEnd={onShapeDragEnd}
+                                onLineDragEnd={onLineDragEnd}
                             />
-                            {selectedLabelId === text.id && (
-                                <Transformer
-                                    // ref={textInputRef}
-                                    attachTo={text}
-                                    visible={true}
-                                    onClick={(e) => {
-                                        // Prevent selecting the stage when clicking on text
-                                        e.cancelBubble = true;
-                                    }}
-                                    rotationEnabled={false}
-                                />
-                            )}
                         </Fragment>
+                    })}
+
+                    {selectedShapes.map((shape, index) => (
+                        <Transformer
+                            key={index}
+                            ref={(node) => {
+                                if (node) {
+                                    // Attach the transformer to the shape
+                                    node.attachTo(shape);
+                                }
+                            }}
+                            keepRatio={false} // Adjust as needed
+                        />
                     ))}
+                    {selectionRect && (
+                        <Rect
+                            x={Math.min(selectionRect.x1, selectionRect.x2)}
+                            y={Math.min(selectionRect.y1, selectionRect.y2)}
+                            width={Math.abs(selectionRect.x2 - selectionRect.x1)}
+                            height={Math.abs(selectionRect.y2 - selectionRect.y1)}
+                            stroke="blue"
+                            strokeWidth={1}
+                            dash={[5, 5]}
+                        />
+                    )}
                 </Layer>
             </Stage>
             {editing && (
                 <input
                     type="text"
                     ref={textInputRef}
-                    value={labels.find((obj) => obj.id === selectedLabelId)?.text || ""}
+                    value={shapes.find((obj) => obj.id === selectedLabelId)?.text || ""}
                     onChange={handleTextChange}
                     autoFocus
                     onBlur={(e) => setEditing(false)}
                     onKeyPress={handleTextKeyPress}
                     style={{
                         position: "absolute",
-                        top: `${labels.find((obj) => obj.id === selectedLabelId)?.y || "10"}px`,
-                        left: `${labels.find((obj) => obj.id === selectedLabelId)?.x || "10"}px`,
+                        top: `${shapes.find((obj) => obj.id === selectedLabelId)?.y || "10"}px`,
+                        left: `${shapes.find((obj) => obj.id === selectedLabelId)?.x || "10"}px`,
                         zIndex: 999,
-                        fontSize: `${labels.find((obj) => obj.id === selectedLabelId)?.fontSize || "16"}px`
+                        fontSize: `${shapes.find((obj) => obj.id === selectedLabelId)?.fontSize || "16"}px`
                     }}
                 />
             )}
