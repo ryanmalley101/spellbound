@@ -6,7 +6,16 @@ import styles from '../../styles/Battlemap.module.css'
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
 import {v4 as uuidv4} from 'uuid';
 
-const Drawing = ({shape, index, onShapeDragEnd, onLineDragEnd, editing, handleTextDblClick, selectedLabelId}) => {
+const Drawing = ({
+                     shape,
+                     index,
+                     onShapeDragEnd,
+                     onLineDragEnd,
+                     editing,
+                     handleTextDblClick,
+                     selectedLabelId,
+                     handleShapeSelect
+                 }) => {
     if (shape.type === DRAW_ENUM.PEN) {
         return <>
             <Line
@@ -18,6 +27,7 @@ const Drawing = ({shape, index, onShapeDragEnd, onLineDragEnd, editing, handleTe
                 lineJoin="round"
                 draggable
                 onDragEnd={(e) => onLineDragEnd(e, index)}
+                onClick={(e) => handleShapeSelect(e, shape)}
                 className="shape"
             />
         </>
@@ -34,6 +44,7 @@ const Drawing = ({shape, index, onShapeDragEnd, onLineDragEnd, editing, handleTe
                 strokeWidth={4}
                 draggable
                 onDragEnd={(e) => onShapeDragEnd(e, index)}
+                onClick={(e) => handleShapeSelect(e, shape)}
                 className="shape"
             />
         </>
@@ -49,6 +60,7 @@ const Drawing = ({shape, index, onShapeDragEnd, onLineDragEnd, editing, handleTe
                 strokeWidth={4}
                 draggable
                 onDragEnd={(e) => onShapeDragEnd(e, index)}
+                onClick={(e) => handleShapeSelect(e, shape)}
                 className="shape"
             />
         </>
@@ -63,6 +75,7 @@ const Drawing = ({shape, index, onShapeDragEnd, onLineDragEnd, editing, handleTe
                 strokeWidth={4}
                 draggable
                 onDragEnd={(e) => onShapeDragEnd(e, index)}
+                onClick={(e) => handleShapeSelect(e, shape)}
                 className="shape"
             />
         </>
@@ -76,6 +89,7 @@ const Drawing = ({shape, index, onShapeDragEnd, onLineDragEnd, editing, handleTe
                 strokeWidth={4}
                 draggable
                 onDragEnd={(e) => onLineDragEnd(e, index)}
+                onClick={(e) => handleShapeSelect(e, shape)}
                 className="shape"
             />
         </>
@@ -138,13 +152,29 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
 
     const clickTimeout = useRef(null);
 
-    // const handleShapeClick = (e, shape) => {
-    //     setSelectedShapes([]);
-    // };
+    const selectionRef = useRef(null)
+
+    const handleShapeClick = (e, shape) => {
+        const stageShapes = stageRef.current.children[0].children; // Adjust the class name as needed
+        // console.log(stageShapes)
+        if (stageShapes) {
+            const newlySelectedShapes = stageShapes.filter((s) => {
+                    console.log(e.target._id)
+                    console.log(s._id)
+                    return e.target._id === s._id
+                }
+            );
+            console.log(newlySelectedShapes)
+            setSelectedShapes(newlySelectedShapes);
+        }
+    }
 
     const handleStageClick = (e) => {
         // Clear selection when clicking on the stage
-        setSelectedShapes([]);
+        console.log(e)
+        if (e.target._id === 1) {
+            setSelectedShapes([]);
+        }
     };
 
     const getPoint = (e) => {
@@ -153,6 +183,14 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
             y: (e.clientY - windowPositionRef.current.y) / scale.current
         }
     }
+
+    useEffect(() => {
+        console.log(selectedShapes)
+        console.log(selectionRef.current)
+        if (selectedShapes && selectionRef.current) {
+            selectionRef.current.nodes(selectedShapes)
+        }
+    }, [selectedShapes]);
 
     const handleTextDblClick = (e, id) => {
         console.log(`Handling double click for`)
@@ -207,26 +245,33 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
             const point = getPoint(e)
 
             if (drawTool === DRAW_ENUM.PEN) {
-                const newShapes = [...shapes, {type: DRAW_ENUM.PEN, points: [point.x, point.y]}]
+                const newShapes = [...shapes, {type: DRAW_ENUM.PEN, id: uuidv4(), points: [point.x, point.y]}]
                 lastShapeRef.current = newShapes.length - 1
                 console.log(newShapes)
                 setShapes(newShapes);
             }
             if (drawTool === DRAW_ENUM.RECTANGLE) {
-                const newShapes = [...shapes, {type: DRAW_ENUM.RECTANGLE, x: point.x, y: point.y, width: 0, height: 0}]
+                const newShapes = [...shapes, {
+                    type: DRAW_ENUM.RECTANGLE,
+                    id: uuidv4(),
+                    x: point.x,
+                    y: point.y,
+                    width: 0,
+                    height: 0
+                }]
                 lastShapeRef.current = newShapes.length - 1
                 setInitialPoint(point)
                 setShapes(newShapes);
             }
             if (drawTool === DRAW_ENUM.CIRCLE) {
-                const newShapes = [...shapes, {type: DRAW_ENUM.CIRCLE, x: point.x, y: point.y, radius: 0}]
+                const newShapes = [...shapes, {type: DRAW_ENUM.CIRCLE, id: uuidv4(), x: point.x, y: point.y, radius: 0}]
                 lastShapeRef.current = newShapes.length - 1
                 setInitialPoint(point)
                 setShapes(newShapes);
             }
 
             if (drawTool === DRAW_ENUM.TRIANGLE) {
-                const newShapes = [...shapes, {type: DRAW_ENUM.TRIANGLE, points: [point.x, point.y]}]
+                const newShapes = [...shapes, {type: DRAW_ENUM.TRIANGLE, id: uuidv4(), points: [point.x, point.y]}]
                 lastShapeRef.current = newShapes.length - 1
                 setInitialPoint(point)
                 setShapes(newShapes);
@@ -264,20 +309,22 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                 }
             }
         } else if (selectedTool === TOOL_ENUM.SELECT) {
-            const {x, y} = getPoint(e)
-            setSelectionRect({
-                x1: x,
-                y1: y,
-                x2: x,
-                y2: y,
-            });
+            if (selectedShapes.length < 1) {
+                const {x, y} = getPoint(e)
+                setSelectionRect({
+                    x1: x,
+                    y1: y,
+                    x2: x,
+                    y2: y,
+                });
+            }
         }
     };
 
     const handleMouseMove = (e) => {
 
         if (selectedTool === TOOL_ENUM.SELECT) {
-            if (selectionRect) {
+            if (selectionRect && selectedShapes.length < 1) {
                 const {x, y} = getPoint(e)
                 setSelectionRect({
                     ...selectionRect,
@@ -301,6 +348,7 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         if (drawTool === DRAW_ENUM.RECTANGLE) {
             const rect = {
                 type: DRAW_ENUM.RECTANGLE,
+                id: uuidv4(),
                 x: Math.min(point.x, initialPoint.x),
                 y: Math.min(point.y, initialPoint.y),
                 width: Math.abs(point.x - initialPoint.x),
@@ -315,7 +363,13 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
             const deltaY = Math.abs(point.y - initialPoint.y)
             const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2)
 
-            const circle = {type: DRAW_ENUM.CIRCLE, x: initialPoint.x, y: initialPoint.y, radius: distance}
+            const circle = {
+                type: DRAW_ENUM.CIRCLE,
+                id: uuidv4(),
+                x: initialPoint.x,
+                y: initialPoint.y,
+                radius: distance
+            }
             const oldShapes = [...shapes]
             oldShapes[lastShapeRef.current] = circle
             setShapes(oldShapes)
@@ -354,18 +408,24 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
 
     const handleMouseUp = (e) => {
         if (selectedTool === TOOL_ENUM.SELECT) {
-            if (selectionRect) {
-                const shapes = stageRef.current.find(".shape"); // Adjust the class name as needed
-                console.log(shapes)
-                const newlySelectedShapes = shapes.filter((shape) =>
-                    isInsideSelection(shape.getClientRect(), selectionRect)
-                );
-                console.log("Selected Shapes:", newlySelectedShapes);
-
-
-                setSelectedShapes(newlySelectedShapes);
-                setSelectionRect(null);
+            if (selectionRect && selectionRect.x1 !== selectionRect.x2 && selectionRect.y1 !== selectionRect.y2) {
+                console.log(selectionRect)
+                const stageShapes = stageRef.current.children[0].children; // Adjust the class name as needed
+                console.log(stageShapes)
+                if (stageShapes) {
+                    const newlySelectedShapes = stageShapes.filter((shape) =>
+                        isInsideSelection(shape.getClientRect(), selectionRect)
+                    );
+                    console.log("Selected Shapes:", newlySelectedShapes);
+                    setSelectedShapes(newlySelectedShapes);
+                    setSelectionRect(null);
+                    return
+                }
+                // setSelectedShapes(null);
+            } else {
+                // handleShapeClick(e)
             }
+            setSelectionRect(null)
             return
         }
 
@@ -374,7 +434,11 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         if (drawTool === DRAW_ENUM.POLYGON) {
             if (!isDrawing) {
                 setIsDrawing(true);
-                const oldShapes = [...shapes, {type: DRAW_ENUM.POLYGON, points: [point.x, point.y, point.x, point.y]}]
+                const oldShapes = [...shapes, {
+                    type: DRAW_ENUM.POLYGON,
+                    id: uuidv4(),
+                    points: [point.x, point.y, point.x, point.y]
+                }]
                 lastShapeRef.current = oldShapes.length - 1
                 currentPolyPoint.current = 2
                 setInitialPoint(point)
@@ -408,6 +472,7 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         const x2 = Math.max(selection.x1, selection.x2);
         const y1 = Math.min(selection.y1, selection.y2);
         const y2 = Math.max(selection.y1, selection.y2);
+
 
         return (
             rect.x >= x1 && rect.x + rect.width <= x2 && rect.y >= y1 && rect.y + rect.height <= y2
@@ -492,22 +557,16 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                                 selectedLabelId={selectedLabelId}
                                 onShapeDragEnd={onShapeDragEnd}
                                 onLineDragEnd={onLineDragEnd}
+                                handleShapeSelect={handleShapeClick}
                             />
                         </Fragment>
                     })}
+                    <Transformer
+                        // nodes
+                        ref={selectionRef}
+                        keepRatio={false} // Adjust as needed
+                    />
 
-                    {selectedShapes.map((shape, index) => (
-                        <Transformer
-                            key={index}
-                            ref={(node) => {
-                                if (node) {
-                                    // Attach the transformer to the shape
-                                    node.attachTo(shape);
-                                }
-                            }}
-                            keepRatio={false} // Adjust as needed
-                        />
-                    ))}
                     {selectionRect && (
                         <Rect
                             x={Math.min(selectionRect.x1, selectionRect.x2)}
