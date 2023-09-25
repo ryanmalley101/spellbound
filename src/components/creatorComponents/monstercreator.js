@@ -97,8 +97,8 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
         }
     }
 
-    const exportJSON = () => {
-        const fileName = "my-file";
+    const exportJSON = (name) => {
+        const fileName = name ? name : "spellboundmonster";
         const json = JSON.stringify(monster.monster, null, 2);
         const blob = new Blob([json], {type: "application/json"});
         const href = URL.createObjectURL(blob);
@@ -188,7 +188,8 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
                 ))}
             </Select>
         </FormControl>
-        <Button variant={"contained"} style={{float: "right"}} onClick={exportJSON}>Export JSON</Button>
+        <Button variant={"contained"} style={{float: "right"}} onClick={() => exportJSON(monster.name)}>Export
+            JSON</Button>
         <Button variant={"contained"} style={{marginRight: "10px", float: "right"}} onClick={downloadFile}>Download
             PNG</Button>
 
