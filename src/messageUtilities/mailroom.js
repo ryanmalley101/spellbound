@@ -1,4 +1,5 @@
 import {API} from "aws-amplify";
+import {replaceDamageTags} from "@/components/gameComponents/monstersheet";
 
 export const rollCheck = async (name, d20mod, playerID, gameID, advantage) => {
     // Prevent the page from reloading
@@ -35,7 +36,7 @@ export const rollAttack = async (attack, playerID, gameID, advantage) => {
     console.log(attack)
     // Prevent the page from reloading
     const convertedDamage = attack.damage.map((dice) => {
-        return {diceString: dice.damage_dice, damageType: dice.damage_type}
+        return {diceString: replaceDamageTags(dice.damage_dice), damageType: dice.damage_type}
     })
     const input = {
         messageType: "ATTACK",

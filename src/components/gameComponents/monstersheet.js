@@ -6,6 +6,14 @@ import {rollCheck, rollAttack} from "@/messageUtilities/mailroom";
 import {API} from "aws-amplify";
 import {getMonsterStatblock} from "@/graphql/queries";
 
+export const replaceDamageTags = (string) => {
+    return string.replace('+[STR]', scoreToMod(monsterData.strength))
+        .replace('+[DEX]', scoreToMod(monsterData.dexterity))
+        .replace('+[CON]', scoreToMod(monsterData.constitution))
+        .replace('+[INT]', scoreToMod(monsterData.intelligence))
+        .replace('+[WIS]', scoreToMod(monsterData.wisdom))
+        .replace('+[CHA]', scoreToMod(monsterData.charisma))
+}
 
 // Get rid of __typenames just so I can stick with the auto generated mutations
 export const cleanMonster = (m) => {
@@ -61,17 +69,21 @@ export const descAttack = (monsterData, attack) => {
     }
 
     const getDamage = () => {
+
         const damage = [...attack.damage]
         const initialText = ''
         const roller = new DiceRoller()
         const damageString = damage.reduce((accumulator, currentValue) => {
-            // console.log(currentValue)
-            if (currentValue.damage_dice !== 0) {
-                const diceRoll = roller.roll(currentValue.damage_dice)
-                accumulator += `${Math.floor(diceRoll.averageTotal)} (${currentValue.damage_dice}) ${currentValue.damage_type} damage plus `
+            const damage_dice = replaceDamageTags(currentValue.damage_dice)
+            console.log(damage_dice)
+            if (damage_dice !== 0) {
+                const diceRoll = roller.roll(damage_dice)
+                accumulator += `${Math.floor(diceRoll.averageTotal)} (${damage_dice}) ${currentValue.damage_type} damage plus `
             }
             return accumulator
         }, initialText)
+
+        // Trim the last " plus" from the damage tags
         return damageString.slice(0, -6)
     }
 
