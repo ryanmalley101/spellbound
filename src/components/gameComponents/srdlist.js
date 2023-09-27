@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from "react";
-import battlemapStore from "@/stores/battlemapStore";
+import useBattlemapStore from "@/stores/battlemapStore";
 import styles from "@/styles/SRDList.module.css";
 import {Collapse, List, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
-import Image from "next/image";
-import {BsFillCaretDownFill, BsFillCaretRightFill, BsFillFilePlusFill} from "react-icons/bs";
+import {BsFillCaretDownFill, BsFillCaretRightFill} from "react-icons/bs";
 import srd from '../../../public/5esrd.json';
-import useBattlemapStore from "@/stores/battlemapStore";
 import {API} from "aws-amplify";
-import * as mutations from "@/graphql/mutations";
-import {shallow} from "zustand/shallow";
 import elden_ring from '../../../public/elden_ring.json'
 import {listMonsterStatblocks} from "@/graphql/queries";
 

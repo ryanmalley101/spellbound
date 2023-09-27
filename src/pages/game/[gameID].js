@@ -2,19 +2,20 @@ import React, {useEffect, useState} from "react";
 import {API, Auth, graphqlOperation, Storage} from "aws-amplify";
 import TabMenu from "@/components/gameComponents/tabmenu";
 import BattleMap from "@/components/gameComponents/battlemap";
-import DraggableWindow, {
+import {
+    DraggableArmorWindow,
+    DraggableAshOfWarWindow,
     DraggableCharacterWindow,
+    DraggableConditionWindow,
+    DraggableMagicItemWindow,
     DraggableMonsterWindow,
     DraggableSpellWindow,
-    DraggableMagicItemWindow,
-    DraggableWeaponWindow,
-    DraggableArmorWindow,
-    DraggableConditionWindow, DraggableAshOfWarWindow
+    DraggableWeaponWindow
 } from "@/components/gameComponents/draggablewindow";
 import useBattlemapStore from "@/stores/battlemapStore";
 import ToolBar from "@/components/gameComponents/toolbar";
 import {useRouter} from "next/router";
-import {getGame, listMessages, messageByGameAndCreatedAt} from "@/graphql/queries";
+import {getGame, messageByGameAndCreatedAt} from "@/graphql/queries";
 import * as mutations from "@/graphql/mutations";
 import {onCreateMessage} from "@/graphql/subscriptions";
 

@@ -2,13 +2,12 @@ import styles from "@/styles/CharacterSheet.module.css"
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {API, graphqlOperation} from "aws-amplify";
-import {onUpdateCharacterSheet, onUpdateToken} from "@/graphql/subscriptions";
+import {onUpdateCharacterSheet} from "@/graphql/subscriptions";
 import * as mutations from "@/graphql/mutations";
-import {getCharacterSheet, getGame} from "@/graphql/queries";
+import {getCharacterSheet} from "@/graphql/queries";
 import useBattlemapStore from "@/stores/battlemapStore";
 import {rollAttack, rollCheck} from "@/messageUtilities/mailroom";
 import {getToHit} from "@/5eReference/converters";
-import NewWindow from 'react-new-window'
 import {replaceDamageTags} from "@/components/gameComponents/monstersheet";
 
 const scoreToMod = (score) => {

@@ -101,7 +101,7 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
             setDamage(action.damage)
         }
     }, [action]);
-    
+
     const confirm = () => {
         handleActionUpdate({
             name: name,

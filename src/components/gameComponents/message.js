@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from "react";
 import styles from "../../styles/Message.module.css";
-import * as PropTypes from "prop-types";
 import {v4} from "uuid";
 import useBattlemapStore from "@/stores/battlemapStore";
-import {API, graphqlOperation} from "aws-amplify";
-import {onCreateMessage} from "@/graphql/subscriptions";
 
 function MessageWrapper({owner, content, createdAt, id}) {
     var awsDate = new Date(createdAt)

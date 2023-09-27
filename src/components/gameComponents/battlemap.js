@@ -3,15 +3,13 @@ import DraggableIcon from '@/components/gameComponents/draggableicon';
 import styles from '../../styles/Battlemap.module.css';
 import GridOverlay from '@/components/gameComponents/gridoverlay';
 import {API, graphqlOperation, Storage} from 'aws-amplify';
-import {onCreateMessage, onCreatePing, onCreateToken, onDeleteToken, onUpdateGame} from '@/graphql/subscriptions';
+import {onCreatePing, onCreateToken, onDeleteToken, onUpdateGame} from '@/graphql/subscriptions';
 import * as mutations from '@/graphql/mutations';
 import {TransformComponent, TransformWrapper, useControls} from 'react-zoom-pan-pinch';
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import Ping from "@/components/gameComponents/ping";
 import {v4} from "uuid";
-import {FileUploader} from "react-drag-drop-files";
 import {useDropzone} from 'react-dropzone'
-import {messageByGameAndCreatedAt} from "@/graphql/queries";
 import DrawingCanvas from "@/components/gameComponents/drawingcanvas";
 import {Layer, Stage} from "react-konva";
 

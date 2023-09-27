@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import ChatRoom from "@/components/gameComponents/chatroom";
 import styles from "@/styles/TabMenu.module.css"
-import {BsBook, BsChatLeftDots, BsCodeSlash, BsGear, BsMusicNoteList} from 'react-icons/bs'
+import {BsBook, BsChatLeftDots, BsCodeSlash, BsGear} from 'react-icons/bs'
 import {AiOutlinePicture} from 'react-icons/ai'
 import {SiDungeonsanddragons} from "react-icons/si";
 import AudioPlayer from "@/components/gameComponents/audioplayer";

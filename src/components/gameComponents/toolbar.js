@@ -1,13 +1,11 @@
 import styles from "@/styles/ToolBar.module.css";
-import {FaMousePointer, FaHandPaper, FaPaintBrush, FaEye, FaRuler, FaBars, FaDrawPolygon} from "react-icons/fa";
+import {FaBars, FaEye, FaHandPaper, FaMousePointer, FaPaintBrush, FaRuler} from "react-icons/fa";
 import {RxText} from "react-icons/rx";
 import {GiAxeSword} from "react-icons/gi";
-import {Box, ListItem, ListItemButton} from "@mui/material";
+import {ListItemButton} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
-import {BsPencilFill, BsTriangle} from "react-icons/bs";
-import {GrCheckbox} from "react-icons/gr";
-import {BiCheckbox, BiCircle, BiPencil, BiShapePolygon, BiUpArrow, BiText} from "react-icons/bi";
+import {BiCheckbox, BiCircle, BiPencil, BiShapePolygon, BiText, BiUpArrow} from "react-icons/bi";
 
 const ToolBar = () => {
     const {selectedTool, setSelectedTool} = useBattlemapStore()

@@ -1,5 +1,4 @@
-import Konva from "konva";
-import {Stage, Layer, Line, Rect, Circle, RegularPolygon, Transformer, Text} from 'react-konva';
+import {Circle, Layer, Line, Rect, Stage, Text, Transformer} from 'react-konva';
 
 import {Fragment, useEffect, useRef, useState} from "react";
 import styles from '../../styles/Battlemap.module.css'

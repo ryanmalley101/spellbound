@@ -1,4 +1,3 @@
-import styles from '../../styles/Battlemap.module.css'
 import {Line} from "react-konva";
 
 const GridOverlay = ({width, height, gridSize}) => {

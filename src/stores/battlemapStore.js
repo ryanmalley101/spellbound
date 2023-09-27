@@ -1,5 +1,4 @@
 import {create} from 'zustand';
-import {shallow} from "zustand/shallow";
 
 export const TOOL_ENUM = {
     SELECT: "SELECT",
