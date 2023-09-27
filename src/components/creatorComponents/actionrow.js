@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/styles/CreateMonsterStatblock.module.css";
 import IconButton from "@mui/material/IconButton";
-import {BsFillTrashFill} from "react-icons/bs";
+import {BsFillTrashFill} from "@react-icons/all-files/bs/BsFillTrashFill";
 import {
     Button,
     Dialog,

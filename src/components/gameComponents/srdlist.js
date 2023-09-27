@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import useBattlemapStore from "@/stores/battlemapStore";
 import styles from "@/styles/SRDList.module.css";
 import {Collapse, List, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
-import {BsFillCaretDownFill, BsFillCaretRightFill} from "react-icons/bs";
+import {BsFillCaretDownFill} from "@react-icons/all-files/bs/BsFillCaretDownFill";
+import {BsFillCaretRightFill} from "@react-icons/all-files/bs/BsFillCaretRightFill";
 import srd from '../../../public/5esrd.json';
 import {API} from "aws-amplify";
 import elden_ring from '../../../public/elden_ring.json'

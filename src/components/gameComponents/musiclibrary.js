@@ -3,10 +3,12 @@ import styles from "@/styles/MusicLibrary.module.css";
 import playlists from "../../../public/playlists.json"
 import {API} from "aws-amplify";
 import {Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
-import {BsFillCaretDownFill, BsFillCaretRightFill, BsFillPlayFill} from "react-icons/bs";
+import {BsFillCaretDownFill} from "@react-icons/all-files/bs/BsFillCaretDownFill";
+import {BsFillCaretRightFill} from "@react-icons/all-files/bs/BsFillCaretRightFill";
+import {BsFillPlayFill} from "@react-icons/all-files/bs/BsFillPlayFill";
 import useBattlemapStore from "@/stores/battlemapStore";
 import * as mutations from "@/graphql/mutations";
-import {AiFillPlayCircle} from "react-icons/ai";
+import {AiFillPlayCircle} from "@react-icons/all-files/ai/AiFillPlayCircle";
 
 function SongButton({song, playSong}) {
     if (song) {

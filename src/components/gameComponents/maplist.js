@@ -16,7 +16,7 @@ import useBattlemapStore from "@/stores/battlemapStore";
 import {API, graphqlOperation} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {onCreateMap} from "@/graphql/subscriptions";
-import {AiFillDelete} from "react-icons/ai";
+import {AiFillDelete} from "@react-icons/all-files/ai/AiFillDelete";
 import IconButton from "@mui/material/IconButton";
 
 function CreateMapDialog(props) {

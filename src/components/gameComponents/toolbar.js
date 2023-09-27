@@ -1,11 +1,20 @@
 import styles from "@/styles/ToolBar.module.css";
-import {FaBars, FaEye, FaHandPaper, FaMousePointer, FaPaintBrush, FaRuler} from "react-icons/fa";
-import {RxText} from "react-icons/rx";
+import {FaBars} from "@react-icons/all-files/fa/FaBars";
+import {FaEye} from "@react-icons/all-files/fa/FaEye";
 import {ListItemButton} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
-import {BiCheckbox, BiCircle, BiPencil, BiShapePolygon, BiText, BiUpArrow} from "react-icons/bi";
-import {RiSwordLine} from "react-icons/ri";
+import {RiSwordLine} from "@react-icons/all-files/ri/RiSwordLine";
+import {FaHandPaper} from "@react-icons/all-files/fa/FaHandPaper";
+import {FaMousePointer} from "@react-icons/all-files/fa/FaMousePointer";
+import {FaPaintBrush} from "@react-icons/all-files/fa/FaPaintBrush";
+import {FaRuler} from "@react-icons/all-files/fa/FaRuler";
+import {BiCheckbox} from "@react-icons/all-files/bi/BiCheckbox";
+import {BiCircle} from "@react-icons/all-files/bi/BiCircle";
+import {BiPencil} from "@react-icons/all-files/bi/BiPencil";
+import {BiShapePolygon} from "@react-icons/all-files/bi/BiShapePolygon";
+import {BiText} from "@react-icons/all-files/bi/BiText";
+import {BiUpArrow} from "@react-icons/all-files/bi/BiUpArrow";
 
 const ToolBar = () => {
     const {selectedTool, setSelectedTool} = useBattlemapStore()
@@ -259,7 +268,7 @@ const ToolBar = () => {
                 edge="end"
                 onClick={() => setSelectedTool(TOOL_ENUM.TEXT)}
             >
-                <RxText className={styles.ToolIcon}/>
+                <BiText className={styles.ToolIcon}/>
             </ListItemButton>
             <ListItemButton
                 sx={{

@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
-import {BsFillCaretDownFill, BsFillCaretRightFill, BsFillFilePlusFill} from 'react-icons/bs';
+import {BsFillCaretDownFill} from '@react-icons/all-files/bs/BsFillCaretDownFill';
+import {BsFillCaretRightFill} from '@react-icons/all-files/bs/BsFillCaretRightFill';
+import {BsFillPlusSquareFill} from '@react-icons/all-files/bs/BsFillPlusSquareFill';
 import Image from 'next/image';
 import styles from "@/styles/ArtLibrary.module.css"
 import useBattlemapStore from "@/stores/battlemapStore";
@@ -40,7 +42,7 @@ function ImageButton(props) {
             <ListItemText primary={props.primary}/>
             <ListItemButton sx={{flexGrow: 0, display: "block", minWidth: "auto"}} className={styles.addButton}
                             onClick={props.onClick} edge="end">
-                <BsFillFilePlusFill size={30}/>
+                <BsFillPlusSquareFill size={30}/>
             </ListItemButton>
         </ListItem>
     }

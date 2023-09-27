@@ -20,9 +20,9 @@ import AbilityRow from "@/components/creatorComponents/abilityrow";
 import {API, graphqlOperation} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {getMonsterStatblock, listMonsterStatblocks} from "@/graphql/queries";
-import {AiOutlineSearch} from "react-icons/ai";
+import {AiOutlineSearch} from "@react-icons/all-files/ai/AiOutlineSearch";
 import html2canvas from "html2canvas";
-import {BsFillTrashFill} from "react-icons/bs";
+import {BsFillTrashFill} from "@react-icons/all-files/bs/BsFillTrashFill";
 
 const HeaderRow = ({monster, setMonster, downloadFile}) => {
     const containsText = (text, searchText) =>

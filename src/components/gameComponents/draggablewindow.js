@@ -3,7 +3,7 @@ import styles from '../../styles/DraggableWindow.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
 import CharacterSheet from "@/components/gameComponents/charactersheet";
-import {BsX} from "react-icons/bs";
+import {BsX} from "@react-icons/all-files/bs/BsX";
 import useBattlemapStore from "@/stores/battlemapStore";
 import MonsterSheet from "@/components/gameComponents/monstersheet";
 import SpellCard from "@/components/gameComponents/spellcard";
@@ -13,7 +13,7 @@ import ArmorCard from "@/components/gameComponents/armorcard";
 import ConditionCard from "@/components/gameComponents/conditioncard";
 import AshOfWarCard from "@/components/gameComponents/ashofwarcard";
 import NewWindow from "react-new-window";
-import {BiWindows} from "react-icons/bi";
+import {BiWindows} from "@react-icons/all-files/bi/BiWindows";
 
 const ConditionalWrapper = ({condition, wrapper, children}) => {
     console.log(condition, wrapper, children)
