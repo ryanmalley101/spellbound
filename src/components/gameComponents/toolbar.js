@@ -1,11 +1,11 @@
 import styles from "@/styles/ToolBar.module.css";
 import {FaBars, FaEye, FaHandPaper, FaMousePointer, FaPaintBrush, FaRuler} from "react-icons/fa";
 import {RxText} from "react-icons/rx";
-import {GiAxeSword} from "react-icons/gi";
 import {ListItemButton} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
 import {BiCheckbox, BiCircle, BiPencil, BiShapePolygon, BiText, BiUpArrow} from "react-icons/bi";
+import {RiSwordLine} from "react-icons/ri";
 
 const ToolBar = () => {
     const {selectedTool, setSelectedTool} = useBattlemapStore()
@@ -272,7 +272,7 @@ const ToolBar = () => {
                 edge="end"
                 onClick={() => setSelectedTool(TOOL_ENUM.OTHER)}
             >
-                <GiAxeSword className={styles.ToolIcon}/>
+                <RiSwordLine className={styles.ToolIcon}/>
             </ListItemButton>
         </div>
     );

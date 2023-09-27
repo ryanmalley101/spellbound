@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
+    "@next/bundle-analyzer": "^13.5.3",
     "aws-amplify": "^5.2.5",
     "boxicons": "^2.1.4",
     "canvas": "^2.11.2",
@@ -44,6 +45,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
-    "depcheck": "^1.4.6"
+    "depcheck": "^1.4.6",
+    "webpack-bundle-analyzer": "^4.9.1"
   }
 }

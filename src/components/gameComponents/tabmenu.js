@@ -3,19 +3,18 @@ import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import ChatRoom from "@/components/gameComponents/chatroom";
 import styles from "@/styles/TabMenu.module.css"
-import {BsBook, BsChatLeftDots, BsCodeSlash, BsGear} from 'react-icons/bs'
+import {BsBook, BsChatLeftDots, BsCodeSlash, BsCompass, BsGear} from 'react-icons/bs'
 import {AiOutlinePicture} from 'react-icons/ai'
-import {SiDungeonsanddragons} from "react-icons/si";
 import AudioPlayer from "@/components/gameComponents/audioplayer";
 import ArtLibrary from "@/components/gameComponents/artlibrary";
 import artDirectory from '../../../public/art_directory.json';
 import JournalList from "@/components/gameComponents/journallist";
 import SRDList from "@/components/gameComponents/srdlist";
-import {GiCompass} from "react-icons/gi";
 import MapList from "@/components/gameComponents/maplist";
 import {CiMusicNote1} from "react-icons/ci";
 import SettingsMenu from "@/components/gameComponents/settingsmenu";
 import MusicLibrary from "@/components/gameComponents/musiclibrary";
+import {FaDragon} from "react-icons/fa";
 
 const TabMenu = ({user, messages}) => {
     const [selectedTab, setSelectedTab] = useState(0);
@@ -37,8 +36,8 @@ const TabMenu = ({user, messages}) => {
                     <Tab><BsChatLeftDots size={24}/></Tab>
                     <Tab><AiOutlinePicture size={24}/></Tab>
                     <Tab><BsBook size={24}/></Tab>
-                    <Tab><GiCompass size={24}/></Tab>
-                    <Tab><SiDungeonsanddragons size={24}/></Tab>
+                    <Tab><BsCompass size={24}/></Tab>
+                    <Tab><FaDragon size={24}/></Tab>
                     <Tab><CiMusicNote1 size={24}/></Tab>
                     <Tab><BsCodeSlash size={24}/></Tab>
                     <Tab><BsGear size={24}/></Tab>

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/styles/CreateMonsterStatblock.module.css";
 import IconButton from "@mui/material/IconButton";
+// import {BsFillTrashFill} from "react-icons/bs/filltrashfill";
 import {BsFillTrashFill} from "react-icons/bs";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 
@@ -43,7 +44,7 @@ const AbilityDialog = ({open, ability, index, onClose, handleAbilityUpdate}) => 
             setAbilityDesc(ability.desc)
         }
     }, [ability]);
-    
+
     const confirm = () => {
         handleAbilityUpdate({name: abilityName, desc: abilityDesc}, index)
         onClose()
