@@ -1,0 +1,56 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-spellbound-dev-192809-authRole",
+      "UnauthRoleArn": "arn:aws:iam::085083467247:role/amplify-spellbound-dev-192809-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::085083467247:role/amplify-spellbound-dev-192809-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+      "UnauthRoleName": "amplify-spellbound-dev-192809-unauthRole",
+      "StackName": "amplify-spellbound-dev-192809",
+      "StackId": "arn:aws:cloudformation:us-east-1:085083467247:stack/amplify-spellbound-dev-192809/f2e57650-04da-11ee-a5f9-0ea67af05653",
+      "AmplifyAppId": "d39rv54hehp56l"
+    },
+    "categories": {
+      "auth": {
+        "spellbound155c16ab": {}
+      },
+      "function": {
+        "createDatabaseUser": {
+          "deploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+          "s3Key": "amplify-builds/createDatabaseUser-56326775504832335135-build.zip"
+        },
+        "createNewGame": {
+          "deploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+          "s3Key": "amplify-builds/createNewGame-2f385a6f6638312b472f-build.zip"
+        },
+        "mapTrigger": {
+          "deploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+          "s3Key": "amplify-builds/mapTrigger-6167314752443168396c-build.zip"
+        },
+        "nextSong": {
+          "deploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+          "s3Key": "amplify-builds/nextSong-7238592b396a36797547-build.zip"
+        },
+        "parseMessage": {
+          "deploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+          "s3Key": "amplify-builds/parseMessage-32614c397a636756614a-build.zip"
+        },
+        "playPlaylist": {
+          "deploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+          "s3Key": "amplify-builds/playPlaylist-554d7056516a55673248-build.zip"
+        },
+        "playSong": {
+          "deploymentBucketName": "amplify-spellbound-dev-192809-deployment",
+          "s3Key": "amplify-builds/playSong-6e687556545033626632-build.zip"
+        }
+      },
+      "storage": {
+        "s3spellboundstorage7811eef0": {}
+      },
+      "api": {
+        "spellbound": {}
+      }
+    }
+  }
+}
