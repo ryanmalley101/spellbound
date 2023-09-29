@@ -31,12 +31,12 @@ export const rollCheck = async (name, d20mod, playerID, gameID, advantage) => {
 }
 
 // Remember to eventually refactor to allow damage dice arrays rather than just one
-export const rollAttack = async (attack, playerID, gameID, advantage) => {
+export const rollAttack = async (attack, stats, playerID, gameID, advantage) => {
     console.log("Rolling Attack")
     console.log(attack)
     // Prevent the page from reloading
     const convertedDamage = attack.damage.map((dice) => {
-        return {diceString: replaceDamageTags(dice.damage_dice), damageType: dice.damage_type}
+        return {diceString: replaceDamageTags(dice.damage_dice, stats), damageType: dice.damage_type}
     })
     const input = {
         messageType: "ATTACK",

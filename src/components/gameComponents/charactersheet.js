@@ -219,7 +219,7 @@ const AttackRow = ({
     };
 
     const handleAttackRoll = () => {
-        rollAttack({...attack, attack_bonus: getToHit(character, attack)}, playerId, gameId, advantage)
+        rollAttack({...attack, character, attack_bonus: getToHit(character, attack)}, playerId, gameId, advantage)
     }
 
     return (
@@ -234,7 +234,7 @@ const AttackRow = ({
                     {attack.damage.map((damage, index) => {
                         if (index < 5) {
                             return <label key={index} className={styles.itemLabel}
-                                          style={{paddingLeft: "0px"}}>{replaceDamageTags(damage.damage_dice)} {damage.damage_type} {index < attack.damage.length - 1 ? ' + ' : ''}</label>
+                                          style={{paddingLeft: "0px"}}>{replaceDamageTags(damage.damage_dice, character)} {damage.damage_type} {index < attack.damage.length - 1 ? ' + ' : ''}</label>
                         }
                     })}
                 </div>

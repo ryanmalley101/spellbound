@@ -6,7 +6,7 @@ import {rollAttack} from "@/messageUtilities/mailroom";
 import {API} from "aws-amplify";
 import {getMonsterStatblock} from "@/graphql/queries";
 
-export const replaceDamageTags = (string) => {
+export const replaceDamageTags = (string, monsterData) => {
     return string.replace('+[STR]', scoreToMod(monsterData.strength))
         .replace('+[DEX]', scoreToMod(monsterData.dexterity))
         .replace('+[CON]', scoreToMod(monsterData.constitution))
@@ -74,7 +74,7 @@ export const descAttack = (monsterData, attack) => {
         const initialText = ''
         const roller = new DiceRoller()
         const damageString = damage.reduce((accumulator, currentValue) => {
-            const damage_dice = replaceDamageTags(currentValue.damage_dice)
+            const damage_dice = replaceDamageTags(currentValue.damage_dice, monsterData)
             console.log(damage_dice)
             if (damage_dice !== 0) {
                 const diceRoll = roller.roll(damage_dice)
@@ -320,7 +320,7 @@ const MonsterSheet = ({slug, statblock, printRef, rollable, playerId, gameId}) =
     }
 
     const handleAttackRoll = (attack) => {
-        rollAttack(attack, playerId, gameId, false)
+        rollAttack(attack, monsterData, playerId, gameId, false)
     }
 
     const getActions = () => {
