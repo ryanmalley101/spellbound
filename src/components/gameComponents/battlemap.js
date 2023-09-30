@@ -125,7 +125,7 @@ const BattleMap = () => {
         if (!mouseReleasedRef.current) {
           await handleMapClick(event)
         }
-      }, 1100);
+      }, 600);
     };
 
     const handleMouseMove = (event) => {
