@@ -836,7 +836,11 @@ export const getMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -1005,7 +1009,11 @@ export const getToken = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -1250,7 +1258,11 @@ export const getToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      points
+      radius
       layer
+      text
+      fontSize
       width
       height
       rotation
@@ -1444,7 +1456,11 @@ export const listTokens = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation
@@ -1793,7 +1809,11 @@ export const getCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation
@@ -2075,7 +2095,11 @@ export const listCharacterSheets = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation

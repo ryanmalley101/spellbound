@@ -1715,7 +1715,11 @@ export const createMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -1803,7 +1807,11 @@ export const updateMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -1891,7 +1899,11 @@ export const deleteMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -2023,7 +2035,11 @@ export const createToken = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -2268,7 +2284,11 @@ export const createToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      points
+      radius
       layer
+      text
+      fontSize
       width
       height
       rotation
@@ -2337,7 +2357,11 @@ export const updateToken = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -2582,7 +2606,11 @@ export const updateToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      points
+      radius
       layer
+      text
+      fontSize
       width
       height
       rotation
@@ -2651,7 +2679,11 @@ export const deleteToken = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -2896,7 +2928,11 @@ export const deleteToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      points
+      radius
       layer
+      text
+      fontSize
       width
       height
       rotation
@@ -3349,7 +3385,11 @@ export const createCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation
@@ -3835,7 +3875,11 @@ export const updateCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation
@@ -4321,7 +4365,11 @@ export const deleteCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation

@@ -20,6 +20,7 @@ body,
 
 .BattleMapContainer {
     flex: 1;
+    height: 98vh;
     overflow: auto; /* Use "auto" to display scrollbars when content overflows */
     position: relative;
 }

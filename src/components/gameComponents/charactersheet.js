@@ -219,7 +219,7 @@ const AttackRow = ({
   };
 
   const handleAttackRoll = () => {
-    rollAttack({...attack, character, attack_bonus: getToHit(character, attack)}, playerId, gameId, advantage)
+    rollAttack(attack, character, playerId, gameId, advantage)
   }
 
   return (

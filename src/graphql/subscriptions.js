@@ -1657,7 +1657,11 @@ export const onCreateMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -1742,7 +1746,11 @@ export const onUpdateMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -1827,7 +1835,11 @@ export const onDeleteMap = /* GraphQL */ `
       tokens {
         items {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -1956,7 +1968,11 @@ export const onCreateToken = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -2201,7 +2217,11 @@ export const onCreateToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      points
+      radius
       layer
+      text
+      fontSize
       width
       height
       rotation
@@ -2267,7 +2287,11 @@ export const onUpdateToken = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -2512,7 +2536,11 @@ export const onUpdateToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      points
+      radius
       layer
+      text
+      fontSize
       width
       height
       rotation
@@ -2578,7 +2606,11 @@ export const onDeleteToken = /* GraphQL */ `
         }
         token {
           imageURL
+          points
+          radius
           layer
+          text
+          fontSize
           width
           height
           rotation
@@ -2823,7 +2855,11 @@ export const onDeleteToken = /* GraphQL */ `
         __typename
       }
       imageURL
+      points
+      radius
       layer
+      text
+      fontSize
       width
       height
       rotation
@@ -3266,7 +3302,11 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation
@@ -3751,7 +3791,11 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation
@@ -4236,7 +4280,11 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           __typename
         }
         imageURL
+        points
+        radius
         layer
+        text
+        fontSize
         width
         height
         rotation

@@ -148,7 +148,7 @@ const BattleMap = () => {
       if (!mouseReleasedRef.current && mouseDownTimeRef.current) {
         const clickEndTime = new Date();
         const timeDifference = clickEndTime - mouseDownTimeRef.current;
-        if (timeDifference >= 1000) {
+        if (timeDifference >= 500) {
           const isMouseStationary = (
             initialMousePositionRef.current.x === currentMousePositionRef.current.x &&
             initialMousePositionRef.current.y === currentMousePositionRef.current.y
@@ -618,7 +618,8 @@ const BattleMap = () => {
   };
 
   return (
-    <div id={"Battlemap Start"} style={{height: '100%', width: '100%', position: 'relative'}}>
+    <div id={"Battlemap Start"} style={{height: '100%', width: '100%', position: 'fixed'}}
+         className={styles.battlemap}>
       <TransformWrapper style={{height: '100%', width: '100%'}} className={styles.mapContainer}
                         disabled={draggingDisabled} minScale={0.1} initialScale={scale.current}
                         onTransformed={(ref) => {
@@ -640,6 +641,10 @@ const BattleMap = () => {
           <div
             style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE, flex: "none"}}
           >
+            <div className={styles.fileDropZone}
+                 style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>
+              <input {...getInputProps()} />
+            </div>
             {/*<DrawingCanvas windowPositionRef={windowPositionRef} scale={scale}/>*/}
             <Stage width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE}
                    onMouseDown={checkDeselect} onTouchStart={checkDeselect}
@@ -672,11 +677,6 @@ const BattleMap = () => {
                 })}
               </Layer>
             </Stage>
-
-            {/*<div className={styles.fileDropZone}*/}
-            {/*     style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>*/}
-            {/*    <input {...getInputProps()} />*/}
-            {/*</div>*/}
           </div>
         </TransformComponent>
       </TransformWrapper>

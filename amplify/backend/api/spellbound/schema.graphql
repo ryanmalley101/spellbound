@@ -183,13 +183,17 @@ type Token
 {
     map: Map! @belongsTo
     character: CharacterSheet @belongsTo
-    imageURL: String!
+    imageURL: String
+    points: [Float]
+    radius: Float
     layer: String
-    width: Float!
-    height: Float!
-    rotation: Float!
-    positionX: Float!
-    positionY: Float!
+    text: String
+    fontSize: Float
+    width: Float
+    height: Float
+    rotation: Float
+    positionX: Float
+    positionY: Float
     key: String
 }
 
@@ -197,7 +201,11 @@ type Token
 input TokenInput {
     mapTokensId: ID
     imageURL: String
+    points: [Float]
+    radius: Float
     layer: String
+    text: String
+    fontSize: Float
     width: Float
     height: Float
     rotation: Float
