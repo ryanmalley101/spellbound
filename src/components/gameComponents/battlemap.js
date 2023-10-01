@@ -229,7 +229,7 @@ const BattleMap = () => {
         console.log(mapTokens)
         setMapTokens((oldTokens) => {
             return oldTokens.map((token) => {
-                if (token.id === updatedToken.id) {
+                if (token.id === updatedToken.id && token !== updatedToken) {
                     console.log(token, updatedToken)
                     return {...updatedToken}
                 }
@@ -326,27 +326,31 @@ const BattleMap = () => {
             console.log(`Active Map ${activeMap}`)
             const response = await API.graphql({
                 query: `
-        query GetMapTokens($id: ID!) {
-          getMap(id: $id) {
-            sizeX
-            sizeY
-            tokens {
-              items {
-                id
-                key
-                imageURL
-                width
-                height
-                rotation
-                x
-                y
-                layer
-                type
-              }
-            }
-          }
-        }
-      `,
+                    query GetMapTokens($id: ID!) {
+                      getMap(id: $id) {
+                        sizeX
+                        sizeY
+                        tokens {
+                          items {
+                            id
+                            type
+                            imageURL
+                            points
+                            radius
+                            layer
+                            text
+                            fontSize
+                            width
+                            height
+                            rotation
+                            x
+                            y
+                            key
+                          }
+                        }
+                      }
+                    }
+                  `,
                 variables: {
                     id: activeMap,
                 },
@@ -414,20 +418,25 @@ const BattleMap = () => {
 
         const subscription = API.graphql(
             graphqlOperation(`
-        subscription OnMapTokenUpdate($filter: ModelSubscriptionTokenFilterInput) {
-          onUpdateToken(filter: $filter) {
-            id
-            key
-            imageURL
-            width
-            height
-            rotation
-            x
-            y
-            layer
-          }
-        }
-      `),
+                                    subscription OnMapTokenUpdate($filter: ModelSubscriptionTokenFilterInput) {
+                                      onUpdateToken(filter: $filter) {
+                                                        id
+                                                        type
+                                                        imageURL
+                                                        points
+                                                        radius
+                                                        layer
+                                                        text
+                                                        fontSize
+                                                        width
+                                                        height
+                                                        rotation
+                                                        x
+                                                        y
+                                                        key
+                                                      }
+                                                    }
+                                                  `),
             {
                 filter: {
                     mutationType: {
@@ -621,7 +630,9 @@ const BattleMap = () => {
 
     return (
         <div id={"Battlemap Start"}
-             className={styles.battlemap}>
+             className={styles.battlemap} onContextMenu={() => {
+            return false
+        }}>
             <TransformWrapper style={{height: '100%', width: '100%'}} className={styles.mapContainer}
                               disabled={draggingDisabled} minScale={0.1} initialScale={scale.current}
                               onTransformed={(ref) => {
@@ -642,6 +653,9 @@ const BattleMap = () => {
                 }} minScale={0.1}>
                     <div
                         style={{width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE, flex: "none"}}
+                        onContextMenu={(e) => {
+                            e.preventDefault()
+                        }}
                     >
                         <div className={styles.fileDropZone}
                              style={{pointerEvents: isDraggingFile ? "auto" : "none"}}{...getRootProps()}>
@@ -649,37 +663,6 @@ const BattleMap = () => {
                         </div>
                         <DrawingCanvas windowPositionRef={windowPositionRef} scale={scale} mapTokens={mapTokens}
                                        widthUnits={widthUnits} heightUnits={heightUnits} GRID_SIZE={GRID_SIZE}/>
-                        {/*<Stage width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE}*/}
-                        {/*       onMouseDown={checkDeselect} onTouchStart={checkDeselect}*/}
-                        {/*  style={{pointerEvents: selectingDisabled ? "none" : "auto"}}*/}
-                        {/*>*/}
-                        {/*  <Layer>*/}
-                        {/*{mapTokens.map((token, index) => {*/}
-                        {/*  if (token.layer === "MAP") {*/}
-                        {/*    // console.log(token.key)*/}
-                        {/*    return <DraggableIcon key={token.key} x={token.x} y={token.y}*/}
-                        {/*                          token={token}*/}
-                        {/*                          scale={scale.current}/>*/}
-                        {/*  }*/}
-                        {/*})}*/}
-                        {/*<GridOverlay width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE}*/}
-                        {/*             gridSize={GRID_SIZE}/>*/}
-                        {/*{mapTokens.map((token, index) => {*/}
-                        {/*  if (token.layer === "TOKEN") {*/}
-                        {/*    return <DraggableIcon key={token.key} x={token.x} y={token.y}*/}
-                        {/*                          token={token}*/}
-                        {/*                          scale={scale.current}/>*/}
-                        {/*  }*/}
-                        {/*})}*/}
-                        {/*{mapTokens.map((token, index) => {*/}
-                        {/*  if (token.layer === "GM") {*/}
-                        {/*    return <DraggableIcon key={token.key} x={token.x} y={token.y}*/}
-                        {/*                          token={token}*/}
-                        {/*                          scale={scale.current}/>*/}
-                        {/*  }*/}
-                        {/*})}*/}
-                        {/*  </Layer>*/}
-                        {/*</Stage>*/}
                     </div>
                 </TransformComponent>
             </TransformWrapper>

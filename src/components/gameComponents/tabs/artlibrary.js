@@ -55,6 +55,7 @@ const ArtDirectoryMenu = ({directory, parentPath = '', filter, user}) => {
 
     const [open, setOpen] = useState(false);
     const {activeMap} = useBattlemapStore()
+    const {mapLayer} = useBattlemapStore()
 
     const handleClick = () => {
         setOpen(!open);
@@ -75,6 +76,7 @@ const ArtDirectoryMenu = ({directory, parentPath = '', filter, user}) => {
         const input = {
             imageURL: path,
             mapTokensId: activeMap,
+            layer: mapLayer,
             x: 0,
             y: 0,
             rotation: 0,

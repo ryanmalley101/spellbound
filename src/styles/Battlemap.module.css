@@ -1,5 +1,6 @@
 .battlemap {
     flex: 1;
+    display: grid;
     /*position: absolute;*/
     /*display: inline-block;*/
     /*width: 100%;*/

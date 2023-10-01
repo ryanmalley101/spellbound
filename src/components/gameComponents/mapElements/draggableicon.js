@@ -8,124 +8,18 @@ import * as mutations from "@/graphql/mutations";
 import {Image, Transformer} from "react-konva";
 import useImage from 'use-image';
 
-const URLImage = ({url, token, shapeProps, onSelect, onChange, draggable, handleDragStop}) => {
-    // const [src, setSrc] = useState("")
-    const shapeRef = useRef();
-    const trRef = useRef();
-    const [image] = useImage(url);
-    const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID);
-    const isSelected = selectedTokenID === token.id
-
-    // const handleDragStop = async (e) => {
-    //     console.log('Handling drag stop')
-    //
-    //     onChange({
-    //         ...shapeProps,
-    //         x: e.target.x(),
-    //         y: e.target.y(),
-    //     });
-    //
-    //     const draggedTokenDetails = {
-    //         id: token.id,
-    //         key: token.key,
-    //         x: e.target.x(),
-    //         y: e.target.y()
-    //     };
-    //
-    //     const updatedToken = await API.graphql({
-    //         query: mutations.updateToken,
-    //         variables: {input: draggedTokenDetails}
-    //     });
-    //
-    //     console.log(updatedToken)
-    // }
-
-
-    const handleResizeStop = async (e, direction, ref, delta, position) => {
-
-        // transformer is changing scale of the node
-        // and NOT its width or height
-        // but in the store we have only width and height
-        // to match the data better we will reset scale on transform end
-        const node = shapeRef.current;
-        const scaleX = node.scaleX();
-        const scaleY = node.scaleY();
-
-        // we will reset it back
-        node.scaleX(1);
-        node.scaleY(1);
-        // onChange({
-        //     ...shapeProps,
-        //     x: node.x(),
-        //     y: node.y(),
-        //     // set minimal value
-        //     width: Math.max(5, node.width() * scaleX),
-        //     height: Math.max(node.height() * scaleY),
-        // });
-
-        const resizedTokenDetails = {
-            id: token.id,
-            key: token.key,
-            x: node.x(),
-            y: node.y(),
-            // set minimal value
-            width: Math.max(5, node.width()),
-            height: Math.max(node.height()),
-        };
-
-        console.log("Updating token", resizedTokenDetails)
-        const updatedToken = await API.graphql({
-            query: mutations.updateToken,
-            variables: {input: resizedTokenDetails}
-        });
-        console.log(updatedToken)
-    };
-
-
-    useEffect(() => {
-        if (isSelected) {
-            // we need to attach transformer manually
-            trRef.current.nodes([shapeRef.current]);
-            trRef.current.getLayer().batchDraw();
-        }
-    }, [isSelected]);
-
-    return (
-        <>
-            <Image image={image}
-                   priority={"true"}
-                   alt="Icon"
-                   style={{pointerEvents: 'none'}}
-                   onClick={onSelect}
-                   ref={shapeRef}
-                   {...shapeProps}
-                   draggable={draggable}
-                   onDragEnd={handleDragStop}
-                   isSelected={isSelected}
-                   onTransformEnd={handleResizeStop}
-                   className={styles.draggableicon}/>
-            {isSelected && (<Transformer
-                    ref={trRef}
-                    boundBoxFunc={(oldBox, newBox) => {
-                        // limit resize
-                        if (newBox.width < 5 || newBox.height < 5) {
-                            return oldBox;
-                        }
-                        return newBox;
-                    }}
-                />
-            )}
-        </>
-    );
-}
-
-const DraggableIcon = ({token}) => {
+const DraggableIcon = ({token, handleDragStop, onDragMove, onClick}) => {
     const zoomLevel = useBattlemapStore(state => state.zoomLevel)
     const [iconPosition, setIconPosition] = useState({x: 0, y: 0});
     const [width, setWidth] = useState(50);
     const [height, setHeight] = useState(50);
     const [imgsrc, setImgsrc] = useState(null);
     const selectedTool = useBattlemapStore((state) => state.selectedTool);
+    const shapeRef = useRef();
+    const trRef = useRef();
+    const [image] = useImage(imgsrc);
+    const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID);
+    const isSelected = selectedTokenID === token.id
     // const dragStartRef = useRef(null); // Define the dragStartRef using useRef
     // const mapLayer = useBattlemapStore((state) => state.mapLayer);
     // const [showContextMenu, setShowContextMenu] = useState(false);
@@ -156,7 +50,6 @@ const DraggableIcon = ({token}) => {
                 setImgsrc(signedUrl);
             } catch (e) {
                 console.log(e);
-                setImgsrc(imageURL);
             }
         };
 
@@ -171,68 +64,189 @@ const DraggableIcon = ({token}) => {
         }
         // if (token)
     }, []); // Empty dependency array to run the effect only once
-    //
-    // // Click handler to select the token
-    // const handleIconClick = () => {
-    //     console.log("Checking select tool")
-    //     if (selectedTool === TOOL_ENUM.SELECT) {
-    //         console.log(`Selecting token ${token.id}`)
-    //         setSelectedTokenID(token.id);
-    //         console.log(selectedTokenID)
-    //     }
-    // };
-    //
-    //
-    // const handleContextMenu = (event) => {
-    //     console.log("Icon Context")
-    //     event.preventDefault(); // Prevent the default right-click context menu behavior
-    //     // Calculate the position of the context menu based on the click event coordinates
-    //     const contextMenuX = iconPosition.x;
-    //     const contextMenuY = iconPosition.y;
-    //
-    //     // Set the context menu position using the calculated coordinates
-    //     setContextMenuPosition({x: contextMenuX, y: contextMenuY});
-    //     setShowContextMenu(true);
-    // };
-    //
-    // const handleMenuClick = async (option) => {
-    //     // Handle the click of the menu options here based on the selected option
-    //     console.log('Clicked option:', option);
-    //     // Perform actions based on the selected option (e.g., "GM", "Token", or "Map")
-    //     // You can close the context menu here or do other actions as needed.
-    //     const updatedToken = {...token, layer: option}
-    //     console.log(updatedToken)
-    //     try {
-    //         const layeredToken = await API.graphql({
-    //             query: mutations.updateToken,
-    //             variables: {input: updatedToken}
-    //         });
-    //     } catch (e) {
-    //         console.log("error adding layer to token")
-    //         console.log(e)
-    //     }
-    //
-    //     setShowContextMenu(false);
-    // };
-    //
-    // useEffect(() => {
-    //     const handleDocumentClick = (event) => {
-    //         const menuContainer = document.getElementById('custom-context-menu');
-    //         if (menuContainer && !menuContainer.contains(event.target)) {
-    //             setShowContextMenu(false);
-    //         }
-    //     };
-    //
-    //     if (showContextMenu) {
-    //         document.addEventListener('click', handleDocumentClick);
-    //     }
-    //
-    //     return () => {
-    //         document.removeEventListener('click', handleDocumentClick);
-    //     };
-    // }, [showContextMenu]);
-    //
-    //
+
+    const onMove = (e) => {
+        console.log(e)
+        setIconPosition({x: e.target.x(), y: e.target.y()})
+    }
+
+    const handleResizeStop = async (e, direction, ref, delta, position) => {
+
+        // transformer is changing scale of the node
+        // and NOT its width or height
+        // but in the store we have only width and height
+        // to match the data better we will reset scale on transform end
+        const node = shapeRef.current;
+        const scaleX = node.scaleX();
+        const scaleY = node.scaleY();
+
+        // we will reset it back
+        node.scaleX(1);
+        node.scaleY(1);
+
+        setIconPosition({x: node.x(), y: node.y()})
+        setWidth(Math.max(5, node.width() * scaleX))
+        setHeight(Math.max(node.height() * scaleY))
+
+        const resizedTokenDetails = {
+            id: token.id,
+            key: token.key,
+            x: node.x(),
+            y: node.y(),
+            // set minimal value
+            width: Math.max(5, node.width()),
+            height: Math.max(node.height()),
+        };
+
+        console.log("Updating token", resizedTokenDetails)
+        const updatedToken = await API.graphql({
+            query: mutations.updateToken,
+            variables: {input: resizedTokenDetails}
+        });
+        console.log(updatedToken)
+    };
+
+
+    useEffect(() => {
+        if (isSelected && imgsrc) {
+            // we need to attach transformer manually
+            trRef.current.nodes([shapeRef.current]);
+            trRef.current.getLayer().batchDraw();
+        }
+    }, [isSelected]);
+
+    const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID);
+
+    const shapeProps = {
+        x: iconPosition.x,
+        y: iconPosition.y,
+        width: width,
+        height: height,
+        id: token.id,
+    }
+
+    if (imgsrc) {
+        return (
+            <>
+                <Image image={image}
+                       priority={"true"}
+                       alt="Icon"
+                       style={{pointerEvents: 'none'}}
+                       onClick={onClick}
+                       ref={shapeRef}
+                       {...shapeProps}
+                       draggable={selectedTool === TOOL_ENUM.SELECT}
+                       onDragEnd={handleDragStop}
+                       isSelected={isSelected}
+                       onTransformEnd={handleResizeStop}
+                    // onDragMove={onDragMove}
+                       className={styles.draggableicon}/>
+                {isSelected && (<Transformer
+                        ref={trRef}
+                        boundBoxFunc={(oldBox, newBox) => {
+                            // limit resize
+                            if (newBox.width < 5 || newBox.height < 5) {
+                                return oldBox;
+                            }
+                            return newBox;
+                        }}
+                    />
+                )}
+            </>
+        )
+    }
+}
+
+
+export default DraggableIcon
+
+// <URLImage
+//     url={imgsrc}
+//     token={token}
+//     draggable={selectedTool === TOOL_ENUM.SELECT}
+//     shapeProps={{
+//         x: iconPosition.x,
+//         y: iconPosition.y,
+//         width: width,
+//         height: height,
+//         id: token.id,
+//     }}
+//     onSelect={() => {
+//         console.log(`Selected token ${token.id}`)
+//         setSelectedTokenID(token.id);
+//     }}
+//     handleDragStop={handleDragStop}
+//     // onDragMove={onMove}
+//     // onChange={(newAttrs) => {
+//     //     console.log(newAttrs)
+//     //     setIconPosition({x: newAttrs.x, y: newAttrs.y})
+//     //     setWidth(newAttrs.width)
+//     //     setHeight(newAttrs.height)
+//     // }}
+// >
+// </URLImage>
+//
+// // Click handler to select the token
+// const handleIconClick = () => {
+//     console.log("Checking select tool")
+//     if (selectedTool === TOOL_ENUM.SELECT) {
+//         console.log(`Selecting token ${token.id}`)
+//         setSelectedTokenID(token.id);
+//         console.log(selectedTokenID)
+//     }
+// };
+//
+//
+// const handleContextMenu = (event) => {
+//     console.log("Icon Context")
+//     event.preventDefault(); // Prevent the default right-click context menu behavior
+//     // Calculate the position of the context menu based on the click event coordinates
+//     const contextMenuX = iconPosition.x;
+//     const contextMenuY = iconPosition.y;
+//
+//     // Set the context menu position using the calculated coordinates
+//     setContextMenuPosition({x: contextMenuX, y: contextMenuY});
+//     setShowContextMenu(true);
+// };
+//
+// const handleMenuClick = async (option) => {
+//     // Handle the click of the menu options here based on the selected option
+//     console.log('Clicked option:', option);
+//     // Perform actions based on the selected option (e.g., "GM", "Token", or "Map")
+//     // You can close the context menu here or do other actions as needed.
+//     const updatedToken = {...token, layer: option}
+//     console.log(updatedToken)
+//     try {
+//         const layeredToken = await API.graphql({
+//             query: mutations.updateToken,
+//             variables: {input: updatedToken}
+//         });
+//     } catch (e) {
+//         console.log("error adding layer to token")
+//         console.log(e)
+//     }
+//
+//     setShowContextMenu(false);
+// };
+//
+// useEffect(() => {
+//     const handleDocumentClick = (event) => {
+//         const menuContainer = document.getElementById('custom-context-menu');
+//         if (menuContainer && !menuContainer.contains(event.target)) {
+//             setShowContextMenu(false);
+//         }
+//     };
+//
+//     if (showContextMenu) {
+//         document.addEventListener('click', handleDocumentClick);
+//     }
+//
+//     return () => {
+//         document.removeEventListener('click', handleDocumentClick);
+//     };
+// }, [showContextMenu]);
+//
+//
 //     if (imgsrc) {
 //         // Define the appearance and behavior of the draggable icon
 //         return (
@@ -315,37 +329,3 @@ const DraggableIcon = ({token}) => {
 //         );
 //     }
 // }
-
-    const setSelectedTokenID = useBattlemapStore((state) => state.setSelectedTokenID);
-
-    if (imgsrc) {
-        return (
-            <URLImage
-                url={imgsrc}
-                token={token}
-                draggable={selectedTool === TOOL_ENUM.SELECT}
-                shapeProps={{
-                    x: iconPosition.x,
-                    y: iconPosition.y,
-                    width: width,
-                    height: height,
-                    id: token.id,
-                }}
-                onSelect={() => {
-                    console.log(`Selected token ${token.id}`)
-                    setSelectedTokenID(token.id);
-                }}
-                // onChange={(newAttrs) => {
-                //     console.log(newAttrs)
-                //     setIconPosition({x: newAttrs.x, y: newAttrs.y})
-                //     setWidth(newAttrs.width)
-                //     setHeight(newAttrs.height)
-                // }}
-            >
-            </URLImage>
-        )
-    }
-}
-
-
-export default DraggableIcon

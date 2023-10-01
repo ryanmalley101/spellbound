@@ -1,4 +1,5 @@
 import {Circle, Layer, Line, Rect, Stage, Text, Transformer} from 'react-konva';
+import {Html} from 'react-konva-utils';
 
 import React, {Fragment, useEffect, useRef, useState} from "react";
 import styles from '../../../styles/Battlemap.module.css'
@@ -9,11 +10,12 @@ import GridOverlay from "@/components/gameComponents/mapElements/gridoverlay";
 import Drawing from "@/components/gameComponents/mapElements/drawing";
 import {API} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
+import {Button} from "@mui/material";
 
 const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE}) => {
 
     const {
-        zoomLevel, selectedTool, drawTool
+        zoomLevel, selectedTool, drawTool, activeMap
     } = useBattlemapStore();
 
     const [selectionRect, setSelectionRect] = useState(null);
@@ -38,13 +40,18 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
     const selectionRef = useRef(null)
 
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    const [contextMenuPosition, setContextMenuPosition] = useState({x: 0, y: 0});
+    const [contextMenuShape, setContextMenuShape] = useState(null)
+
     const handleShapeClick = (e, shape) => {
         const stageShapes = stageRef.current.children[0].children; // Adjust the class name as needed
+        console.log("Handling shape click")
         // console.log(stageShapes)
         if (stageShapes) {
             const newlySelectedShapes = stageShapes.filter((s) => {
-                    console.log(e.target._id)
-                    console.log(s._id)
+                    // console.log(e.target._id)
+                    // console.log(s._id)
                     return e.target._id === s._id
                 }
             );
@@ -53,11 +60,28 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
         }
     }
 
+    useEffect(() => {
+        console.log(selectedShapes)
+        setSelectedShapes([])
+    }, [mapTokens]);
+
     const handleStageClick = (e) => {
         // Clear selection when clicking on the stage
-        console.log(e)
+        const stageShapes = stageRef.current.children[0].children; // Adjust the class name as needed
+        console.log(e, stageShapes)
         if (e.target._id === 1) {
             setSelectedShapes([]);
+            setShowContextMenu(false)
+        } else if (e.evt.button === 2 && e.target.attrs.id) {
+            // Right-click
+            e.evt.preventDefault();
+            console.log("Opening context menu", e)
+            // Show the context menu at the right-clicked position
+            setContextMenuPosition({x: e.evt.offsetX, y: e.evt.offsetY})
+            setShowContextMenu(true)
+            setContextMenuShape(e.target.attrs)
+        } else {
+            setShowContextMenu(false)
         }
     };
 
@@ -319,37 +343,32 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             console.log(deltaX, deltaY)
             if (deltaX < 2 && deltaY < 2) {
                 setIsDrawing(false);
-                const input = {...currentShape}
+                return createNewShape()
 
-                const newToken = await API.graphql({
-                    query: mutations.createToken,
-                    variables: {input: input}
-                });
-
-                console.log("Creating a new token")
-                console.log(newToken)
-                setCurrentShape(null)
-                return newToken.data.createToken.id
             } else {
                 currentPolygon.points = currentPolygon.points.concat([point.x, point.y])
                 setCurrentShape(currentPolygon)
                 currentPolyPoint.current = currentPolyPoint.current + 2
-                return
             }
         } else {
             setIsDrawing(false);
-            const input = {...currentShape}
-            const newToken = await API.graphql({
-                query: mutations.createToken,
-                variables: {input: input}
-            });
-
-            console.log("Creating a new token")
-            console.log(newToken)
-            setCurrentShape(null)
-            return newToken.data.createToken.id
+            return createNewShape()
         }
     };
+
+    const createNewShape = async (shape) => {
+        const input = {...currentShape, mapTokensId: activeMap,}
+        console.log(currentShape)
+        const newToken = await API.graphql({
+            query: mutations.createToken,
+            variables: {input: input}
+        });
+
+        console.log("Creating a new token")
+        console.log(newToken)
+        setCurrentShape(null)
+        return newToken.data.createToken.id
+    }
 
     const isInsideSelection = (rect, selection) => {
         const x1 = Math.min(selection.x1, selection.x2);
@@ -410,11 +429,34 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
     //     })
     // }
 
+    const handleMenuClick = async (option) => {
+        // Handle the click of the menu options here based on the selected option
+        console.log('Clicked option:', option);
+        // Perform actions based on the selected option (e.g., "GM", "Token", or "Map")
+        // You can close the context menu here or do other actions as needed.
+        const updatedToken = {id: contextMenuShape.id, layer: option}
+        console.log(updatedToken)
+        try {
+            const layeredToken = await API.graphql({
+                query: mutations.updateToken,
+                variables: {input: updatedToken}
+            });
+        } catch (e) {
+            console.log("error adding layer to token")
+            console.log(e)
+        }
+
+        setShowContextMenu(false);
+    };
+
     return (
         <div
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
+            onContextMenu={() => {
+                return false
+            }}
             style={{
                 zIndex: 100,
                 position: "absolute",
@@ -439,51 +481,85 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                     {mapTokens.map((token, index) => {
                         if (token.layer === "MAP") {
                             // console.log(token.key)
-                            return <Drawing key={token.key}
-                                            shape={token}
-                                            editing={editing}
-                                            handleTextDblClick={handleTextDblClick}
-                                            selectedLabelId={selectedLabelId}
-                                            handleShapeSelect={handleShapeClick}/>
+                            return <Drawing
+                                key={token.key}
+                                shape={token}
+                                index={index}
+                                editing={editing}
+                                handleTextDblClick={handleTextDblClick}
+                                selectedLabelId={selectedLabelId}
+                                selectionRef={selectionRef}
+                                // onShapeDragEnd={onShapeDragEnd}
+                                // onLineDragEnd={onLineDragEnd}
+                                handleShapeSelect={handleShapeClick}
+                            />
                         }
                     })}
                     <GridOverlay width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE}
                                  gridSize={GRID_SIZE}/>
                     {mapTokens.map((token, index) => {
                         if (token.layer === "TOKEN") {
-                            return <Drawing key={token.key}
-                                            shape={token}
-                                            editing={editing}
-                                            handleTextDblClick={handleTextDblClick}
-                                            selectedLabelId={selectedLabelId}
-                                            handleShapeSelect={handleShapeClick}/>
-                        }
-                    })}
-                    {mapTokens.map((token, index) => {
-                        if (token.layer === "GM") {
-                            return <Drawing key={token.key}
-                                            shape={token}
-                                            editing={editing}
-                                            handleTextDblClick={handleTextDblClick}
-                                            selectedLabelId={selectedLabelId}
-                                            handleShapeSelect={handleShapeClick}/>
-                        }
-                    })}
-
-                    {mapTokens.map((shape, index) => {
-                        return <Fragment key={JSON.stringify(shape)}>
-                            <Drawing
-                                shape={shape}
+                            return <Drawing
+                                key={token.key}
+                                shape={token}
                                 index={index}
                                 editing={editing}
                                 handleTextDblClick={handleTextDblClick}
                                 selectedLabelId={selectedLabelId}
+                                selectionRef={selectionRef}
                                 // onShapeDragEnd={onShapeDragEnd}
                                 // onLineDragEnd={onLineDragEnd}
                                 handleShapeSelect={handleShapeClick}
                             />
-                        </Fragment>
+                        }
                     })}
+                    {mapTokens.map((token, index) => {
+                        if (token.layer === "GM") {
+                            return <Drawing
+                                key={token.key}
+                                shape={token}
+                                index={index}
+                                editing={editing}
+                                handleTextDblClick={handleTextDblClick}
+                                selectedLabelId={selectedLabelId}
+                                selectionRef={selectionRef}
+                                // onShapeDragEnd={onShapeDragEnd}
+                                // onLineDragEnd={onLineDragEnd}
+                                handleShapeSelect={handleShapeClick}
+                            />
+
+                        }
+                    })}
+                    {showContextMenu && (
+                        <Html>
+                            <div
+                                id="custom-context-menu"
+                                style={{
+                                    position: 'fixed',
+                                    top: contextMenuPosition.y,
+                                    left: contextMenuPosition.x,
+                                    // transform: `translate(25px, 25px)`,
+                                    backgroundColor: 'transparent', // Make the background transparent
+                                    boxShadow: 'none', // Remove the box shadow
+                                    zIndex: 9999,
+                                    display: 'flex',
+                                    flexDirection: 'column', // Stack the icons vertically
+                                }}
+                            >
+                                {/* MUI Buttons */}
+                                <Button onClick={() => handleMenuClick('GM')} variant="contained" color="primary">
+                                    GM
+                                </Button>
+                                <Button onClick={() => handleMenuClick('TOKEN')} variant="contained" color="primary">
+                                    Token
+                                </Button>
+                                <Button onClick={() => handleMenuClick('MAP')} variant="contained" color="primary">
+                                    Map
+                                </Button>
+                            </div>
+                        </Html>
+                    )}
+
                     <Transformer
                         // nodes
                         ref={selectionRef}
