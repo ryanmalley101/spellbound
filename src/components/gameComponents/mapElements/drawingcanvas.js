@@ -154,7 +154,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             const point = getPoint(e)
 
             if (drawTool === DRAW_ENUM.PEN) {
-                setCurrentShape({type: DRAW_ENUM.PEN, id: uuidv4(), points: [point.x, point.y]})
+                setCurrentShape({type: DRAW_ENUM.PEN, id: uuidv4(), points: [point.x, point.y], x: 0, y: 0})
             }
             if (drawTool === DRAW_ENUM.RECTANGLE) {
                 setCurrentShape({
@@ -344,7 +344,6 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             if (deltaX < 2 && deltaY < 2) {
                 setIsDrawing(false);
                 return createNewShape()
-
             } else {
                 currentPolygon.points = currentPolygon.points.concat([point.x, point.y])
                 setCurrentShape(currentPolygon)

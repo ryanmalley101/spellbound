@@ -1,6 +1,6 @@
 import useBattlemapStore, {DRAW_ENUM} from "@/stores/battlemapStore";
 import {Circle, Line, Rect, Text, Transformer} from "react-konva";
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import {API} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import DraggableIcon from "@/components/gameComponents/mapElements/draggableicon";
@@ -17,10 +17,18 @@ const Drawing = ({
                  }) => {
 
     const {activeMap} = useBattlemapStore()
+    const shapeRef = useRef(null)
 
     const onMove = (e) => {
         console.log(e)
     }
+
+    useEffect(() => {
+        if (shapeRef.current) {
+            shapeRef.current.scaleX(1)
+            shapeRef.current.scaleY(1)
+        }
+    }, [shape]);
 
     const handleResizeStop = async (e, direction, ref, delta, position) => {
 
@@ -29,8 +37,11 @@ const Drawing = ({
         // but in the store we have only width and height
         // to match the data better we will reset scale on transform end
         const node = selectionRef.current;
+        console.log(e)
         const scaleX = node.scaleX();
         const scaleY = node.scaleY();
+        // shapeRef.current.scaleX(1)
+        // shapeRef.current.scaleY(1)
 
         // we will reset it back
         node.scaleX(1);
@@ -43,7 +54,7 @@ const Drawing = ({
             y: node.y(),
             // set minimal value
             width: Math.max(5, node.width() * scaleX),
-            height: Math.max(node.height() * scaleY)
+            height: Math.max(5, node.height() * scaleY)
         };
 
         console.log("Updating token", resizedTokenDetails)
@@ -82,21 +93,29 @@ const Drawing = ({
         console.log(updatedToken)
     }
 
-    const onLineDragEnd = (e, index) => {
-        console.log(e, index)
-        setShapes(prevState => {
-            return prevState.map((r, i) => {
-                if (i === index) {
-                    r.points = r.points.map((point, index) => {
-                        if (index % 2 === 0) {
-                            return point + e.target.x()
-                        }
-                        return point + e.target.y()
-                    })
-                }
-                return r
-            })
-        })
+    const onLineDragEnd = async (e, index) => {
+        console.log(e.target.getTransform(), index)
+        const draggedTokenDetails = {
+            id: shape.id,
+            key: shape.key,
+            x: e.target.x(),
+            y: e.target.y(),
+            // points: shape.points.map((p) => {
+            //     if (index % 2 === 0) {
+            //         return p + e.target.x()
+            //     }
+            //     return p + e.target.y()
+            // })
+        };
+        console.log(shape)
+        console.log(draggedTokenDetails)
+
+        const updatedToken = await API.graphql({
+            query: mutations.updateToken,
+            variables: {input: draggedTokenDetails}
+        });
+
+        console.log(updatedToken)
     }
 
     if (!shape) {
@@ -107,15 +126,18 @@ const Drawing = ({
         return <>
             <Line
                 id={shape.id}
+                ref={shapeRef}
                 points={shape.points}
+                x={shape.x}
+                y={shape.y}
                 stroke="black"
                 strokeWidth={2}
                 tension={0.5}
                 lineCap="round"
                 lineJoin="round"
                 draggable
-                onTransformEnd={handleResizeStop}
-                onDragEnd={(e) => onLineDragEnd(e, index)}
+                onTransformEnd={onLineDragEnd}
+                onDragEnd={onLineDragEnd}
                 onClick={(e) => handleShapeSelect(e, shape)}
                 className="shape"
             />
@@ -126,6 +148,7 @@ const Drawing = ({
             <Rect
                 id={shape.id}
                 key={index}
+                ref={shapeRef}
                 x={shape.x}
                 y={shape.y}
                 width={shape.width}
@@ -145,6 +168,7 @@ const Drawing = ({
             <Circle
                 id={shape.id}
                 key={index}
+                ref={shapeRef}
                 x={shape.x}
                 y={shape.y}
                 radius={shape.radius}
@@ -163,6 +187,7 @@ const Drawing = ({
             <Line
                 id={shape.id}
                 key={index}
+                ref={shapeRef}
                 closed={true}
                 points={shape.points}
                 stroke={'black'}
@@ -180,6 +205,7 @@ const Drawing = ({
             <Line
                 id={shape.id}
                 closed={true}
+                ref={shapeRef}
                 points={shape.points}
                 stroke={'black'}
                 strokeWidth={4}
@@ -195,6 +221,7 @@ const Drawing = ({
         return <>
             <Text
                 id={shape.id}
+                ref={shapeRef}
                 x={shape.x}
                 y={shape.y}
                 text={shape.text}
@@ -226,6 +253,7 @@ const Drawing = ({
 
     if (shape.type === DRAW_ENUM.IMAGE) {
         return <DraggableIcon token={shape}
+                              ref={shapeRef}
                               handleDragStop={handleDragStop}
                               onDragMove={onMove}
                               onDragEnd={(e) => handleDragStop(e, index)}
