@@ -2,7 +2,7 @@ import {API} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {useEffect, useState} from "react";
 import {getMonsterProf, scoreToMod} from "@/5eReference/converters";
-import MonsterSheet from "@/components/gameComponents/monstersheet";
+import MonsterSheet from "@/components/gameComponents/sheets/monstersheet";
 
 
 const ConvertSRDMonsters = () => {

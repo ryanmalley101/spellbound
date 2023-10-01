@@ -13,7 +13,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {descAttack} from "@/components/gameComponents/monstersheet";
+import {descAttack} from "@/components/gameComponents/sheets/monstersheet";
 
 const ActionRow = ({
                        action,

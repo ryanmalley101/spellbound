@@ -5,7 +5,7 @@ import {BsFillCaretRightFill} from '@react-icons/all-files/bs/BsFillCaretRightFi
 import {BsFillPlusSquareFill} from '@react-icons/all-files/bs/BsFillPlusSquareFill';
 import Image from 'next/image';
 import styles from "@/styles/ArtLibrary.module.css"
-import useBattlemapStore from "@/stores/battlemapStore";
+import useBattlemapStore, {DRAW_ENUM} from "@/stores/battlemapStore";
 import {API, Storage} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 
@@ -75,11 +75,12 @@ const ArtDirectoryMenu = ({directory, parentPath = '', filter, user}) => {
         const input = {
             imageURL: path,
             mapTokensId: activeMap,
-            positionX: 0,
-            positionY: 0,
+            x: 0,
+            y: 0,
             rotation: 0,
             width: 50,
-            height: 50
+            height: 50,
+            type: DRAW_ENUM.IMAGE
         };
 
         console.log(path)

@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import styles from '../../styles/Battlemap.module.css'
+import styles from '../../../styles/Battlemap.module.css'
 import 'react-resizable/css/styles.css';
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
 import {API, Storage} from "aws-amplify";
@@ -8,7 +8,7 @@ import * as mutations from "@/graphql/mutations";
 import {Image, Transformer} from "react-konva";
 import useImage from 'use-image';
 
-const URLImage = ({url, token, shapeProps, onSelect, onChange, draggable}) => {
+const URLImage = ({url, token, shapeProps, onSelect, onChange, draggable, handleDragStop}) => {
     // const [src, setSrc] = useState("")
     const shapeRef = useRef();
     const trRef = useRef();
@@ -16,29 +16,29 @@ const URLImage = ({url, token, shapeProps, onSelect, onChange, draggable}) => {
     const selectedTokenID = useBattlemapStore((state) => state.selectedTokenID);
     const isSelected = selectedTokenID === token.id
 
-    const handleDragStop = async (e) => {
-        console.log('Handling drag stop')
-
-        onChange({
-            ...shapeProps,
-            x: e.target.x(),
-            y: e.target.y(),
-        });
-
-        const draggedTokenDetails = {
-            id: token.id,
-            key: token.key,
-            positionX: e.target.x(),
-            positionY: e.target.y()
-        };
-
-        const updatedToken = await API.graphql({
-            query: mutations.updateToken,
-            variables: {input: draggedTokenDetails}
-        });
-
-        console.log(updatedToken)
-    }
+    // const handleDragStop = async (e) => {
+    //     console.log('Handling drag stop')
+    //
+    //     onChange({
+    //         ...shapeProps,
+    //         x: e.target.x(),
+    //         y: e.target.y(),
+    //     });
+    //
+    //     const draggedTokenDetails = {
+    //         id: token.id,
+    //         key: token.key,
+    //         x: e.target.x(),
+    //         y: e.target.y()
+    //     };
+    //
+    //     const updatedToken = await API.graphql({
+    //         query: mutations.updateToken,
+    //         variables: {input: draggedTokenDetails}
+    //     });
+    //
+    //     console.log(updatedToken)
+    // }
 
 
     const handleResizeStop = async (e, direction, ref, delta, position) => {
@@ -54,20 +54,20 @@ const URLImage = ({url, token, shapeProps, onSelect, onChange, draggable}) => {
         // we will reset it back
         node.scaleX(1);
         node.scaleY(1);
-        onChange({
-            ...shapeProps,
-            x: node.x(),
-            y: node.y(),
-            // set minimal value
-            width: Math.max(5, node.width() * scaleX),
-            height: Math.max(node.height() * scaleY),
-        });
+        // onChange({
+        //     ...shapeProps,
+        //     x: node.x(),
+        //     y: node.y(),
+        //     // set minimal value
+        //     width: Math.max(5, node.width() * scaleX),
+        //     height: Math.max(node.height() * scaleY),
+        // });
 
         const resizedTokenDetails = {
             id: token.id,
             key: token.key,
-            positionX: node.x(),
-            positionY: node.y(),
+            x: node.x(),
+            y: node.y(),
             // set minimal value
             width: Math.max(5, node.width()),
             height: Math.max(node.height()),
@@ -119,9 +119,9 @@ const URLImage = ({url, token, shapeProps, onSelect, onChange, draggable}) => {
     );
 }
 
-const DraggableIcon = ({token, scale, x, y}) => {
+const DraggableIcon = ({token}) => {
     const zoomLevel = useBattlemapStore(state => state.zoomLevel)
-    const [iconPosition, setIconPosition] = useState({x: x, y: y});
+    const [iconPosition, setIconPosition] = useState({x: 0, y: 0});
     const [width, setWidth] = useState(50);
     const [height, setHeight] = useState(50);
     const [imgsrc, setImgsrc] = useState(null);
@@ -139,7 +139,7 @@ const DraggableIcon = ({token, scale, x, y}) => {
 
     useEffect(() => {
         console.log(token)
-        setIconPosition({x: token.positionX, y: token.positionY})
+        setIconPosition({x: token.x, y: token.y})
         setWidth(token.width)
         setHeight(token.height)
         // setImgsrc(token.imageURL)
@@ -161,7 +161,7 @@ const DraggableIcon = ({token, scale, x, y}) => {
         };
 
 
-        if (token.positionX && token.positionY) setIconPosition({x: token.positionX, y: token.positionY})
+        if (token.x && token.y) setIconPosition({x: token.x, y: token.y})
         if (token.imageURL) {
             fetchImagePath(token.imageURL)
         } else console.error("No URL was provided for token")
@@ -335,12 +335,12 @@ const DraggableIcon = ({token, scale, x, y}) => {
                     console.log(`Selected token ${token.id}`)
                     setSelectedTokenID(token.id);
                 }}
-                onChange={(newAttrs) => {
-                    console.log(newAttrs)
-                    setIconPosition({x: newAttrs.x, y: newAttrs.y})
-                    setWidth(newAttrs.width)
-                    setHeight(newAttrs.height)
-                }}
+                // onChange={(newAttrs) => {
+                //     console.log(newAttrs)
+                //     setIconPosition({x: newAttrs.x, y: newAttrs.y})
+                //     setWidth(newAttrs.width)
+                //     setHeight(newAttrs.height)
+                // }}
             >
             </URLImage>
         )

@@ -3,15 +3,15 @@ import {API, Auth, graphqlOperation, Storage} from "aws-amplify";
 import TabMenu from "@/components/gameComponents/tabmenu";
 import BattleMap from "@/components/gameComponents/battlemap";
 import {
-  DraggableArmorWindow,
-  DraggableAshOfWarWindow,
-  DraggableCharacterWindow,
-  DraggableConditionWindow,
-  DraggableMagicItemWindow,
-  DraggableMonsterWindow,
-  DraggableSpellWindow,
-  DraggableWeaponWindow
-} from "@/components/gameComponents/draggablewindow";
+    DraggableArmorWindow,
+    DraggableAshOfWarWindow,
+    DraggableCharacterWindow,
+    DraggableConditionWindow,
+    DraggableMagicItemWindow,
+    DraggableMonsterWindow,
+    DraggableSpellWindow,
+    DraggableWeaponWindow
+} from "@/components/gameComponents/sheets/draggablewindow";
 import useBattlemapStore from "@/stores/battlemapStore";
 import ToolBar from "@/components/gameComponents/toolbar";
 import {useRouter} from "next/router";
@@ -20,230 +20,220 @@ import * as mutations from "@/graphql/mutations";
 import {onCreateMessage} from "@/graphql/subscriptions";
 
 function GameID() {
-  const {gameID, setGameID, activeMap, setActiveMap} = useBattlemapStore();
-  const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows)
-  const monsterBlocks = useBattlemapStore((state) => state.monsterBlocks)
-  const spellCards = useBattlemapStore((state) => state.spellCards)
-  const magicItemCards = useBattlemapStore((state) => state.magicItemCards)
-  const weaponCards = useBattlemapStore((state) => state.weaponCards)
-  const armorCards = useBattlemapStore((state) => state.armorCards)
-  const conditionCards = useBattlemapStore((state) => state.conditionCards)
-  const ashOfWarCards = useBattlemapStore((state) => state.ashOfWarCards)
-  const gameMode = useBattlemapStore((state) => state.gameMode)
-  const playingSong = useBattlemapStore((state) => state.playingSong)
-  const setPlayingSong = useBattlemapStore((state) => state.setPlayingSong)
-  const setGameMode = useBattlemapStore(state => state.setGameMode)
-  const setPlayerID = useBattlemapStore(state => state.setPlayerID)
-  const setGamePlayers = useBattlemapStore(state => state.setGamePlayers)
+    const {gameID, setGameID, activeMap, setActiveMap} = useBattlemapStore();
+    const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows)
+    const monsterBlocks = useBattlemapStore((state) => state.monsterBlocks)
+    const spellCards = useBattlemapStore((state) => state.spellCards)
+    const magicItemCards = useBattlemapStore((state) => state.magicItemCards)
+    const weaponCards = useBattlemapStore((state) => state.weaponCards)
+    const armorCards = useBattlemapStore((state) => state.armorCards)
+    const conditionCards = useBattlemapStore((state) => state.conditionCards)
+    const ashOfWarCards = useBattlemapStore((state) => state.ashOfWarCards)
+    const gameMode = useBattlemapStore((state) => state.gameMode)
+    const playingSong = useBattlemapStore((state) => state.playingSong)
+    const setPlayingSong = useBattlemapStore((state) => state.setPlayingSong)
+    const setGameMode = useBattlemapStore(state => state.setGameMode)
+    const setPlayerID = useBattlemapStore(state => state.setPlayerID)
+    const setGamePlayers = useBattlemapStore(state => state.setGamePlayers)
 
-  const router = useRouter();
+    const router = useRouter();
 
-  const [user, setUser] = useState(null);
-  const [gameName, setGameName] = useState(null)
-  const [messages, setMessages] = useState([]);
+    const [user, setUser] = useState(null);
+    const [gameName, setGameName] = useState(null)
+    const [messages, setMessages] = useState([]);
 
-  const idQuery = router.query;
-  const fetchUser = async () => {
-    try {
-      const amplifyUser = await Auth.currentAuthenticatedUser();
-      setUser(amplifyUser);
-    } catch (err) {
-      setUser(null);
+    const idQuery = router.query;
+    const fetchUser = async () => {
+        try {
+            const amplifyUser = await Auth.currentAuthenticatedUser();
+            setUser(amplifyUser);
+        } catch (err) {
+            setUser(null);
+        }
+    };
+
+    const fetchGame = async () => {
+        if (gameID) {
+            console.log(`Fetch game gameID`)
+            console.log(gameID)
+            const gamesReq = await API.graphql({
+                query: getGame,
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+                variables: {id: gameID}
+            });
+            console.log(gamesReq.data.getGame)
+            console.log("Game name: ", gamesReq.data.getGame.name)
+            setGameName(gamesReq.data.getGame.name)
+            const players = gamesReq.data.getGame.players.items
+            console.log("Game players: ", players)
+            setGamePlayers(players)
+            console.log(user)
+            const userPlayer = players.filter((player) => player.userPlayersId === user.attributes.sub)
+            if (userPlayer.length > 1) {
+                console.error("More than one matching player was found for the logged in user")
+                console.error(userPlayer)
+            } else if (userPlayer.length === 0) {
+                console.log("No matching player found for logged in user")
+            } else {
+                console.log(`PlayerID ${userPlayer[0].id}`)
+                setPlayerID(userPlayer[0].id)
+            }
+
+            const maps = (gamesReq.data.getGame.maps.items)
+            if (maps.length === 0) {
+                console.log("Current game has no maps")
+            } else if (!gamesReq.data.getGame.activeMap) {
+                console.log("Current game has no active map")
+                const activeMapDetails = {
+                    id: gameID,
+                    activeMap: maps[0].id
+                };
+
+                const updatedGame = await API.graphql({
+                    query: mutations.updateGame,
+                    variables: {input: activeMapDetails}
+                });
+                console.log(updatedGame)
+                setActiveMap(updatedGame.data.updateGame.activeMap)
+            } else {
+                setActiveMap(gamesReq.data.getGame.activeMap)
+            }
+
+            setGameMode(gamesReq.data.getGame.gameMode)
+
+            if (playingSong !== gamesReq.data.getGame.activeSong) {
+                const newSong = await Storage.get('music/' + gamesReq.data.getGame.activeSong, {
+                    level: 'protected',
+                    identidyId: '253A4971ef34-3da5-4205-87cc-ca1cbcd4a019'
+                })
+                console.log(playingSong)
+                setPlayingSong(newSong)
+            }
+        }
     }
-  };
 
-  const fetchGame = async () => {
-    if (gameID) {
-      console.log(`Fetch game gameID`)
-      console.log(gameID)
-      const gamesReq = await API.graphql({
-        query: getGame,
-        authMode: "AMAZON_COGNITO_USER_POOLS",
-        variables: {id: gameID}
-      });
-      console.log(gamesReq.data.getGame)
-      console.log("Game name: ", gamesReq.data.getGame.name)
-      setGameName(gamesReq.data.getGame.name)
-      const players = gamesReq.data.getGame.players.items
-      console.log("Game players: ", players)
-      setGamePlayers(players)
-      console.log(user)
-      const userPlayer = players.filter((player) => player.userPlayersId === user.attributes.sub)
-      if (userPlayer.length > 1) {
-        console.error("More than one matching player was found for the logged in user")
-        console.error(userPlayer)
-      } else if (userPlayer.length === 0) {
-        console.log("No matching player found for logged in user")
-      } else {
-        console.log(`PlayerID ${userPlayer[0].id}`)
-        setPlayerID(userPlayer[0].id)
-      }
+    useEffect(() => {
+        fetchUser()
+    }, [])
 
-      const maps = (gamesReq.data.getGame.maps.items)
-      if (maps.length === 0) {
-        console.log("Current game has no maps")
-      } else if (!gamesReq.data.getGame.activeMap) {
-        console.log("Current game has no active map")
-        const activeMapDetails = {
-          id: gameID,
-          activeMap: maps[0].id
+    useEffect(() => {
+        const initialFetch = async () => {
+            console.log(`ID Query`)
+            console.log(idQuery.gameID)
+
+            setGameID(idQuery.gameID)
+            console.log(`Post set gameID`)
+            console.log(gameID)
+        }
+        if (!idQuery) return
+        initialFetch()
+    }, [router.isReady])
+
+    useEffect(() => {
+        if (!gameID || !user) return
+
+        console.log("Use effect game ID")
+        console.log(gameID)
+        fetchGame()
+    }, [gameID, user])
+
+    useEffect(() => {
+        const getMessages = async () => {
+            const response = await API.graphql({
+                query: messageByGameAndCreatedAt,
+                variables: {
+                    gameId: gameID,
+                    limit: 100,
+                    sortDirection: "DESC"
+                }
+            });
+            // console.log(response)
+            // setMessages(response.data.listMessages.items)
+            // console.log("Initial fetch chatroom messages:")
+            // console.log(response.data.listMessages.items)
+
+            console.log(response)
+            setMessages(response.data.messageByGameAndCreatedAt.items)
+            console.log("Initial fetch chatroom messages:")
+            console.log(response.data.messageByGameAndCreatedAt.items)
+        }
+        if (gameID) {
+            getMessages()
+
+        }
+    }, [gameID])
+
+    useEffect(() => {
+        // Define the subscription handler
+        const subscriptionHandler = (data) => {
+            const newMessage = data.value.data.onCreateMessage;
+            console.log('New Message', newMessage);
+            setMessages((prevMessages) => [newMessage].concat(prevMessages))
         };
 
-        const updatedGame = await API.graphql({
-          query: mutations.updateGame,
-          variables: {input: activeMapDetails}
+        const subscription = API.graphql(
+            graphqlOperation(onCreateMessage, {gameId: gameID}),
+            {
+                filter: {
+                    mutationType: {
+                        eq: 'create',
+                    }
+                },
+            }
+        ).subscribe({
+            next: (data) => {
+                subscriptionHandler(data);
+            },
+            error: (error) => {
+                console.error('Subscription Error:', error);
+            },
         });
-        console.log(updatedGame)
-        setActiveMap(updatedGame.data.updateGame.activeMap)
-      } else {
-        setActiveMap(gamesReq.data.getGame.activeMap)
-      }
+        // Clean up the subscription when the component unmounts or the tab switches
+        return () => {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+        };
+    }, [])
 
-      setGameMode(gamesReq.data.getGame.gameMode)
+    if (user && gameName) {
+        return (
+            <div className="app">
+                <div className={"appContainer"}>
+                    <ToolBar/>
+                    <BattleMap className="BattleMap"/>
+                    <TabMenu user={user} messages={messages}/>
+                </div>
+                {characterSheetWindows.map((sheet) => (
+                    <DraggableCharacterWindow key={sheet.id} characterSheet={sheet}/>
+                ))}
+                {monsterBlocks.map((monster) => (
+                    <DraggableMonsterWindow key={monster.slug} slug={monster.slug}/>
+                ))}
+                {spellCards.map((spell) => (
+                    <DraggableSpellWindow key={spell.slug} slug={spell.slug}/>
+                ))}
+                {magicItemCards.map((item) => (
+                    <DraggableMagicItemWindow key={item.slug} slug={item.slug}/>
+                ))}
+                {weaponCards.map((item) => (
+                    <DraggableWeaponWindow key={item.slug} slug={item.slug}/>
+                ))}
+                {armorCards.map((item) => (
+                    <DraggableArmorWindow key={item.slug} slug={item.slug}/>
+                ))}
+                {conditionCards.map((item) => (
+                    <DraggableConditionWindow key={item.slug} slug={item.slug}/>
+                ))}
+                {ashOfWarCards.map((item) => (
+                    <DraggableAshOfWarWindow key={item.slug} slug={item.slug}/>
+                ))}
 
-      if (playingSong !== gamesReq.data.getGame.activeSong) {
-        const newSong = await Storage.get('music/' + gamesReq.data.getGame.activeSong, {
-          level: 'protected',
-          identidyId: '253A4971ef34-3da5-4205-87cc-ca1cbcd4a019'
-        })
-        console.log(playingSong)
-        setPlayingSong(newSong)
-      }
-    }
-  }
-
-  useEffect(() => {
-    fetchUser()
-  }, [])
-
-  useEffect(() => {
-    const initialFetch = async () => {
-      console.log(`ID Query`)
-      console.log(idQuery.gameID)
-
-      setGameID(idQuery.gameID)
-      console.log(`Post set gameID`)
-      console.log(gameID)
-    }
-    if (!idQuery) return
-    initialFetch()
-  }, [router.isReady])
-
-  useEffect(() => {
-    if (!gameID || !user) return
-
-    console.log("Use effect game ID")
-    console.log(gameID)
-    fetchGame()
-  }, [gameID, user])
-
-  useEffect(() => {
-    const getMessages = async () => {
-      const response = await API.graphql({
-        query: messageByGameAndCreatedAt,
-        variables: {
-          gameId: gameID,
-          limit: 100,
-          sortDirection: "DESC"
-        }
-      });
-      // console.log(response)
-      // setMessages(response.data.listMessages.items)
-      // console.log("Initial fetch chatroom messages:")
-      // console.log(response.data.listMessages.items)
-
-      console.log(response)
-      setMessages(response.data.messageByGameAndCreatedAt.items)
-      console.log("Initial fetch chatroom messages:")
-      console.log(response.data.messageByGameAndCreatedAt.items)
-    }
-    if (gameID) {
-      getMessages()
-
-    }
-  }, [gameID])
-
-  useEffect(() => {
-    // Define the subscription handler
-    const subscriptionHandler = (data) => {
-      const newMessage = data.value.data.onCreateMessage;
-      console.log('New Message', newMessage);
-      setMessages((prevMessages) => [newMessage].concat(prevMessages))
-    };
-
-    const subscription = API.graphql(
-      graphqlOperation(onCreateMessage, {gameId: gameID}),
-      {
-        filter: {
-          mutationType: {
-            eq: 'create',
-          }
-        },
-      }
-    ).subscribe({
-      next: (data) => {
-        subscriptionHandler(data);
-      },
-      error: (error) => {
-        console.error('Subscription Error:', error);
-      },
-    });
-    // Clean up the subscription when the component unmounts or the tab switches
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
-  }, [])
-
-  if (user && gameName) {
-    return (
-      <div className="app">
-        <div className={"appContainer"}>
-          <div className="ToolBarContainer">
-            <div className="ToolBar">
-              <ToolBar/>
             </div>
-          </div>
-          <div>
-            <BattleMap className="BattleMap"/>
-          </div>
-          <div className="TabMenuContainer">
-            <div className="TabMenu">
-              <TabMenu user={user} messages={messages}/>
-            </div>
-          </div>
-        </div>
-        {characterSheetWindows.map((sheet) => (
-          <DraggableCharacterWindow key={sheet.id} characterSheet={sheet}/>
-        ))}
-        {monsterBlocks.map((monster) => (
-          <DraggableMonsterWindow key={monster.slug} slug={monster.slug}/>
-        ))}
-        {spellCards.map((spell) => (
-          <DraggableSpellWindow key={spell.slug} slug={spell.slug}/>
-        ))}
-        {magicItemCards.map((item) => (
-          <DraggableMagicItemWindow key={item.slug} slug={item.slug}/>
-        ))}
-        {weaponCards.map((item) => (
-          <DraggableWeaponWindow key={item.slug} slug={item.slug}/>
-        ))}
-        {armorCards.map((item) => (
-          <DraggableArmorWindow key={item.slug} slug={item.slug}/>
-        ))}
-        {conditionCards.map((item) => (
-          <DraggableConditionWindow key={item.slug} slug={item.slug}/>
-        ))}
-        {ashOfWarCards.map((item) => (
-          <DraggableAshOfWarWindow key={item.slug} slug={item.slug}/>
-        ))}
-
-      </div>
-    );
-  } else {
-    return <p>Loading...</p>;
-  }
+        );
+    } else {
+        return <p>Loading...</p>;
+    }
 }
 
 // export default Home;

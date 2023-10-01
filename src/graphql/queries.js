@@ -240,8 +240,8 @@ export const getGame = /* GraphQL */ `
       }
       pings {
         items {
-          positionX
-          positionY
+          x
+          y
           scale
           ttl
           id
@@ -835,6 +835,7 @@ export const getMap = /* GraphQL */ `
     getMap(id: $id) {
       tokens {
         items {
+          type
           imageURL
           points
           radius
@@ -844,8 +845,8 @@ export const getMap = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -1008,6 +1009,7 @@ export const getToken = /* GraphQL */ `
           __typename
         }
         token {
+          type
           imageURL
           points
           radius
@@ -1017,8 +1019,8 @@ export const getToken = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -1257,6 +1259,7 @@ export const getToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      type
       imageURL
       points
       radius
@@ -1266,8 +1269,8 @@ export const getToken = /* GraphQL */ `
       width
       height
       rotation
-      positionX
-      positionY
+      x
+      y
       key
       id
       createdAt
@@ -1455,6 +1458,7 @@ export const listTokens = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        type
         imageURL
         points
         radius
@@ -1464,8 +1468,8 @@ export const listTokens = /* GraphQL */ `
         width
         height
         rotation
-        positionX
-        positionY
+        x
+        y
         key
         id
         createdAt
@@ -1533,8 +1537,8 @@ export const getPing = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
-      positionX
-      positionY
+      x
+      y
       scale
       ttl
       id
@@ -1567,8 +1571,8 @@ export const listPings = /* GraphQL */ `
           gameSongQueueId
           __typename
         }
-        positionX
-        positionY
+        x
+        y
         scale
         ttl
         id
@@ -1808,6 +1812,7 @@ export const getCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        type
         imageURL
         points
         radius
@@ -1817,8 +1822,8 @@ export const getCharacterSheet = /* GraphQL */ `
         width
         height
         rotation
-        positionX
-        positionY
+        x
+        y
         key
         id
         createdAt
@@ -2094,6 +2099,7 @@ export const listCharacterSheets = /* GraphQL */ `
           __typename
         }
         token {
+          type
           imageURL
           points
           radius
@@ -2103,8 +2109,8 @@ export const listCharacterSheets = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt

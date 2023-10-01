@@ -259,8 +259,8 @@ export const createGame = /* GraphQL */ `
       }
       pings {
         items {
-          positionX
-          positionY
+          x
+          y
           scale
           ttl
           id
@@ -548,8 +548,8 @@ export const updateGame = /* GraphQL */ `
       }
       pings {
         items {
-          positionX
-          positionY
+          x
+          y
           scale
           ttl
           id
@@ -837,8 +837,8 @@ export const deleteGame = /* GraphQL */ `
       }
       pings {
         items {
-          positionX
-          positionY
+          x
+          y
           scale
           ttl
           id
@@ -1714,6 +1714,7 @@ export const createMap = /* GraphQL */ `
     createMap(input: $input, condition: $condition) {
       tokens {
         items {
+          type
           imageURL
           points
           radius
@@ -1723,8 +1724,8 @@ export const createMap = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -1806,6 +1807,7 @@ export const updateMap = /* GraphQL */ `
     updateMap(input: $input, condition: $condition) {
       tokens {
         items {
+          type
           imageURL
           points
           radius
@@ -1815,8 +1817,8 @@ export const updateMap = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -1898,6 +1900,7 @@ export const deleteMap = /* GraphQL */ `
     deleteMap(input: $input, condition: $condition) {
       tokens {
         items {
+          type
           imageURL
           points
           radius
@@ -1907,8 +1910,8 @@ export const deleteMap = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -2034,6 +2037,7 @@ export const createToken = /* GraphQL */ `
           __typename
         }
         token {
+          type
           imageURL
           points
           radius
@@ -2043,8 +2047,8 @@ export const createToken = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -2283,6 +2287,7 @@ export const createToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      type
       imageURL
       points
       radius
@@ -2292,8 +2297,8 @@ export const createToken = /* GraphQL */ `
       width
       height
       rotation
-      positionX
-      positionY
+      x
+      y
       key
       id
       createdAt
@@ -2356,6 +2361,7 @@ export const updateToken = /* GraphQL */ `
           __typename
         }
         token {
+          type
           imageURL
           points
           radius
@@ -2365,8 +2371,8 @@ export const updateToken = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -2605,6 +2611,7 @@ export const updateToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      type
       imageURL
       points
       radius
@@ -2614,8 +2621,8 @@ export const updateToken = /* GraphQL */ `
       width
       height
       rotation
-      positionX
-      positionY
+      x
+      y
       key
       id
       createdAt
@@ -2678,6 +2685,7 @@ export const deleteToken = /* GraphQL */ `
           __typename
         }
         token {
+          type
           imageURL
           points
           radius
@@ -2687,8 +2695,8 @@ export const deleteToken = /* GraphQL */ `
           width
           height
           rotation
-          positionX
-          positionY
+          x
+          y
           key
           id
           createdAt
@@ -2927,6 +2935,7 @@ export const deleteToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      type
       imageURL
       points
       radius
@@ -2936,8 +2945,8 @@ export const deleteToken = /* GraphQL */ `
       width
       height
       rotation
-      positionX
-      positionY
+      x
+      y
       key
       id
       createdAt
@@ -3005,8 +3014,8 @@ export const createPing = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
-      positionX
-      positionY
+      x
+      y
       scale
       ttl
       id
@@ -3074,8 +3083,8 @@ export const updatePing = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
-      positionX
-      positionY
+      x
+      y
       scale
       ttl
       id
@@ -3143,8 +3152,8 @@ export const deletePing = /* GraphQL */ `
         gameSongQueueId
         __typename
       }
-      positionX
-      positionY
+      x
+      y
       scale
       ttl
       id
@@ -3384,6 +3393,7 @@ export const createCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        type
         imageURL
         points
         radius
@@ -3393,8 +3403,8 @@ export const createCharacterSheet = /* GraphQL */ `
         width
         height
         rotation
-        positionX
-        positionY
+        x
+        y
         key
         id
         createdAt
@@ -3874,6 +3884,7 @@ export const updateCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        type
         imageURL
         points
         radius
@@ -3883,8 +3894,8 @@ export const updateCharacterSheet = /* GraphQL */ `
         width
         height
         rotation
-        positionX
-        positionY
+        x
+        y
         key
         id
         createdAt
@@ -4364,6 +4375,7 @@ export const deleteCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        type
         imageURL
         points
         radius
@@ -4373,8 +4385,8 @@ export const deleteCharacterSheet = /* GraphQL */ `
         width
         height
         rotation
-        positionX
-        positionY
+        x
+        y
         key
         id
         createdAt

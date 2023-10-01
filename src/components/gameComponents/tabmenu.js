@@ -1,20 +1,20 @@
 import React, {useState} from 'react';
 import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import ChatRoom from "@/components/gameComponents/chatroom";
+import ChatRoom from "@/components/gameComponents/tabs/chatroom";
 import styles from "@/styles/TabMenu.module.css"
 import {BsBook} from "@react-icons/all-files/bs/BsBook";
 import {BsChatDotsFill} from "@react-icons/all-files/bs/BsChatDotsFill";
 import {AiOutlinePicture} from '@react-icons/all-files/ai/AiOutlinePicture'
 import AudioPlayer from "@/components/gameComponents/audioplayer";
-import ArtLibrary from "@/components/gameComponents/artlibrary";
+import ArtLibrary from "@/components/gameComponents/tabs/artlibrary";
 import artDirectory from '../../../public/art_directory.json';
-import JournalList from "@/components/gameComponents/journallist";
-import SRDList from "@/components/gameComponents/srdlist";
-import MapList from "@/components/gameComponents/maplist";
+import JournalList from "@/components/gameComponents/tabs/journallist";
+import SRDList from "@/components/gameComponents/tabs/srdlist";
+import MapList from "@/components/gameComponents/tabs/maplist";
 import {BsMusicNoteList} from "@react-icons/all-files/bs/BsMusicNoteList";
-import SettingsMenu from "@/components/gameComponents/settingsmenu";
-import MusicLibrary from "@/components/gameComponents/musiclibrary";
+import SettingsMenu from "@/components/gameComponents/tabs/settingsmenu";
+import MusicLibrary from "@/components/gameComponents/tabs/musiclibrary";
 import {FaDragon} from "@react-icons/all-files/fa/FaDragon";
 import {BsCompass} from "@react-icons/all-files/bs/BsCompass";
 import {BsCodeSlash} from "@react-icons/all-files/bs/BsCodeSlash";

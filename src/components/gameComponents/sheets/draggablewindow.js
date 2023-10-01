@@ -1,17 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
-import styles from '../../styles/DraggableWindow.module.css'
+import styles from '../../../styles/DraggableWindow.module.css'
 import 'react-resizable/css/styles.css';
 import {Rnd} from "react-rnd";
-import CharacterSheet from "@/components/gameComponents/charactersheet";
+import CharacterSheet from "@/components/gameComponents/sheets/charactersheet";
 import {BsX} from "@react-icons/all-files/bs/BsX";
 import useBattlemapStore from "@/stores/battlemapStore";
-import MonsterSheet from "@/components/gameComponents/monstersheet";
-import SpellCard from "@/components/gameComponents/spellcard";
-import MagicItemCard from "@/components/gameComponents/magicitemcard";
-import WeaponCard from "@/components/gameComponents/weaponcard";
-import ArmorCard from "@/components/gameComponents/armorcard";
-import ConditionCard from "@/components/gameComponents/conditioncard";
-import AshOfWarCard from "@/components/gameComponents/ashofwarcard";
+import MonsterSheet from "@/components/gameComponents/sheets/monstersheet";
+import SpellCard from "@/components/gameComponents/cards/spellcard";
+import MagicItemCard from "@/components/gameComponents/cards/magicitemcard";
+import WeaponCard from "@/components/gameComponents/cards/weaponcard";
+import ArmorCard from "@/components/gameComponents/cards/armorcard";
+import ConditionCard from "@/components/gameComponents/cards/conditioncard";
+import AshOfWarCard from "@/components/gameComponents/cards/ashofwarcard";
 import NewWindow from "react-new-window";
 import {BiWindows} from "@react-icons/all-files/bi/BiWindows";
 

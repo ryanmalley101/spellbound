@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import styles from "@/styles/MusicLibrary.module.css";
-import playlists from "../../../public/playlists.json"
+import playlists from "../../../../public/playlists.json"
 import {API} from "aws-amplify";
 import {Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import {BsFillCaretDownFill} from "@react-icons/all-files/bs/BsFillCaretDownFill";

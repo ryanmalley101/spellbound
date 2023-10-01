@@ -1,131 +1,16 @@
 import {Circle, Layer, Line, Rect, Stage, Text, Transformer} from 'react-konva';
 
-import {Fragment, useEffect, useRef, useState} from "react";
-import styles from '../../styles/Battlemap.module.css'
+import React, {Fragment, useEffect, useRef, useState} from "react";
+import styles from '../../../styles/Battlemap.module.css'
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
 import {v4 as uuidv4} from 'uuid';
+import DraggableIcon from "@/components/gameComponents/mapElements/draggableicon";
+import GridOverlay from "@/components/gameComponents/mapElements/gridoverlay";
+import Drawing from "@/components/gameComponents/mapElements/drawing";
+import {API} from "aws-amplify";
+import * as mutations from "@/graphql/mutations";
 
-const Drawing = ({
-                     shape,
-                     index,
-                     onShapeDragEnd,
-                     onLineDragEnd,
-                     editing,
-                     handleTextDblClick,
-                     selectedLabelId,
-                     handleShapeSelect
-                 }) => {
-    if (shape.type === DRAW_ENUM.PEN) {
-        return <>
-            <Line
-                points={shape.points}
-                stroke="black"
-                strokeWidth={2}
-                tension={0.5}
-                lineCap="round"
-                lineJoin="round"
-                draggable
-                onDragEnd={(e) => onLineDragEnd(e, index)}
-                onClick={(e) => handleShapeSelect(e, shape)}
-                className="shape"
-            />
-        </>
-    }
-    if (shape.type === "RECTANGLE") {
-        return <>
-            <Rect
-                key={index}
-                x={shape.x}
-                y={shape.y}
-                width={shape.width}
-                height={shape.height}
-                stroke={'black'}
-                strokeWidth={4}
-                draggable
-                onDragEnd={(e) => onShapeDragEnd(e, index)}
-                onClick={(e) => handleShapeSelect(e, shape)}
-                className="shape"
-            />
-        </>
-    }
-    if (shape.type === DRAW_ENUM.CIRCLE) {
-        return <>
-            <Circle
-                key={index}
-                x={shape.x}
-                y={shape.y}
-                radius={shape.radius}
-                stroke={'black'}
-                strokeWidth={4}
-                draggable
-                onDragEnd={(e) => onShapeDragEnd(e, index)}
-                onClick={(e) => handleShapeSelect(e, shape)}
-                className="shape"
-            />
-        </>
-    }
-    if (shape.type === DRAW_ENUM.TRIANGLE) {
-        return <>
-            <Line
-                key={index}
-                closed={true}
-                points={shape.points}
-                stroke={'black'}
-                strokeWidth={4}
-                draggable
-                onDragEnd={(e) => onShapeDragEnd(e, index)}
-                onClick={(e) => handleShapeSelect(e, shape)}
-                className="shape"
-            />
-        </>
-    }
-    if (shape.type === DRAW_ENUM.POLYGON) {
-        return <>
-            <Line
-                closed={true}
-                points={shape.points}
-                stroke={'black'}
-                strokeWidth={4}
-                draggable
-                onDragEnd={(e) => onLineDragEnd(e, index)}
-                onClick={(e) => handleShapeSelect(e, shape)}
-                className="shape"
-            />
-        </>
-    }
-    if (shape.type === DRAW_ENUM.LABEL) {
-        return <>
-            <Text
-                x={shape.x}
-                y={shape.y}
-                text={shape.text}
-                fontSize={shape.fontSize}
-                draggable={!editing}
-                onDblClick={(e) => handleTextDblClick(e, shape.id)}
-                onClick={(e) => {
-                    // Prevent selecting the stage when clicking on text
-                    e.cancelBubble = true;
-                }}
-                onDragEnd={(e) => onShapeDragEnd(e, index)}
-                className="shape"
-            />
-            {selectedLabelId === shape.id && (
-                <Transformer
-                    // ref={textInputRef}
-                    attachTo={shape}
-                    visible={true}
-                    onClick={(e) => {
-                        // Prevent selecting the stage when clicking on text
-                        e.cancelBubble = true;
-                    }}
-                    rotationEnabled={false}
-                />
-            )}
-        </>
-    }
-}
-
-const DrawingCanvas = ({windowPositionRef, scale}) => {
+const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE}) => {
 
     const {
         zoomLevel, selectedTool, drawTool
@@ -135,8 +20,8 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
     const [selectedShapes, setSelectedShapes] = useState([]);
     const stageRef = useRef();
 
-    const [shapes, setShapes] = useState([])
-    const lastShapeRef = useRef(0)
+    const [currentShape, setCurrentShape] = useState(null)
+    // const lastShapeRef = useRef(0)
 
     const [selectedLabelId, setSelectedLabelId] = useState("");
     const [editing, setEditing] = useState(false);
@@ -200,15 +85,15 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         // textInputRef.current.focus();
     }
 
-    const handleTextChange = (e) => {
-        const updatedTextObjects = shapes.map((shape) => {
-            if (shape.id === selectedLabelId) {
-                return {...shape, text: e.target.value};
-            }
-            return shape;
-        });
-        setShapes(updatedTextObjects);
-    };
+    // const handleTextChange = (e) => {
+    //     const updatedTextObjects = shapes.map((shape) => {
+    //         if (shape.id === selectedLabelId) {
+    //             return {...shape, text: e.target.value};
+    //         }
+    //         return shape;
+    //     });
+    //     setShapes(updatedTextObjects);
+    // };
 
     const handleTextKeyPress = (e) => {
         if (e.key === "Enter") {
@@ -226,12 +111,13 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                 setEditing(false);
                 setSelectedLabelId(null);
             }
-        };
+        }
+
         textInputRef.current.focus()
         window.addEventListener("keydown", handler);
         return () => {
             window.removeEventListener("keydown", handler);
-        };
+        }
     }, [editing])
 
     const handleMouseDown = (e) => {
@@ -244,36 +130,27 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
             const point = getPoint(e)
 
             if (drawTool === DRAW_ENUM.PEN) {
-                const newShapes = [...shapes, {type: DRAW_ENUM.PEN, id: uuidv4(), points: [point.x, point.y]}]
-                lastShapeRef.current = newShapes.length - 1
-                console.log(newShapes)
-                setShapes(newShapes);
+                setCurrentShape({type: DRAW_ENUM.PEN, id: uuidv4(), points: [point.x, point.y]})
             }
             if (drawTool === DRAW_ENUM.RECTANGLE) {
-                const newShapes = [...shapes, {
+                setCurrentShape({
                     type: DRAW_ENUM.RECTANGLE,
                     id: uuidv4(),
                     x: point.x,
                     y: point.y,
                     width: 0,
                     height: 0
-                }]
-                lastShapeRef.current = newShapes.length - 1
+                })
                 setInitialPoint(point)
-                setShapes(newShapes);
             }
             if (drawTool === DRAW_ENUM.CIRCLE) {
-                const newShapes = [...shapes, {type: DRAW_ENUM.CIRCLE, id: uuidv4(), x: point.x, y: point.y, radius: 0}]
-                lastShapeRef.current = newShapes.length - 1
+                setCurrentShape({type: DRAW_ENUM.CIRCLE, id: uuidv4(), x: point.x, y: point.y, radius: 0})
                 setInitialPoint(point)
-                setShapes(newShapes);
             }
 
             if (drawTool === DRAW_ENUM.TRIANGLE) {
-                const newShapes = [...shapes, {type: DRAW_ENUM.TRIANGLE, id: uuidv4(), points: [point.x, point.y]}]
-                lastShapeRef.current = newShapes.length - 1
+                setCurrentShape({type: DRAW_ENUM.TRIANGLE, id: uuidv4(), points: [point.x, point.y]})
                 setInitialPoint(point)
-                setShapes(newShapes);
             }
 
             if (drawTool === DRAW_ENUM.LABEL) {
@@ -288,21 +165,21 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                             clickTimeout.current = null
                             console.log("Creating new label")
                             const newLabelId = uuidv4()
-                            const newShapes = [...shapes, {
+                            setCurrentShape({
                                 type: DRAW_ENUM.LABEL,
                                 text: "NEW LABEL",
                                 x: point.x,
                                 y: point.y,
                                 fontSize: 32,
                                 id: newLabelId
-                            }]
-                            lastShapeRef.current = newShapes.length - 1
-                            setTimeout(() => {
-                                // Stops the click event itself from removing focus from the newly editable label
-                                setEditing(true)
-                            }, 100);
-                            setSelectedLabelId(newLabelId)
-                            setShapes(newShapes);
+                            })
+                            //
+                            // setTimeout(() => {
+                            //     // Stops the click event itself from removing focus from the newly editable label
+                            //     setEditing(true)
+                            // }, 100);
+                            // setSelectedLabelId(newLabelId)
+                            // setShapes(newShapes);
                         }, 500)
                     }
                 }
@@ -321,7 +198,6 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
     };
 
     const handleMouseMove = (e) => {
-
         if (selectedTool === TOOL_ENUM.SELECT) {
             if (selectionRect && selectedShapes.length < 1) {
                 const {x, y} = getPoint(e)
@@ -340,9 +216,9 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         const point = getPoint(e)
 
         if (drawTool === DRAW_ENUM.PEN) {
-            const updatedLine = [...shapes]
-            updatedLine[lastShapeRef.current].points = updatedLine[lastShapeRef.current].points.concat([point.x, point.y]);
-            setShapes(updatedLine)
+            const oldShape = {...currentShape}
+            oldShape.points = currentShape.points.concat([point.x, point.y]);
+            setCurrentShape(oldShape)
         }
         if (drawTool === DRAW_ENUM.RECTANGLE) {
             const rect = {
@@ -353,9 +229,7 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                 width: Math.abs(point.x - initialPoint.x),
                 height: Math.abs(point.y - initialPoint.y)
             }
-            const oldShapes = [...shapes]
-            oldShapes[lastShapeRef.current] = rect
-            setShapes(oldShapes)
+            setCurrentShape(rect)
         }
         if (drawTool === DRAW_ENUM.CIRCLE) {
             const deltaX = Math.abs(point.x - initialPoint.x)
@@ -369,9 +243,7 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                 y: initialPoint.y,
                 radius: distance
             }
-            const oldShapes = [...shapes]
-            oldShapes[lastShapeRef.current] = circle
-            setShapes(oldShapes)
+            setCurrentShape(circle)
         }
         if (drawTool === DRAW_ENUM.TRIANGLE) {
             const height = Math.sqrt(Math.pow(point.x - initialPoint.x, 2) + Math.pow(point.y - initialPoint.y, 2));
@@ -390,22 +262,20 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
             const bottomY = initialPoint.y + sideLength * Math.sin(angle2);
 
             const trianglePoints = [initialPoint.x, initialPoint.y, topX, topY, bottomX, bottomY]
-            const oldShapes = [...shapes]
-            oldShapes[lastShapeRef.current].points = trianglePoints
-            setShapes(oldShapes)
+            const oldShape = {...currentShape}
+            oldShape.points = trianglePoints
+            setCurrentShape(oldShape)
         }
 
         if (drawTool === DRAW_ENUM.POLYGON) {
-            const oldShapes = [...shapes]
-            const oldPolygon = oldShapes[lastShapeRef.current]
-            oldPolygon.points[currentPolyPoint.current] = point.x
-            oldPolygon.points[currentPolyPoint.current + 1] = point.y
-            oldShapes[lastShapeRef.current] = oldPolygon
-            setShapes(oldShapes)
+            const oldShape = {...currentShape}
+            oldShape.points[currentPolyPoint.current] = point.x
+            oldShape.points[currentPolyPoint.current + 1] = point.y
+            setCurrentShape(oldShape)
         }
     };
 
-    const handleMouseUp = (e) => {
+    const handleMouseUp = async (e) => {
         if (selectedTool === TOOL_ENUM.SELECT) {
             if (selectionRect && selectionRect.x1 !== selectionRect.x2 && selectionRect.y1 !== selectionRect.y2) {
                 console.log(selectionRect)
@@ -433,37 +303,52 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         if (drawTool === DRAW_ENUM.POLYGON) {
             if (!isDrawing) {
                 setIsDrawing(true);
-                const oldShapes = [...shapes, {
+                setCurrentShape({
                     type: DRAW_ENUM.POLYGON,
                     id: uuidv4(),
                     points: [point.x, point.y, point.x, point.y]
-                }]
-                lastShapeRef.current = oldShapes.length - 1
+                })
                 currentPolyPoint.current = 2
                 setInitialPoint(point)
-                setShapes(oldShapes)
                 return
             }
 
-            lastShapeRef.current = shapes.length - 1
-            console.log(shapes)
-            const currentPolygon = shapes[lastShapeRef.current]
+            const currentPolygon = {...currentShape}
             const deltaX = Math.abs(currentPolygon.points[currentPolyPoint.current - 2] - point.x)
             const deltaY = Math.abs(currentPolygon.points[currentPolyPoint.current - 1] - point.y)
             console.log(deltaX, deltaY)
             if (deltaX < 2 && deltaY < 2) {
                 setIsDrawing(false);
-                lastShapeRef.current = -1
-                return
+                const input = {...currentShape}
+
+                const newToken = await API.graphql({
+                    query: mutations.createToken,
+                    variables: {input: input}
+                });
+
+                console.log("Creating a new token")
+                console.log(newToken)
+                setCurrentShape(null)
+                return newToken.data.createToken.id
             } else {
-                const oldShapes = [...shapes]
-                oldShapes[lastShapeRef.current].points = oldShapes[lastShapeRef.current].points.concat([point.x, point.y])
-                setShapes(oldShapes)
+                currentPolygon.points = currentPolygon.points.concat([point.x, point.y])
+                setCurrentShape(currentPolygon)
                 currentPolyPoint.current = currentPolyPoint.current + 2
                 return
             }
+        } else {
+            setIsDrawing(false);
+            const input = {...currentShape}
+            const newToken = await API.graphql({
+                query: mutations.createToken,
+                variables: {input: input}
+            });
+
+            console.log("Creating a new token")
+            console.log(newToken)
+            setCurrentShape(null)
+            return newToken.data.createToken.id
         }
-        setIsDrawing(false);
     };
 
     const isInsideSelection = (rect, selection) => {
@@ -495,35 +380,35 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
         }
     }, [])
 
-    const onShapeDragEnd = (e, index) => {
-        console.log(e, index)
-        setShapes(prevState => {
-            return prevState.map((r, i) => {
-                if (i === index) {
-                    r.x = e.target.x()
-                    r.y = e.target.y()
-                }
-                return r
-            })
-        })
-    }
+    // const onShapeDragEnd = (e, index) => {
+    //     console.log(e, index)
+    //     setShapes(prevState => {
+    //         return prevState.map((r, i) => {
+    //             if (i === index) {
+    //                 r.x = e.target.x()
+    //                 r.y = e.target.y()
+    //             }
+    //             return r
+    //         })
+    //     })
+    // }
 
-    const onLineDragEnd = (e, index) => {
-        console.log(e, index)
-        setShapes(prevState => {
-            return prevState.map((r, i) => {
-                if (i === index) {
-                    r.points = r.points.map((point, index) => {
-                        if (index % 2 === 0) {
-                            return point + e.target.x()
-                        }
-                        return point + e.target.y()
-                    })
-                }
-                return r
-            })
-        })
-    }
+    // const onLineDragEnd = (e, index) => {
+    //     console.log(e, index)
+    //     setShapes(prevState => {
+    //         return prevState.map((r, i) => {
+    //             if (i === index) {
+    //                 r.points = r.points.map((point, index) => {
+    //                     if (index % 2 === 0) {
+    //                         return point + e.target.x()
+    //                     }
+    //                     return point + e.target.y()
+    //                 })
+    //             }
+    //             return r
+    //         })
+    //     })
+    // }
 
     return (
         <div
@@ -546,7 +431,46 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                 onClick={handleStageClick} // Clear selection when clicking on the stage
             >
                 <Layer>
-                    {shapes.map((shape, index) => {
+                    {<Drawing shape={currentShape}
+                              editing={editing}
+                              handleTextDblClick={handleTextDblClick}
+                              selectedLabelId={selectedLabelId}
+                              handleShapeSelect={handleShapeClick}/>}
+                    {mapTokens.map((token, index) => {
+                        if (token.layer === "MAP") {
+                            // console.log(token.key)
+                            return <Drawing key={token.key}
+                                            shape={token}
+                                            editing={editing}
+                                            handleTextDblClick={handleTextDblClick}
+                                            selectedLabelId={selectedLabelId}
+                                            handleShapeSelect={handleShapeClick}/>
+                        }
+                    })}
+                    <GridOverlay width={widthUnits * GRID_SIZE} height={heightUnits * GRID_SIZE}
+                                 gridSize={GRID_SIZE}/>
+                    {mapTokens.map((token, index) => {
+                        if (token.layer === "TOKEN") {
+                            return <Drawing key={token.key}
+                                            shape={token}
+                                            editing={editing}
+                                            handleTextDblClick={handleTextDblClick}
+                                            selectedLabelId={selectedLabelId}
+                                            handleShapeSelect={handleShapeClick}/>
+                        }
+                    })}
+                    {mapTokens.map((token, index) => {
+                        if (token.layer === "GM") {
+                            return <Drawing key={token.key}
+                                            shape={token}
+                                            editing={editing}
+                                            handleTextDblClick={handleTextDblClick}
+                                            selectedLabelId={selectedLabelId}
+                                            handleShapeSelect={handleShapeClick}/>
+                        }
+                    })}
+
+                    {mapTokens.map((shape, index) => {
                         return <Fragment key={JSON.stringify(shape)}>
                             <Drawing
                                 shape={shape}
@@ -554,8 +478,8 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                                 editing={editing}
                                 handleTextDblClick={handleTextDblClick}
                                 selectedLabelId={selectedLabelId}
-                                onShapeDragEnd={onShapeDragEnd}
-                                onLineDragEnd={onLineDragEnd}
+                                // onShapeDragEnd={onShapeDragEnd}
+                                // onLineDragEnd={onLineDragEnd}
                                 handleShapeSelect={handleShapeClick}
                             />
                         </Fragment>
@@ -579,24 +503,24 @@ const DrawingCanvas = ({windowPositionRef, scale}) => {
                     )}
                 </Layer>
             </Stage>
-            {editing && (
-                <input
-                    type="text"
-                    ref={textInputRef}
-                    value={shapes.find((obj) => obj.id === selectedLabelId)?.text || ""}
-                    onChange={handleTextChange}
-                    autoFocus
-                    onBlur={(e) => setEditing(false)}
-                    onKeyPress={handleTextKeyPress}
-                    style={{
-                        position: "absolute",
-                        top: `${shapes.find((obj) => obj.id === selectedLabelId)?.y || "10"}px`,
-                        left: `${shapes.find((obj) => obj.id === selectedLabelId)?.x || "10"}px`,
-                        zIndex: 999,
-                        fontSize: `${shapes.find((obj) => obj.id === selectedLabelId)?.fontSize || "16"}px`
-                    }}
-                />
-            )}
+            {/*{editing && (*/}
+            {/*    <input*/}
+            {/*        type="text"*/}
+            {/*        ref={textInputRef}*/}
+            {/*        value={shapes.find((obj) => obj.id === selectedLabelId)?.text || ""}*/}
+            {/*        onChange={handleTextChange}*/}
+            {/*        autoFocus*/}
+            {/*        onBlur={(e) => setEditing(false)}*/}
+            {/*        onKeyPress={handleTextKeyPress}*/}
+            {/*        style={{*/}
+            {/*            position: "absolute",*/}
+            {/*            top: `${shapes.find((obj) => obj.id === selectedLabelId)?.y || "10"}px`,*/}
+            {/*            left: `${shapes.find((obj) => obj.id === selectedLabelId)?.x || "10"}px`,*/}
+            {/*            zIndex: 999,*/}
+            {/*            fontSize: `${shapes.find((obj) => obj.id === selectedLabelId)?.fontSize || "16"}px`*/}
+            {/*        }}*/}
+            {/*    />*/}
+            {/*)}*/}
         </div>
 
     )

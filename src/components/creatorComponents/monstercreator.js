@@ -13,7 +13,7 @@ import {
     Typography
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"
-import MonsterSheet, {cleanMonster} from "@/components/gameComponents/monstersheet";
+import MonsterSheet, {cleanMonster} from "@/components/gameComponents/sheets/monstersheet";
 import {getMonsterProf, scoreToMod} from "@/5eReference/converters";
 import ActionRow from "@/components/creatorComponents/actionrow";
 import AbilityRow from "@/components/creatorComponents/abilityrow";

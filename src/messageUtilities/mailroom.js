@@ -1,69 +1,69 @@
 import {API} from "aws-amplify";
-import {replaceDamageTags} from "@/components/gameComponents/monstersheet";
+import {replaceDamageTags} from "@/components/gameComponents/sheets/monstersheet";
 import {getToHit} from "@/5eReference/converters";
 
 export const rollCheck = async (name, d20mod, playerID, gameID, advantage) => {
-  // Prevent the page from reloading
-  const input = {
-    messageType: "CHECK",
-    abilityName: name,
-    d20mod: d20mod,
-    owner: playerID,
-    gameMessageListId: gameID,
-    advantage: advantage
-  };
-  // Call the createNewGame mutation
-  const response = await API.graphql({
-    query: `
+    // Prevent the page from reloading
+    const input = {
+        messageType: "CHECK",
+        abilityName: name,
+        d20mod: d20mod,
+        owner: playerID,
+        gameMessageListId: gameID,
+        advantage: advantage
+    };
+    // Call the createNewGame mutation
+    const response = await API.graphql({
+        query: `
         mutation ParseMessage($input: ParseMessageInput!) {
           parseMessage(input: $input) {
             id
           }
         }
       `,
-    variables: {
-      input
-    },
-  });
+        variables: {
+            input
+        },
+    });
 
-  console.log("Ability Response", response)
+    console.log("Ability Response", response)
 
-  return response
+    return response
 }
 
 // Remember to eventually refactor to allow damage dice arrays rather than just one
 export const rollAttack = async (attack, stats, playerID, gameID, advantage) => {
-  console.log("Rolling Attack")
-  console.log(attack)
-  // Prevent the page from reloading
-  const convertedDamage = attack.damage.map((dice) => {
-    return {diceString: replaceDamageTags(dice.damage_dice, stats), damageType: dice.damage_type}
-  })
-  const input = {
-    messageType: "ATTACK",
-    abilityName: attack.name,
-    d20mod: getToHit(stats, attack),
-    damageDice: convertedDamage,
-    messageText: attack.notes,
-    owner: playerID,
-    gameMessageListId: gameID,
-    gameId: gameID,
-    advantage: advantage,
-  };
-  // Call the createNewGame mutation
-  const response = await API.graphql({
-    query: `
+    console.log("Rolling Attack")
+    console.log(attack)
+    // Prevent the page from reloading
+    const convertedDamage = attack.damage.map((dice) => {
+        return {diceString: replaceDamageTags(dice.damage_dice, stats), damageType: dice.damage_type}
+    })
+    const input = {
+        messageType: "ATTACK",
+        abilityName: attack.name,
+        d20mod: getToHit(stats, attack),
+        damageDice: convertedDamage,
+        messageText: attack.notes,
+        owner: playerID,
+        gameMessageListId: gameID,
+        gameId: gameID,
+        advantage: advantage,
+    };
+    // Call the createNewGame mutation
+    const response = await API.graphql({
+        query: `
         mutation ParseMessage($input: ParseMessageInput!) {
           parseMessage(input: $input) {
             id
           }
         }
       `,
-    variables: {
-      input
-    },
-  });
-  console.log("Attack response", attack)
+        variables: {
+            input
+        },
+    });
+    console.log("Attack response", attack)
 
-  return response
+    return response
 }

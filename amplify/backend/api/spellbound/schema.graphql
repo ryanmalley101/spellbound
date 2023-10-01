@@ -183,6 +183,7 @@ type Token
 {
     map: Map! @belongsTo
     character: CharacterSheet @belongsTo
+    type: String
     imageURL: String
     points: [Float]
     radius: Float
@@ -192,8 +193,8 @@ type Token
     width: Float
     height: Float
     rotation: Float
-    positionX: Float
-    positionY: Float
+    x: Float
+    y: Float
     key: String
 }
 
@@ -209,8 +210,8 @@ input TokenInput {
     width: Float
     height: Float
     rotation: Float
-    positionX: Float
-    positionY: Float
+    x: Float
+    y: Float
     token: String
 }
 
@@ -219,16 +220,16 @@ type Ping
 @auth(rules: [{ allow: private }])
 {
     game: Game! @belongsTo
-    positionX: Float!
-    positionY: Float!
+    x: Float!
+    y: Float!
     scale: Float!
-    ttl: Int
+    ttl: Int @ttl
 }
 
 input PingInput {
     gamePingsId: ID
-    positionX: Float
-    positionY: Float
+    x: Float
+    y: Float
     scale: Float
     ttl: Int
 }

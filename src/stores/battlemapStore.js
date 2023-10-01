@@ -15,7 +15,8 @@ export const DRAW_ENUM = {
     RECTANGLE: "RECTANGLE",
     TRIANGLE: "TRIANGLE",
     LABEL: "TEXT",
-    POLYGON: "POLYGON"
+    POLYGON: "POLYGON",
+    IMAGE: "IMAGE"
 }
 
 const useBattlemapStore = create((set) => ({
