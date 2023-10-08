@@ -27,17 +27,19 @@ const Drawing = ({
         if (shapeRef.current) {
             shapeRef.current.scaleX(1)
             shapeRef.current.scaleY(1)
+            shapeRef.current.x(shape.x)
+            shapeRef.current.y(shape.y)
         }
     }, [shape]);
 
     const handleResizeStop = async (e, direction, ref, delta, position) => {
-
+        console.log("HANDLING TRANSFORM END")
         // transformer is changing scale of the node
         // and NOT its width or height
         // but in the store we have only width and height
         // to match the data better we will reset scale on transform end
         const node = selectionRef.current;
-        console.log(e)
+        console.log(e, node.scaleX(), node.scaleY())
         const scaleX = node.scaleX();
         const scaleY = node.scaleY();
         // shapeRef.current.scaleX(1)
@@ -94,6 +96,33 @@ const Drawing = ({
     }
 
     const onLineDragEnd = async (e, index) => {
+        const deflat = (n, arr, y = []) => {
+            return arr.length === 0
+                ? y
+                : deflat(n, arr.slice(n), y.concat([arr.slice(0, n)]));
+        }
+
+        const node = shapeRef.current;
+        if (node) {
+            console.log(node.points())
+            let points = [];
+            let flatendPoints = deflat(2, node.points());
+            flatendPoints.forEach((k, i) => {
+                let {x, y} = node
+                    .getAbsoluteTransform()
+                    .point({x: k[0], y: k[1]});
+                points.push([x, y]);
+            });
+
+            console.log(points.flat(2));
+            const updatedToken = await API.graphql({
+                query: mutations.updateToken,
+                variables: {input: {id: shape.id, points: points.flat(2)}}
+            });
+            console.log(updatedToken)
+            return
+        }
+
         console.log(e.target.getTransform(), index)
         const draggedTokenDetails = {
             id: shape.id,

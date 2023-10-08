@@ -355,7 +355,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
         }
     };
 
-    const createNewShape = async (shape) => {
+    const createNewShape = async () => {
         const input = {...currentShape, mapTokensId: activeMap,}
         console.log(currentShape)
         const newToken = await API.graphql({
