@@ -1,51 +1,46 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {Circle} from 'react-konva';
 
 const Ping = ({x, y, scale}) => {
-  const [ringSize, setRingSize] = useState(0);
-  const [pingVisible, setPingVisible] = useState(true);
-  const animationRef = useRef();
+    const [ringSize, setRingSize] = useState(0);
+    const [pingVisible, setPingVisible] = useState(true);
 
-  // console.log("Creating ping")
+    useEffect(() => {
+        const animation = new window.Konva.Animation(frame => {
+            if (ringSize >= 100) {
+                setPingVisible(false);
+                animation.stop();
+            } else {
+                setRingSize(ringSize + 3); // Adjust the increment value to control the animation speed
+            }
+        });
 
-  useEffect(() => {
-    const startAnimation = () => {
-      animationRef.current = requestAnimationFrame(updateRingSize);
-    };
+        animation.start();
 
-    const updateRingSize = () => {
-      setRingSize((prevSize) => {
-        if (prevSize >= 100) {
-          setPingVisible(false);
-          return 0;
-        }
-        return prevSize + 3; // Adjust the decrement value to control the animation speed
-      });
-      animationRef.current = requestAnimationFrame(updateRingSize);
-    };
+        return () => {
+            animation.stop();
+        };
+    }, [ringSize]);
 
-    startAnimation();
-
-    return () => {
-      cancelAnimationFrame(animationRef.current);
-    };
-  }, []);
-
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        left: x - ringSize / 2,
-        top: y - ringSize / 2,
-        width: ringSize,
-        height: ringSize,
-        borderRadius: '50%',
-        border: '5px solid #00f',
-        boxShadow: '0 0 5px #00f',
-        opacity: pingVisible ? 1 : 0,
-        zIndex: 10000
-      }}
-    ></div>
-  );
+    return (
+        <>
+            <Circle
+                x={x}
+                y={y}
+                radius={ringSize / 2}
+                fill='transparent'
+                stroke='#00f'
+                strokeWidth={5}
+                opacity={pingVisible ? 1 : 0}
+                shadowColor='#00f'
+                shadowBlur={5}
+                shadowOpacity={1}
+                shadowOffsetX={0}
+                shadowOffsetY={0}
+            />
+        </>
+    );
 };
+
 
 export default Ping;

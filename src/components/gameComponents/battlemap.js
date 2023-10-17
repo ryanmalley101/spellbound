@@ -27,11 +27,6 @@ const BattleMap = () => {
 
     const windowPositionRef = useRef({x: 0, y: 0})
     const scale = useRef(1)
-    const [pings, setPings] = useState([])
-    const initialMousePositionRef = useRef(null)
-    const mouseDownTimeRef = useRef(null);
-    const mouseReleasedRef = useRef(false);
-    const currentMousePositionRef = useRef({x: 0, y: 0});
 
     let dragHandle
     const body = document.body
@@ -103,110 +98,6 @@ const BattleMap = () => {
         mapLayer, setMapLayer, gameID, activeMap, setActiveMap, playingSong, setPlayingSong, setIsSongPlaying
     } = useBattlemapStore();
 
-    useEffect(() => {
-
-        const handleMouseDown = async (event) => {
-
-            console.log("MouseDown")
-            initialMousePositionRef.current = {
-                x: (event.clientX),
-                y: (event.clientY)
-            }
-            currentMousePositionRef.current = {
-                x: event.clientX,
-                y: event.clientY,
-            };
-
-            mouseDownTimeRef.current = Date.now()
-            mouseReleasedRef.current = false
-
-            // Automatically call handleClick after 1 second
-            setTimeout(async () => {
-                console.log("Timeout", mouseReleasedRef.current)
-                if (!mouseReleasedRef.current) {
-                    await handleMapClick(event)
-                }
-            }, 600);
-        };
-
-        const handleMouseMove = (event) => {
-            currentMousePositionRef.current = {
-                x: event.clientX,
-                y: event.clientY,
-            };
-        };
-
-        const handleMouseUp = () => {
-            console.log("Handle mouse up")
-            mouseReleasedRef.current = true
-            // mouseDownTimeRef.current = null
-            // Clear the timeout if the mouse is released before 1 second
-            // clearTimeout();
-        };
-
-        const handleMapClick = async (event) => {
-            console.log("Handling map click", event, windowPositionRef.current, scale.current)
-            if (!mouseReleasedRef.current && mouseDownTimeRef.current) {
-                const clickEndTime = new Date();
-                const timeDifference = clickEndTime - mouseDownTimeRef.current;
-                if (timeDifference >= 500) {
-                    const isMouseStationary = (
-                        initialMousePositionRef.current.x === currentMousePositionRef.current.x &&
-                        initialMousePositionRef.current.y === currentMousePositionRef.current.y
-                    );
-
-                    if (isMouseStationary) {
-                        console.log("Creating a ping")
-
-                        // // Perform the GraphQL mutation to create a Ping object
-                        // const x = event.clientX;
-                        // const y = event.clientY;
-
-                        const deconstructedX = (event.clientX - 75 - windowPositionRef.current.x) / scale.current
-                        const deconstructedY = (event.clientY - 20 - windowPositionRef.current.y) / scale.current
-                        // Update this with the current scale value from state
-                        const pingInput = {
-                            gamePingsId: gameID,
-                            x: deconstructedX,
-                            y: deconstructedY,
-                            scale: zoomLevel,
-                            ttl: Math.floor((Date.now() / 1000)) + 60
-                        };
-                        console.log(pingInput)
-                        try {
-                            const response = await API.graphql({
-                                query: mutations.createPing,
-                                variables: {input: pingInput},
-                            });
-                            console.log("Created Ping object:", response);
-                        } catch (error) {
-                            console.error("Error creating Ping object:", error);
-                        }
-                    } else {
-                        console.log("Mouse wasn't stationary during press")
-                    }
-                }
-            }
-        };
-
-        // Attach the event listener to the map container
-        const mapContainer = document.getElementById("Battlemap Start");
-        if (mapContainer) {
-            mapContainer.addEventListener("mousedown", handleMouseDown);
-            mapContainer.addEventListener("mouseup", handleMouseUp);
-            mapContainer.addEventListener("mousemove", handleMouseMove);
-        }
-
-        return () => {
-            // Remove the event listeners when the component is unmounted
-            if (mapContainer) {
-                mapContainer.addEventListener("mousemove", handleMouseMove);
-                mapContainer.removeEventListener("mousedown", handleMouseDown);
-                mapContainer.removeEventListener("mouseup", handleMouseUp);
-            }
-        };
-    }, []);
-
     const removeMapToken = (deletedToken) => {
         console.log("removing map token")
         setMapTokens(oldMapTokens => oldMapTokens.filter((token) => {
@@ -219,7 +110,10 @@ const BattleMap = () => {
 
     const addMapToken = (newToken) => {
         console.log("adding map token")
-        setMapTokens(oldMapTokens => [...oldMapTokens, newToken])
+        setMapTokens((oldMapTokens) => {
+            console.log(oldMapTokens)
+            return [...oldMapTokens, newToken]
+        })
     }
 
     const updateMapToken = (updatedToken) => {
@@ -239,37 +133,6 @@ const BattleMap = () => {
         // // You can access the updated mapTokens directly here:
         // console.log("Updated Map Tokens", mapTokens);
     };
-
-    const deleteSelectedToken = async (tokenID) => {
-        console.log("Deleting selected token", tokenID);
-        if (tokenID) {
-            try {
-                const deletedToken = await API.graphql({
-                    query: mutations.deleteToken,
-                    variables: {input: {id: tokenID}},
-                });
-                console.log("deleted token", deletedToken);
-                setSelectedTokenID(""); // Clear the selectedTokenID here if needed
-            } catch (error) {
-                console.error("Error deleting token:", error);
-            }
-        }
-    };
-
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.key === 'Backspace' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
-                deleteSelectedToken(selectedTokenID); // Pass the selectedTokenID as an argument
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [deleteSelectedToken, selectedTokenID]);
 
     const handleWheel = (event) => {
         const scaleFactor = 0.05; // Adjust the scale factor to control the zoom speed
@@ -539,51 +402,6 @@ const BattleMap = () => {
     };
 
 
-    const subscribeToPingCreation = () => {
-        const subscriptionHandler = (data) => {
-            console.log(data, windowPositionRef.current, scale.current)
-            const newPing = {...data.value.data.onCreatePing};
-            const reconstructedX = (newPing.x * scale.current) + 75 + windowPositionRef.current.x
-            const reconstructedY = (newPing.y * scale.current) + 20 + windowPositionRef.current.y
-            console.log("Got a ping", newPing, reconstructedX, reconstructedY)
-
-            newPing.x = reconstructedX
-            newPing.x = reconstructedY
-            // Draw the circle at (reconstructedX, reconstructedY)
-
-            setPings((prevPings) => [...prevPings, newPing]);
-            // Automatically call handleClick after 1 second
-            setTimeout(async () => {
-                setPings((prevPings) => prevPings.filter((ping) => ping.x !== reconstructedX && ping.y !== reconstructedY));
-
-            }, 3000);
-        };
-
-        const subscription = API.graphql(
-            graphqlOperation(onCreatePing, {gamePingsID: gameID}),
-            {
-                filter: {
-                    mutationType: {
-                        eq: "create",
-                    },
-                },
-            }
-        ).subscribe({
-            next: (data) => {
-                subscriptionHandler(data);
-            },
-            error: (error) => {
-                console.error("Subscription Error:", error);
-            },
-        });
-
-        return () => {
-            if (subscription) {
-                subscription.unsubscribe();
-            }
-        };
-    };
-
     // Whenever there is a new activeMap loaded, resubscribe to token creations and game updates
     useEffect(() => {
         // Subscribe to different events
@@ -591,7 +409,6 @@ const BattleMap = () => {
         const unsubscribeToTokenUpdate = subscribeToTokenUpdate();
         const unsubscribeToTokenDelete = subscribeToTokenDeletion();
         const unsubscribeToGameUpdate = subscribeToGameUpdate();
-        const unsubscribeToPingCreation = subscribeToPingCreation();
 
         // Clean up subscriptions
         return () => {
@@ -599,8 +416,6 @@ const BattleMap = () => {
             unsubscribeToTokenUpdate();
             unsubscribeToTokenDelete();
             unsubscribeToGameUpdate();
-            unsubscribeToPingCreation();
-
         };
     }, [activeMap]);
 
@@ -636,13 +451,9 @@ const BattleMap = () => {
             <TransformWrapper style={{height: '100%', width: '100%'}} className={styles.mapContainer}
                               disabled={draggingDisabled} minScale={0.1} initialScale={scale.current}
                               onTransformed={(ref) => {
-                                  windowPositionRef.current = {x: ref.state.x, y: ref.state.y}
+                                  windowPositionRef.current = {x: ref.state.positionX, y: ref.state.positionY}
                                   scale.current = ref.state.scale
                               }} limitToBounds={false}>
-
-                {pings.map((ping) => (
-                    <Ping key={v4()} x={ping.x} y={ping.y}/>
-                ))}
                 {/*<Controls/>*/}
                 <TransformComponent wrapperStyle={{
                     height: '100%',
@@ -662,7 +473,8 @@ const BattleMap = () => {
                             <input {...getInputProps()} />
                         </div>
                         <DrawingCanvas windowPositionRef={windowPositionRef} scale={scale} mapTokens={mapTokens}
-                                       widthUnits={widthUnits} heightUnits={heightUnits} GRID_SIZE={GRID_SIZE}/>
+                                       widthUnits={widthUnits} heightUnits={heightUnits} GRID_SIZE={GRID_SIZE}
+                                       id={"Canvas Start"}/>
                     </div>
                 </TransformComponent>
             </TransformWrapper>

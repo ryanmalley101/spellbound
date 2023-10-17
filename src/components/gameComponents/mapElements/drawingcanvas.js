@@ -4,18 +4,20 @@ import {Html} from 'react-konva-utils';
 import React, {Fragment, useEffect, useRef, useState} from "react";
 import styles from '../../../styles/Battlemap.module.css'
 import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
-import {v4 as uuidv4} from 'uuid';
+import {v4, v4 as uuidv4} from 'uuid';
 import DraggableIcon from "@/components/gameComponents/mapElements/draggableicon";
 import GridOverlay from "@/components/gameComponents/mapElements/gridoverlay";
 import Drawing from "@/components/gameComponents/mapElements/drawing";
-import {API} from "aws-amplify";
+import {API, graphqlOperation} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {Button} from "@mui/material";
+import Ping from "@/components/gameComponents/mapElements/ping";
+import {onCreatePing} from "@/graphql/subscriptions";
 
 const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE}) => {
 
     const {
-        zoomLevel, selectedTool, drawTool, activeMap
+        zoomLevel, selectedTool, drawTool, activeMap, mapLayer, gameID
     } = useBattlemapStore();
 
     const [selectionRect, setSelectionRect] = useState(null);
@@ -40,9 +42,182 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
     const selectionRef = useRef(null)
 
+    const [pings, setPings] = useState([])
+
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [contextMenuPosition, setContextMenuPosition] = useState({x: 0, y: 0});
     const [contextMenuShape, setContextMenuShape] = useState(null)
+
+    const initialMousePositionRef = useRef(null)
+    const mouseDownTimeRef = useRef(null);
+    const mouseReleasedRef = useRef(false);
+    const currentMousePositionRef = useRef({x: 0, y: 0});
+
+    const subscribeToPingCreation = () => {
+        const subscriptionHandler = (data) => {
+            console.log(data, windowPositionRef.current, scale.current)
+            const newPing = {...data.value.data.onCreatePing};
+            // const reconstructedX = (newPing.x * scale.current) + 75 + windowPositionRef.current.x
+            // const reconstructedY = (newPing.y * scale.current) + 20 + windowPositionRef.current.y
+            const reconstructedX = newPing.x
+            const reconstructedY = newPing.y
+            console.log("Got a ping", newPing, reconstructedX, reconstructedY)
+
+            newPing.x = reconstructedX
+            newPing.y = reconstructedY
+            // Draw the circle at (reconstructedX, reconstructedY)
+
+            setPings((prevPings) => [...prevPings, newPing]);
+            // Automatically call handleClick after 1 second
+            setTimeout(async () => {
+                setPings((prevPings) => prevPings.filter((ping) => ping.x !== reconstructedX && ping.y !== reconstructedY));
+
+            }, 3000);
+        };
+
+        const subscription = API.graphql(
+            graphqlOperation(onCreatePing, {gamePingsID: gameID}),
+            {
+                filter: {
+                    mutationType: {
+                        eq: "create",
+                    },
+                },
+            }
+        ).subscribe({
+            next: (data) => {
+                subscriptionHandler(data);
+            },
+            error: (error) => {
+                console.error("Subscription Error:", error);
+            },
+        });
+
+        return () => {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+        };
+    };
+
+    // Whenever there is a new activeMap loaded, resubscribe to token creations and game updates
+    useEffect(() => {
+        // Subscribe to different events
+        const unsubscribeToPingCreation = subscribeToPingCreation();
+
+        // Clean up subscriptions
+        return () => {
+            unsubscribeToPingCreation();
+        };
+    }, [activeMap]);
+
+    useEffect(() => {
+
+        const handleMouseDown = async (event) => {
+
+            console.log("MouseDown")
+            initialMousePositionRef.current = {
+                x: (event.clientX),
+                y: (event.clientY)
+            }
+            currentMousePositionRef.current = {
+                x: event.clientX,
+                y: event.clientY,
+            };
+
+            mouseDownTimeRef.current = Date.now()
+            mouseReleasedRef.current = false
+
+            // Automatically call handleClick after 1 second
+            setTimeout(async () => {
+                console.log("Timeout", mouseReleasedRef.current)
+                if (!mouseReleasedRef.current) {
+                    await handleMapClick(event)
+                }
+            }, 600);
+        };
+
+        const handleMouseMove = (event) => {
+            currentMousePositionRef.current = {
+                x: event.clientX,
+                y: event.clientY,
+            };
+        };
+
+        const handleMouseUp = () => {
+            console.log("Handle mouse up")
+            mouseReleasedRef.current = true
+            // mouseDownTimeRef.current = null
+            // Clear the timeout if the mouse is released before 1 second
+            // clearTimeout();
+        };
+
+        const handleMapClick = async (event) => {
+            console.log("Handling map click", event, windowPositionRef.current, scale.current)
+            if (!mouseReleasedRef.current && mouseDownTimeRef.current) {
+                const clickEndTime = new Date();
+                const timeDifference = clickEndTime - mouseDownTimeRef.current;
+                if (timeDifference >= 500) {
+                    const isMouseStationary = (
+                        initialMousePositionRef.current.x === currentMousePositionRef.current.x &&
+                        initialMousePositionRef.current.y === currentMousePositionRef.current.y
+                    );
+
+                    if (isMouseStationary) {
+                        console.log("Creating a ping", event)
+
+                        // // Perform the GraphQL mutation to create a Ping object
+                        // const x = event.clientX;
+                        // const y = event.clientY;
+
+                        // const deconstructedX = (event.clientX - 75 - windowPositionRef.current.x) / scale.current
+                        // const deconstructedY = (event.clientY - 20 - windowPositionRef.current.y) / scale.current
+                        const pingPoint = getPoint(event)
+                        
+                        const deconstructedX = pingPoint.x
+                        const deconstructedY = pingPoint.y
+                        // Update this with the current scale value from state
+                        const pingInput = {
+                            gamePingsId: gameID,
+                            x: deconstructedX,
+                            y: deconstructedY,
+                            scale: zoomLevel,
+                            ttl: Math.floor((Date.now() / 1000)) + 60
+                        };
+                        console.log(pingInput)
+                        try {
+                            const response = await API.graphql({
+                                query: mutations.createPing,
+                                variables: {input: pingInput},
+                            });
+                            console.log("Created Ping object:", response);
+                        } catch (error) {
+                            console.error("Error creating Ping object:", error);
+                        }
+                    } else {
+                        console.log("Mouse wasn't stationary during press")
+                    }
+                }
+            }
+        };
+
+        // Attach the event listener to the map container
+        const mapContainer = document.getElementById("Battlemap Start");
+        if (mapContainer) {
+            mapContainer.addEventListener("mousedown", handleMouseDown);
+            mapContainer.addEventListener("mouseup", handleMouseUp);
+            mapContainer.addEventListener("mousemove", handleMouseMove);
+        }
+
+        return () => {
+            // Remove the event listeners when the component is unmounted
+            if (mapContainer) {
+                mapContainer.addEventListener("mousemove", handleMouseMove);
+                mapContainer.removeEventListener("mousedown", handleMouseDown);
+                mapContainer.removeEventListener("mouseup", handleMouseUp);
+            }
+        };
+    }, []);
 
     const handleShapeClick = (e, shape) => {
         const stageShapes = stageRef.current.children[0].children; // Adjust the class name as needed
@@ -152,28 +327,45 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
             setIsDrawing(true);
             const point = getPoint(e)
+            const newId = uuidv4()
 
             if (drawTool === DRAW_ENUM.PEN) {
-                setCurrentShape({type: DRAW_ENUM.PEN, id: uuidv4(), points: [point.x, point.y], x: 0, y: 0})
+                setCurrentShape({
+                    type: DRAW_ENUM.PEN,
+                    id: newId,
+                    key: newId,
+                    points: [point.x, point.y],
+                    x: 0,
+                    y: 0,
+                    layer: mapLayer
+                })
             }
             if (drawTool === DRAW_ENUM.RECTANGLE) {
                 setCurrentShape({
                     type: DRAW_ENUM.RECTANGLE,
-                    id: uuidv4(),
+                    id: newId,
+                    key: newId,
                     x: point.x,
                     y: point.y,
                     width: 0,
-                    height: 0
+                    height: 0,
+                    layer: mapLayer
                 })
                 setInitialPoint(point)
             }
             if (drawTool === DRAW_ENUM.CIRCLE) {
-                setCurrentShape({type: DRAW_ENUM.CIRCLE, id: uuidv4(), x: point.x, y: point.y, radius: 0})
+                setCurrentShape({
+                    type: DRAW_ENUM.CIRCLE, id: newId,
+                    key: newId, x: point.x, y: point.y, radius: 0, layer: mapLayer
+                })
                 setInitialPoint(point)
             }
 
             if (drawTool === DRAW_ENUM.TRIANGLE) {
-                setCurrentShape({type: DRAW_ENUM.TRIANGLE, id: uuidv4(), points: [point.x, point.y]})
+                setCurrentShape({
+                    type: DRAW_ENUM.TRIANGLE, id: newId,
+                    key: newId, points: [point.x, point.y], layer: mapLayer
+                })
                 setInitialPoint(point)
             }
 
@@ -195,7 +387,8 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                                 x: point.x,
                                 y: point.y,
                                 fontSize: 32,
-                                id: newLabelId
+                                id: newLabelId,
+                                layer: mapLayer
                             })
                             //
                             // setTimeout(() => {
@@ -210,6 +403,8 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             }
         } else if (selectedTool === TOOL_ENUM.SELECT) {
             if (selectedShapes.length < 1) {
+                console.log(e)
+                console.log(getPoint(e))
                 const {x, y} = getPoint(e)
                 setSelectionRect({
                     x1: x,
@@ -238,6 +433,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
         // setDrawTimer(new Date().getTime())
         const point = getPoint(e)
+        const newId = uuidv4()
 
         if (drawTool === DRAW_ENUM.PEN) {
             const oldShape = {...currentShape}
@@ -247,11 +443,13 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
         if (drawTool === DRAW_ENUM.RECTANGLE) {
             const rect = {
                 type: DRAW_ENUM.RECTANGLE,
-                id: uuidv4(),
+                id: newId,
+                key: newId,
                 x: Math.min(point.x, initialPoint.x),
                 y: Math.min(point.y, initialPoint.y),
                 width: Math.abs(point.x - initialPoint.x),
-                height: Math.abs(point.y - initialPoint.y)
+                height: Math.abs(point.y - initialPoint.y),
+                layer: mapLayer
             }
             setCurrentShape(rect)
         }
@@ -262,10 +460,12 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
             const circle = {
                 type: DRAW_ENUM.CIRCLE,
-                id: uuidv4(),
+                id: newId,
+                key: newId,
                 x: initialPoint.x,
                 y: initialPoint.y,
-                radius: distance
+                radius: distance,
+                layer: mapLayer
             }
             setCurrentShape(circle)
         }
@@ -329,8 +529,11 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                 setIsDrawing(true);
                 setCurrentShape({
                     type: DRAW_ENUM.POLYGON,
-                    id: uuidv4(),
-                    points: [point.x, point.y, point.x, point.y]
+                    id: newId,
+                    key: newId,
+                    points: [point.x, point.y, point.x, point.y],
+                    layer: mapLayer
+
                 })
                 currentPolyPoint.current = 2
                 setInitialPoint(point)
@@ -398,36 +601,6 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
         }
     }, [])
 
-    // const onShapeDragEnd = (e, index) => {
-    //     console.log(e, index)
-    //     setShapes(prevState => {
-    //         return prevState.map((r, i) => {
-    //             if (i === index) {
-    //                 r.x = e.target.x()
-    //                 r.y = e.target.y()
-    //             }
-    //             return r
-    //         })
-    //     })
-    // }
-
-    // const onLineDragEnd = (e, index) => {
-    //     console.log(e, index)
-    //     setShapes(prevState => {
-    //         return prevState.map((r, i) => {
-    //             if (i === index) {
-    //                 r.points = r.points.map((point, index) => {
-    //                     if (index % 2 === 0) {
-    //                         return point + e.target.x()
-    //                     }
-    //                     return point + e.target.y()
-    //                 })
-    //             }
-    //             return r
-    //         })
-    //     })
-    // }
-
     const handleMenuClick = async (option) => {
         // Handle the click of the menu options here based on the selected option
         console.log('Clicked option:', option);
@@ -447,6 +620,39 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
         setShowContextMenu(false);
     };
+
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Backspace' && !['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) {
+                console.log(selectionRef.current.nodes())
+                selectionRef.current.nodes().forEach((s) => deleteSelectedToken(s.attrs.id))
+                // deleteSelectedToken(selectedTokenID); // Pass the selectedTokenID as an argument
+            }
+        };
+
+        const deleteSelectedToken = async (tokenID) => {
+            console.log("Deleting selected token", tokenID);
+            if (tokenID) {
+                try {
+                    const deletedToken = await API.graphql({
+                        query: mutations.deleteToken,
+                        variables: {input: {id: tokenID}},
+                    });
+                    console.log("deleted token", deletedToken);
+                    // setSelectedTokenID(""); // Clear the selectedTokenID here if needed
+                } catch (error) {
+                    console.error("Error deleting token:", error);
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
     return (
         <div
@@ -529,6 +735,9 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
                         }
                     })}
+                    {pings.map((ping) => (
+                        <Ping key={v4()} x={ping.x} y={ping.y}/>
+                    ))}
                     {showContextMenu && (
                         <Html>
                             <div
