@@ -13,6 +13,7 @@ import * as mutations from "@/graphql/mutations";
 import {Button} from "@mui/material";
 import Ping from "@/components/gameComponents/mapElements/ping";
 import {onCreatePing} from "@/graphql/subscriptions";
+import Ruler from "@/components/gameComponents/mapElements/ruler";
 
 const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE}) => {
 
@@ -25,6 +26,8 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
     const stageRef = useRef();
 
     const [currentShape, setCurrentShape] = useState(null)
+    const [rulerShape, setRulerShape] = useState(null)
+
     // const lastShapeRef = useRef(0)
 
     const [selectedLabelId, setSelectedLabelId] = useState("");
@@ -173,7 +176,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                         // const deconstructedX = (event.clientX - 75 - windowPositionRef.current.x) / scale.current
                         // const deconstructedY = (event.clientY - 20 - windowPositionRef.current.y) / scale.current
                         const pingPoint = getPoint(event)
-                        
+
                         const deconstructedX = pingPoint.x
                         const deconstructedY = pingPoint.y
                         // Update this with the current scale value from state
@@ -203,6 +206,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
         // Attach the event listener to the map container
         const mapContainer = document.getElementById("Battlemap Start");
+        console.log("Map Container", mapContainer)
         if (mapContainer) {
             mapContainer.addEventListener("mousedown", handleMouseDown);
             mapContainer.addEventListener("mouseup", handleMouseUp);
@@ -413,10 +417,18 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                     y2: y,
                 });
             }
+        } else if (selectedTool === TOOL_ENUM.RULER) {
+            console.log("Dragging a ruler", e)
+            const point = getPoint(e)
+            setRulerShape({
+                points: [point.x, point.y, point.x, point.y]
+            })
         }
     };
 
     const handleMouseMove = (e) => {
+        const point = getPoint(e)
+
         if (selectedTool === TOOL_ENUM.SELECT) {
             if (selectionRect && selectedShapes.length < 1) {
                 const {x, y} = getPoint(e)
@@ -429,10 +441,19 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             return
         }
 
+        if (selectedTool === TOOL_ENUM.RULER) {
+            if (rulerShape) {
+                // console.log("Dragging ruler", rulerShape)
+                setRulerShape((oldRuler) => {
+                    return {points: [oldRuler.points[0], oldRuler.points[1], point.x, point.y]}
+                })
+            }
+            return
+        }
+
         if (!isDrawing || new Date().getTime() - drawTimer < 50) return
 
         // setDrawTimer(new Date().getTime())
-        const point = getPoint(e)
         const newId = uuidv4()
 
         if (drawTool === DRAW_ENUM.PEN) {
@@ -497,6 +518,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             oldShape.points[currentPolyPoint.current + 1] = point.y
             setCurrentShape(oldShape)
         }
+
     };
 
     const handleMouseUp = async (e) => {
@@ -520,6 +542,10 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             }
             setSelectionRect(null)
             return
+        }
+
+        if (selectedTool === TOOL_ENUM.RULER) {
+            setRulerShape(null)
         }
 
         const point = getPoint(e)
@@ -667,7 +693,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                 position: "absolute",
                 width: "inherit",
                 height: "inherit",
-                pointerEvents: selectedTool === TOOL_ENUM.DRAW || selectedTool === TOOL_ENUM.SELECT ? 'auto' : "none"
+                pointerEvents: selectedTool === TOOL_ENUM.DRAW || selectedTool === TOOL_ENUM.SELECT || selectedTool === TOOL_ENUM.RULER ? 'auto' : "none"
             }}
             ref={divRef}
         >
@@ -738,6 +764,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                     {pings.map((ping) => (
                         <Ping key={v4()} x={ping.x} y={ping.y}/>
                     ))}
+                    {rulerShape ? <Ruler shape={rulerShape}/> : null}
                     {showContextMenu && (
                         <Html>
                             <div

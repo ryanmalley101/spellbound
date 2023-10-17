@@ -91,7 +91,7 @@ const TabMenu = ({user, messages}) => {
                     {/* Add your settings component here */}
                 </TabPanel>
             </Tabs>
-            <AudioPlayer autoPlay/>
+            {/*<AudioPlayer autoPlay/>*/}
         </div>
     );
 };

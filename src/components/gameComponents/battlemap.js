@@ -1,20 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
-import DraggableIcon from '@/components/gameComponents/mapElements/draggableicon';
 import styles from '../../styles/Battlemap.module.css';
-import GridOverlay from '@/components/gameComponents/mapElements/gridoverlay';
 import {API, graphqlOperation, Storage} from 'aws-amplify';
-import {onCreatePing, onCreateToken, onDeleteToken, onUpdateGame} from '@/graphql/subscriptions';
+import {onCreateToken, onDeleteToken, onUpdateGame} from '@/graphql/subscriptions';
 import * as mutations from '@/graphql/mutations';
 import {TransformComponent, TransformWrapper, useControls} from 'react-zoom-pan-pinch';
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
-import Ping from "@/components/gameComponents/mapElements/ping";
-import {v4} from "uuid";
 import {useDropzone} from 'react-dropzone'
 import DrawingCanvas from "@/components/gameComponents/mapElements/drawingcanvas";
-import {Layer, Stage} from "react-konva";
 
 const GRID_SIZE = 70
-
 
 const BattleMap = () => {
 
