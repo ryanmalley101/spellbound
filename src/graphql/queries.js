@@ -779,6 +779,19 @@ export const getPlayer = /* GraphQL */ `
         updatedAt
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       gamePlayersId
@@ -819,6 +832,10 @@ export const listPlayers = /* GraphQL */ `
           updatedAt
           __typename
         }
+        rulers {
+          nextToken
+          __typename
+        }
         createdAt
         updatedAt
         gamePlayersId
@@ -853,6 +870,19 @@ export const getMap = /* GraphQL */ `
           updatedAt
           mapTokensId
           tokenCharacterId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
           __typename
         }
         nextToken
@@ -932,6 +962,10 @@ export const listMaps = /* GraphQL */ `
           nextToken
           __typename
         }
+        rulers {
+          nextToken
+          __typename
+        }
         sizeX
         sizeY
         name
@@ -965,6 +999,10 @@ export const getToken = /* GraphQL */ `
     getToken(id: $id) {
       map {
         tokens {
+          nextToken
+          __typename
+        }
+        rulers {
           nextToken
           __typename
         }
@@ -1579,6 +1617,126 @@ export const listPings = /* GraphQL */ `
         createdAt
         updatedAt
         gamePingsId
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getRuler = /* GraphQL */ `
+  query GetRuler($id: ID!) {
+    getRuler(id: $id) {
+      id
+      points
+      map {
+        tokens {
+          nextToken
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        sizeX
+        sizeY
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        id
+        createdAt
+        updatedAt
+        gameMapsId
+        __typename
+      }
+      player {
+        id
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        user {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        gamePlayersId
+        userPlayersId
+        __typename
+      }
+      createdAt
+      updatedAt
+      playerRulersId
+      mapRulersId
+      __typename
+    }
+  }
+`;
+export const listRulers = /* GraphQL */ `
+  query ListRulers(
+    $filter: ModelRulerFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listRulers(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        points
+        map {
+          sizeX
+          sizeY
+          name
+          id
+          createdAt
+          updatedAt
+          gameMapsId
+          __typename
+        }
+        player {
+          id
+          name
+          createdAt
+          updatedAt
+          gamePlayersId
+          userPlayersId
+          __typename
+        }
+        createdAt
+        updatedAt
+        playerRulersId
+        mapRulersId
         __typename
       }
       nextToken

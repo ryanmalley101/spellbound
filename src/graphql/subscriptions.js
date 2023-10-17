@@ -1483,6 +1483,19 @@ export const onCreatePlayer = /* GraphQL */ `
         updatedAt
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       gamePlayersId
@@ -1561,6 +1574,19 @@ export const onUpdatePlayer = /* GraphQL */ `
         }
         createdAt
         updatedAt
+        __typename
+      }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
         __typename
       }
       createdAt
@@ -1643,6 +1669,19 @@ export const onDeletePlayer = /* GraphQL */ `
         updatedAt
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       gamePlayersId
@@ -1674,6 +1713,19 @@ export const onCreateMap = /* GraphQL */ `
           updatedAt
           mapTokensId
           tokenCharacterId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
           __typename
         }
         nextToken
@@ -1769,6 +1821,19 @@ export const onUpdateMap = /* GraphQL */ `
         nextToken
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       sizeX
       sizeY
       name
@@ -1859,6 +1924,19 @@ export const onDeleteMap = /* GraphQL */ `
         nextToken
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       sizeX
       sizeY
       name
@@ -1926,6 +2004,10 @@ export const onCreateToken = /* GraphQL */ `
     onCreateToken(filter: $filter) {
       map {
         tokens {
+          nextToken
+          __typename
+        }
+        rulers {
           nextToken
           __typename
         }
@@ -2250,6 +2332,10 @@ export const onUpdateToken = /* GraphQL */ `
           nextToken
           __typename
         }
+        rulers {
+          nextToken
+          __typename
+        }
         sizeX
         sizeY
         name
@@ -2568,6 +2654,10 @@ export const onDeleteToken = /* GraphQL */ `
     onDeleteToken(filter: $filter) {
       map {
         tokens {
+          nextToken
+          __typename
+        }
+        rulers {
           nextToken
           __typename
         }
@@ -3078,6 +3168,246 @@ export const onDeletePing = /* GraphQL */ `
       createdAt
       updatedAt
       gamePingsId
+      __typename
+    }
+  }
+`;
+export const onCreateRuler = /* GraphQL */ `
+  subscription OnCreateRuler($filter: ModelSubscriptionRulerFilterInput) {
+    onCreateRuler(filter: $filter) {
+      id
+      points
+      map {
+        tokens {
+          nextToken
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        sizeX
+        sizeY
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        id
+        createdAt
+        updatedAt
+        gameMapsId
+        __typename
+      }
+      player {
+        id
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        user {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        gamePlayersId
+        userPlayersId
+        __typename
+      }
+      createdAt
+      updatedAt
+      playerRulersId
+      mapRulersId
+      __typename
+    }
+  }
+`;
+export const onUpdateRuler = /* GraphQL */ `
+  subscription OnUpdateRuler($filter: ModelSubscriptionRulerFilterInput) {
+    onUpdateRuler(filter: $filter) {
+      id
+      points
+      map {
+        tokens {
+          nextToken
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        sizeX
+        sizeY
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        id
+        createdAt
+        updatedAt
+        gameMapsId
+        __typename
+      }
+      player {
+        id
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        user {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        gamePlayersId
+        userPlayersId
+        __typename
+      }
+      createdAt
+      updatedAt
+      playerRulersId
+      mapRulersId
+      __typename
+    }
+  }
+`;
+export const onDeleteRuler = /* GraphQL */ `
+  subscription OnDeleteRuler($filter: ModelSubscriptionRulerFilterInput) {
+    onDeleteRuler(filter: $filter) {
+      id
+      points
+      map {
+        tokens {
+          nextToken
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        sizeX
+        sizeY
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        id
+        createdAt
+        updatedAt
+        gameMapsId
+        __typename
+      }
+      player {
+        id
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        user {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        gamePlayersId
+        userPlayersId
+        __typename
+      }
+      createdAt
+      updatedAt
+      playerRulersId
+      mapRulersId
       __typename
     }
   }

@@ -150,6 +150,7 @@ type Player
     name: String!
     game: Game! @belongsTo
     user: User! @belongsTo
+    rulers: [Ruler] @hasMany
 }
 
 input PlayerInput {
@@ -163,6 +164,7 @@ type Map
 @auth(rules: [{ allow: private }])
 {
     tokens: [Token]! @hasMany
+    rulers: [Ruler] @hasMany
     sizeX: Int!
     sizeY: Int!
     name: String!
@@ -232,6 +234,24 @@ input PingInput {
     y: Float
     scale: Float
     ttl: Int
+}
+
+type Ruler
+@model
+@auth(rules: [{ allow: private }])
+{
+    id: ID!
+    points: [Float]!
+    map: Map! @belongsTo
+    player: Player! @belongsTo
+}
+
+
+input RulerInput {
+    id: ID
+    points: [Float]
+    mapRulersId: ID
+    playerRulersId: ID
 }
 
 type CharacterSheet
@@ -544,7 +564,7 @@ type MonsterStatblock
 input MonsterStatblockInput
 {
     ownerId: String
-    name: ID
+    name: String
     createdAt: AWSDateTime
     updatedAt: AWSDateTime
     desc: String

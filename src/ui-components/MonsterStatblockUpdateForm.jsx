@@ -409,7 +409,7 @@ export default function MonsterStatblockUpdateForm(props) {
       const record = idProp
         ? (
             await API.graphql({
-              query: getMonsterStatblock,
+              query: getMonsterStatblock.replaceAll("__typename", ""),
               variables: { ...idProp },
             })
           )?.data?.getMonsterStatblock
@@ -615,7 +615,7 @@ export default function MonsterStatblockUpdateForm(props) {
             }
           });
           await API.graphql({
-            query: updateMonsterStatblock,
+            query: updateMonsterStatblock.replaceAll("__typename", ""),
             variables: {
               input: {
                 id: monsterStatblockRecord.id,

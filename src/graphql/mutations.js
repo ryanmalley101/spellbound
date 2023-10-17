@@ -1532,6 +1532,19 @@ export const createPlayer = /* GraphQL */ `
         updatedAt
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       gamePlayersId
@@ -1613,6 +1626,19 @@ export const updatePlayer = /* GraphQL */ `
         }
         createdAt
         updatedAt
+        __typename
+      }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
         __typename
       }
       createdAt
@@ -1698,6 +1724,19 @@ export const deletePlayer = /* GraphQL */ `
         updatedAt
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       gamePlayersId
@@ -1732,6 +1771,19 @@ export const createMap = /* GraphQL */ `
           updatedAt
           mapTokensId
           tokenCharacterId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
           __typename
         }
         nextToken
@@ -1830,6 +1882,19 @@ export const updateMap = /* GraphQL */ `
         nextToken
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       sizeX
       sizeY
       name
@@ -1923,6 +1988,19 @@ export const deleteMap = /* GraphQL */ `
         nextToken
         __typename
       }
+      rulers {
+        items {
+          id
+          points
+          createdAt
+          updatedAt
+          playerRulersId
+          mapRulersId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       sizeX
       sizeY
       name
@@ -1993,6 +2071,10 @@ export const createToken = /* GraphQL */ `
     createToken(input: $input, condition: $condition) {
       map {
         tokens {
+          nextToken
+          __typename
+        }
+        rulers {
           nextToken
           __typename
         }
@@ -2320,6 +2402,10 @@ export const updateToken = /* GraphQL */ `
           nextToken
           __typename
         }
+        rulers {
+          nextToken
+          __typename
+        }
         sizeX
         sizeY
         name
@@ -2641,6 +2727,10 @@ export const deleteToken = /* GraphQL */ `
     deleteToken(input: $input, condition: $condition) {
       map {
         tokens {
+          nextToken
+          __typename
+        }
+        rulers {
           nextToken
           __typename
         }
@@ -3160,6 +3250,255 @@ export const deletePing = /* GraphQL */ `
       createdAt
       updatedAt
       gamePingsId
+      __typename
+    }
+  }
+`;
+export const createRuler = /* GraphQL */ `
+  mutation CreateRuler(
+    $input: CreateRulerInput!
+    $condition: ModelRulerConditionInput
+  ) {
+    createRuler(input: $input, condition: $condition) {
+      id
+      points
+      map {
+        tokens {
+          nextToken
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        sizeX
+        sizeY
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        id
+        createdAt
+        updatedAt
+        gameMapsId
+        __typename
+      }
+      player {
+        id
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        user {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        gamePlayersId
+        userPlayersId
+        __typename
+      }
+      createdAt
+      updatedAt
+      playerRulersId
+      mapRulersId
+      __typename
+    }
+  }
+`;
+export const updateRuler = /* GraphQL */ `
+  mutation UpdateRuler(
+    $input: UpdateRulerInput!
+    $condition: ModelRulerConditionInput
+  ) {
+    updateRuler(input: $input, condition: $condition) {
+      id
+      points
+      map {
+        tokens {
+          nextToken
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        sizeX
+        sizeY
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        id
+        createdAt
+        updatedAt
+        gameMapsId
+        __typename
+      }
+      player {
+        id
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        user {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        gamePlayersId
+        userPlayersId
+        __typename
+      }
+      createdAt
+      updatedAt
+      playerRulersId
+      mapRulersId
+      __typename
+    }
+  }
+`;
+export const deleteRuler = /* GraphQL */ `
+  mutation DeleteRuler(
+    $input: DeleteRulerInput!
+    $condition: ModelRulerConditionInput
+  ) {
+    deleteRuler(input: $input, condition: $condition) {
+      id
+      points
+      map {
+        tokens {
+          nextToken
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        sizeX
+        sizeY
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        id
+        createdAt
+        updatedAt
+        gameMapsId
+        __typename
+      }
+      player {
+        id
+        name
+        game {
+          id
+          name
+          dms
+          activeMap
+          gameMode
+          activeSong
+          songPlaying
+          createdAt
+          updatedAt
+          userGamesId
+          gameSongQueueId
+          __typename
+        }
+        user {
+          id
+          email
+          username
+          createdAt
+          updatedAt
+          __typename
+        }
+        rulers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        gamePlayersId
+        userPlayersId
+        __typename
+      }
+      createdAt
+      updatedAt
+      playerRulersId
+      mapRulersId
       __typename
     }
   }

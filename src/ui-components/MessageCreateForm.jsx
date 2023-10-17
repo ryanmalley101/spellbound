@@ -363,7 +363,7 @@ export default function MessageCreateForm(props) {
             }
           });
           await API.graphql({
-            query: createMessage,
+            query: createMessage.replaceAll("__typename", ""),
             variables: {
               input: {
                 ...modelFields,

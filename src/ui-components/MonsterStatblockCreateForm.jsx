@@ -592,7 +592,7 @@ export default function MonsterStatblockCreateForm(props) {
             }
           });
           await API.graphql({
-            query: createMonsterStatblock,
+            query: createMonsterStatblock.replaceAll("__typename", ""),
             variables: {
               input: {
                 ...modelFields,

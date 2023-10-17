@@ -15,10 +15,10 @@ import Ping from "@/components/gameComponents/mapElements/ping";
 import {onCreatePing} from "@/graphql/subscriptions";
 import Ruler from "@/components/gameComponents/mapElements/ruler";
 
-const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE}) => {
+const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE, mapRulers}) => {
 
     const {
-        zoomLevel, selectedTool, drawTool, activeMap, mapLayer, gameID
+        zoomLevel, selectedTool, drawTool, activeMap, mapLayer, gameID, playerID
     } = useBattlemapStore();
 
     const [selectionRect, setSelectionRect] = useState(null);
@@ -323,7 +323,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
         }
     }, [editing])
 
-    const handleMouseDown = (e) => {
+    const handleMouseDown = async (e) => {
         if (selectedTool === TOOL_ENUM.DRAW) {
             if (drawTool === DRAW_ENUM.POLYGON) {
                 return
@@ -420,13 +420,33 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
         } else if (selectedTool === TOOL_ENUM.RULER) {
             console.log("Dragging a ruler", e)
             const point = getPoint(e)
+            const roundedX = Math.round((point.x + (GRID_SIZE / 2)) / GRID_SIZE) * GRID_SIZE - (GRID_SIZE / 2)
+            const roundedY = Math.round((point.y + (GRID_SIZE / 2)) / GRID_SIZE) * GRID_SIZE - (GRID_SIZE / 2)
+            const newId = uuidv4()
+
             setRulerShape({
-                points: [point.x, point.y, point.x, point.y]
+                points: [roundedX, roundedY, roundedX, roundedY], id: newId
             })
+
+            const input = {
+                points: [roundedX, roundedY, roundedX, roundedY],
+                mapRulersId: activeMap,
+                playerRulersId: playerID,
+                id: newId
+            }
+            const newRuler = await API.graphql({
+                query: mutations.createRuler,
+                variables: {input: input}
+            });
+
+            console.log("Creating a new token")
+            console.log(newRuler)
+            setCurrentShape(null)
+            return newRuler.data.createRuler.id
         }
     };
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = async (e) => {
         const point = getPoint(e)
 
         if (selectedTool === TOOL_ENUM.SELECT) {
@@ -443,17 +463,36 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
         if (selectedTool === TOOL_ENUM.RULER) {
             if (rulerShape) {
+                if (new Date().getTime() - drawTimer < 200) return
+                setDrawTimer(new Date().getTime())
                 // console.log("Dragging ruler", rulerShape)
+                const roundedX = Math.round((point.x + (GRID_SIZE / 2)) / GRID_SIZE) * GRID_SIZE - (GRID_SIZE / 2)
+                const roundedY = Math.round((point.y + (GRID_SIZE / 2)) / GRID_SIZE) * GRID_SIZE - (GRID_SIZE / 2)
                 setRulerShape((oldRuler) => {
-                    return {points: [oldRuler.points[0], oldRuler.points[1], point.x, point.y]}
+                    return {...oldRuler, points: [oldRuler.points[0], oldRuler.points[1], roundedX, roundedY]}
                 })
+
+                const input = {
+                    id: rulerShape.id,
+                    points: [rulerShape.points[0], rulerShape.points[1], roundedX, roundedY],
+                }
+
+                const updatedRuler = await API.graphql({
+                    query: mutations.updateRuler,
+                    variables: {input: input}
+                });
+
+                console.log("Updating a ruler")
+                console.log(updatedRuler)
+                setCurrentShape(null)
+                return updatedRuler.data.updateRuler.id
             }
             return
         }
 
         if (!isDrawing || new Date().getTime() - drawTimer < 50) return
 
-        // setDrawTimer(new Date().getTime())
+        setDrawTimer(new Date().getTime())
         const newId = uuidv4()
 
         if (drawTool === DRAW_ENUM.PEN) {
@@ -545,7 +584,18 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
         }
 
         if (selectedTool === TOOL_ENUM.RULER) {
+            try {
+                const deletedRuler = await API.graphql({
+                    query: mutations.deleteRuler,
+                    variables: {input: {id: rulerShape.id}},
+                });
+                console.log("deleted ruler", deletedRuler);
+                // setSelectedTokenID(""); // Clear the selectedTokenID here if needed
+            } catch (error) {
+                console.error("Error deleting ruler:", error);
+            }
             setRulerShape(null)
+            return
         }
 
         const point = getPoint(e)
@@ -764,7 +814,12 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                     {pings.map((ping) => (
                         <Ping key={v4()} x={ping.x} y={ping.y}/>
                     ))}
-                    {rulerShape ? <Ruler shape={rulerShape}/> : null}
+                    {mapRulers.map((ruler) => {
+                        if (!rulerShape || ruler.id !== rulerShape.id) {
+                            return <Ruler key={ruler.id} shape={ruler} GRID_SIZE={GRID_SIZE}/>
+                        }
+                    })}
+                    {rulerShape ? <Ruler shape={rulerShape} GRID_SIZE={GRID_SIZE}/> : null}
                     {showContextMenu && (
                         <Html>
                             <div

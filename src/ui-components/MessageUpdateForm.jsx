@@ -263,7 +263,7 @@ export default function MessageUpdateForm(props) {
       const record = idProp
         ? (
             await API.graphql({
-              query: getMessage,
+              query: getMessage.replaceAll("__typename", ""),
               variables: { ...idProp },
             })
           )?.data?.getMessage
@@ -384,7 +384,7 @@ export default function MessageUpdateForm(props) {
             }
           });
           await API.graphql({
-            query: updateMessage,
+            query: updateMessage.replaceAll("__typename", ""),
             variables: {
               input: {
                 id: messageRecord.id,

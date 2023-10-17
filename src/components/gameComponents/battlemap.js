@@ -1,7 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import styles from '../../styles/Battlemap.module.css';
 import {API, graphqlOperation, Storage} from 'aws-amplify';
-import {onCreateToken, onDeleteToken, onUpdateGame} from '@/graphql/subscriptions';
+import {
+    onCreateRuler,
+    onCreateToken,
+    onDeleteRuler,
+    onDeleteToken,
+    onUpdateGame,
+    onUpdateRuler
+} from '@/graphql/subscriptions';
 import * as mutations from '@/graphql/mutations';
 import {TransformComponent, TransformWrapper, useControls} from 'react-zoom-pan-pinch';
 import useBattlemapStore, {TOOL_ENUM} from "@/stores/battlemapStore";
@@ -17,6 +24,7 @@ const BattleMap = () => {
     const [widthUnits, setWidthUnits] = useState(25);
     const [heightUnits, setHeightUnits] = useState(25);
     const [mapTokens, setMapTokens] = useState(['debug'])
+    const [mapRulers, setMapRulers] = useState([])
     const [isDraggingFile, setIsDraggingFile] = useState(false)
 
     const windowPositionRef = useRef({x: 0, y: 0})
@@ -92,16 +100,6 @@ const BattleMap = () => {
         mapLayer, setMapLayer, gameID, activeMap, setActiveMap, playingSong, setPlayingSong, setIsSongPlaying
     } = useBattlemapStore();
 
-    const removeMapToken = (deletedToken) => {
-        console.log("removing map token")
-        setMapTokens(oldMapTokens => oldMapTokens.filter((token) => {
-            console.log(token, deletedToken)
-            if (token.id !== deletedToken.id) {
-                return token
-            }
-        }))
-    }
-
     const addMapToken = (newToken) => {
         console.log("adding map token")
         setMapTokens((oldMapTokens) => {
@@ -127,6 +125,52 @@ const BattleMap = () => {
         // // You can access the updated mapTokens directly here:
         // console.log("Updated Map Tokens", mapTokens);
     };
+
+    const removeMapToken = (deletedToken) => {
+        console.log("removing map token")
+        setMapTokens(oldMapTokens => oldMapTokens.filter((token) => {
+            console.log(token, deletedToken)
+            if (token.id !== deletedToken.id) {
+                return token
+            }
+        }))
+    }
+
+    const addMapRuler = (newRuler) => {
+        console.log("adding map ruler")
+        setMapRulers((oldMapRulers) => {
+            console.log(oldMapRulers)
+            return [...oldMapRulers, newRuler]
+        })
+    }
+
+    const updateMapRuler = (updatedRuler) => {
+        console.log("Updating map rulers");
+        // console.log(mapTokens);
+        console.log(updatedRuler)
+        console.log(mapRulers)
+        setMapRulers((oldRulers) => {
+            return oldRulers.map((ruler) => {
+                if (ruler.id === updatedRuler.id && ruler !== updatedRuler) {
+                    console.log(ruler, updatedRuler)
+                    return {...updatedRuler}
+                }
+                return ruler
+            })
+        })
+        // // You can access the updated mapTokens directly here:
+        // console.log("Updated Map Tokens", mapTokens);
+    };
+
+    const removeMapRuler = (deletedRuler) => {
+        console.log("removing map ruler", deletedRuler, mapRulers)
+        setMapRulers(oldMapRulers => oldMapRulers.filter((ruler) => {
+            console.log(ruler, deletedRuler)
+            if (ruler.id !== deletedRuler.id) {
+                return ruler
+            }
+        }))
+    }
 
     const handleWheel = (event) => {
         const scaleFactor = 0.05; // Adjust the scale factor to control the zoom speed
@@ -204,6 +248,12 @@ const BattleMap = () => {
                             y
                             key
                           }
+                        }
+                        rulers {
+                            items {
+                                points
+                                playerRulersId
+                            }
                         }
                       }
                     }
@@ -349,6 +399,100 @@ const BattleMap = () => {
         };
     };
 
+    const subscribeToRulerCreation = () => {
+        const subscriptionHandler = (data) => {
+            const newRuler = data.value.data.onCreateRuler;
+            addMapRuler(newRuler);
+        };
+
+        const subscription = API.graphql(
+            graphqlOperation(onCreateRuler, {mapRulersId: activeMap}),
+            {
+                filter: {
+                    mutationType: {
+                        eq: 'create',
+                    },
+                },
+            }
+        ).subscribe({
+            next: (data) => {
+                subscriptionHandler(data);
+            },
+            error: (error) => {
+                console.error('Subscription Error:', error);
+            },
+        });
+
+        return () => {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+        };
+    };
+
+    const subscribeToRulerUpdate = () => {
+        const subscriptionHandler = (data) => {
+            const updatedRuler = data.value.data.onUpdateRuler;
+            updateMapRuler(updatedRuler);
+        };
+
+        const subscription = API.graphql(
+            graphqlOperation(onUpdateRuler, {mapRulersId: activeMap}),
+            {
+                filter: {
+                    mutationType: {
+                        eq: 'update',
+                    },
+                },
+            }
+        ).subscribe({
+            next: (data) => {
+                subscriptionHandler(data);
+            },
+            error: (error) => {
+                console.error('Subscription Error:', error);
+            },
+        });
+
+        return () => {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+        };
+    };
+
+    const subscribeToRulerDeletion = () => {
+        const subscriptionHandler = (data) => {
+            const deletedRuler = data.value.data.onDeleteRuler;
+            console.log("Delete Ruler Subscription")
+            removeMapRuler(deletedRuler);
+        };
+
+        const subscription = API.graphql(
+            graphqlOperation(onDeleteRuler, {mapRulersId: activeMap}),
+            {
+                filter: {
+                    mutationType: {
+                        eq: 'delete',
+                    },
+                },
+            }
+        ).subscribe({
+            next: (data) => {
+                subscriptionHandler(data);
+            },
+            error: (error) => {
+                console.error('Subscription Error:', error);
+            },
+        });
+
+        return () => {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+        };
+    };
+
     const subscribeToGameUpdate = () => {
         const subscriptionHandler = async (data) => {
             console.log("Updated game ", data)
@@ -402,6 +546,9 @@ const BattleMap = () => {
         const unsubscribeToTokenCreation = subscribeToTokenCreation();
         const unsubscribeToTokenUpdate = subscribeToTokenUpdate();
         const unsubscribeToTokenDelete = subscribeToTokenDeletion();
+        const unsubscribeToRulerCreation = subscribeToRulerCreation();
+        const unsubscribeToRulerUpdate = subscribeToRulerUpdate();
+        const unsubscribeToRulerDelete = subscribeToRulerDeletion();
         const unsubscribeToGameUpdate = subscribeToGameUpdate();
 
         // Clean up subscriptions
@@ -409,6 +556,9 @@ const BattleMap = () => {
             unsubscribeToTokenCreation();
             unsubscribeToTokenUpdate();
             unsubscribeToTokenDelete();
+            unsubscribeToRulerCreation();
+            unsubscribeToRulerUpdate();
+            unsubscribeToRulerDelete();
             unsubscribeToGameUpdate();
         };
     }, [activeMap]);
@@ -467,6 +617,7 @@ const BattleMap = () => {
                             <input {...getInputProps()} />
                         </div>
                         <DrawingCanvas windowPositionRef={windowPositionRef} scale={scale} mapTokens={mapTokens}
+                                       mapRulers={mapRulers}
                                        widthUnits={widthUnits} heightUnits={heightUnits} GRID_SIZE={GRID_SIZE}
                                        id={"Canvas Start"}/>
                     </div>
