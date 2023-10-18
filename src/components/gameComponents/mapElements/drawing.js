@@ -182,7 +182,8 @@ const Drawing = ({
                 y={shape.y}
                 width={shape.width}
                 height={shape.height}
-                stroke={'black'}
+                stroke={shape.stroke ? shape.stroke : 'black'}
+                fill={shape.fill ? shape.fill : null}
                 strokeWidth={4}
                 draggable
                 onTransformEnd={handleResizeStop}

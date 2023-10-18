@@ -3,7 +3,7 @@ import {FaBars} from "@react-icons/all-files/fa/FaBars";
 import {FaEye} from "@react-icons/all-files/fa/FaEye";
 import {ListItemButton} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import useBattlemapStore, {DRAW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
+import useBattlemapStore, {DRAW_ENUM, FOW_ENUM, TOOL_ENUM} from "@/stores/battlemapStore";
 import {RiSwordLine} from "@react-icons/all-files/ri/RiSwordLine";
 import {FaHandPaper} from "@react-icons/all-files/fa/FaHandPaper";
 import {FaMousePointer} from "@react-icons/all-files/fa/FaMousePointer";
@@ -15,30 +15,139 @@ import {BiPencil} from "@react-icons/all-files/bi/BiPencil";
 import {BiShapePolygon} from "@react-icons/all-files/bi/BiShapePolygon";
 import {BiText} from "@react-icons/all-files/bi/BiText";
 import {BiUpArrow} from "@react-icons/all-files/bi/BiUpArrow";
+import {revealAllFOW} from "@/components/gameComponents/mapElements/fogofwar";
+import {API, graphqlOperation} from "aws-amplify";
+import {v4 as uuidv4} from "uuid";
+import * as mutations from "@/graphql/mutations";
 
-const ToolBar = () => {
+const ToolBar = ({mapTokensRef, mapDimensionsRef}) => {
     const {selectedTool, setSelectedTool} = useBattlemapStore()
     const {mapLayer, setMapLayer} = useBattlemapStore()
     const {drawTool, setDrawTool} = useBattlemapStore()
+    const {fogOfWarMode, setFogOfWarMode} = useBattlemapStore()
+    const {activeMap} = useBattlemapStore()
     const [isMapButtonsVisible, setIsMapButtonsVisible] = useState(false); // State variable for additional buttons
     const [isDrawButtonsVisible, setIsDrawButtonsVisible] = useState(false); // State variable for additional buttons
+    const [isFogOfWarButtonsVisible, setIsFogOfWarButtonsVisible] = useState(false); // State variable for additional buttons
 
     const handleMapButtonClick = () => {
+        setSelectedTool(TOOL_ENUM.LAYERS)
         setIsMapButtonsVisible((prevState) => !prevState); // Toggle the state when the button is clicked
         setIsDrawButtonsVisible(false)
+        setIsFogOfWarButtonsVisible(false)
     };
 
     const handleDrawButtonClick = () => {
         setSelectedTool(TOOL_ENUM.DRAW)
         setIsDrawButtonsVisible(true)
         setIsMapButtonsVisible(false)
+        setIsFogOfWarButtonsVisible(false)
+    }
+
+    const handleFogOfWarButtonClick = () => {
+        setSelectedTool(TOOL_ENUM.REVEAL)
+        setIsFogOfWarButtonsVisible(true)
+        setIsDrawButtonsVisible(false)
+        setIsMapButtonsVisible(false)
     }
 
     useEffect(() => {
-        if (selectedTool !== "DRAW") {
+        if (selectedTool !== TOOL_ENUM.DRAW) {
             setIsDrawButtonsVisible(false)
         }
+        if (selectedTool !== TOOL_ENUM.LAYERS) {
+            setIsMapButtonsVisible(false)
+        }
+        if (selectedTool !== TOOL_ENUM.REVEAL) {
+            setIsFogOfWarButtonsVisible(false)
+        }
     }, [selectedTool]);
+
+    const bulkDeleteFOW = async () => {
+        const batchMutation = mapTokensRef.current.filter((shape) => shape.type === TOOL_ENUM.REVEAL).map((shape, i) => {
+            console.log(shape)
+            return (
+                `mutation${i}: deleteToken(input: {id: "${shape.id}"}) { 
+                    id 
+                    createdAt 
+                    updatedAt 
+                    mapTokensId
+                    map {
+                        sizeX
+                        sizeY
+                        name
+                        game {
+                          id
+                          name
+                          dms
+                          activeMap
+                          gameMode
+                          activeSong
+                          songPlaying
+                          createdAt
+                          updatedAt
+                          userGamesId
+                          gameSongQueueId
+                        }
+                        id
+                        createdAt
+                        updatedAt
+                        gameMapsId
+                        __typename
+                    }
+                  }`
+            )
+            console.log(shape)
+        });
+        console.log(batchMutation)
+        if (batchMutation.length > 0) {
+            try {
+                const batchResponse = await API.graphql(
+                    graphqlOperation(`
+              mutation batchMutation {
+                ${batchMutation}
+              }
+            `)
+                );
+                console.log("deleted fow elements", batchResponse);
+                // setSelectedTokenID(""); // Clear the selectedTokenID here if needed
+            } catch (error) {
+                console.error("Error fow elements:", error);
+            }
+        }
+    }
+
+    const revealAllFOW = async () => {
+        bulkDeleteFOW()
+    }
+
+    const hideAllFOW = async () => {
+        await bulkDeleteFOW()
+
+        const newId = uuidv4()
+
+        const fowMask = {
+            id: newId,
+            key: newId,
+            x: 0,
+            y: 0,
+            width: mapDimensionsRef.current.width,
+            height: mapDimensionsRef.current.height,
+            type: TOOL_ENUM.REVEAL,
+            layer: FOW_ENUM.HIDE,
+            mapTokensId: activeMap
+        }
+
+        console.log(fowMask)
+        const newToken = await API.graphql({
+            query: mutations.createToken,
+            variables: {input: fowMask}
+        });
+
+        console.log("Applied mask over entire canvas")
+        console.log(newToken)
+        return newToken.data.createToken.id
+    }
 
     return (
         <div className={styles.ToolBar}>
@@ -177,7 +286,7 @@ const ToolBar = () => {
                     flexGrow: 0,
                     display: 'block',
                     minWidth: 'auto',
-                    backgroundColor: selectedTool === TOOL_ENUM.REVEAL ? '#ccc' : 'transparent',
+                    backgroundColor: selectedTool === TOOL_ENUM.LAYERS ? '#ccc' : 'transparent',
                 }}
                 className={styles.ToolContainer}
                 edge="end"
@@ -240,10 +349,70 @@ const ToolBar = () => {
                 }}
                 className={styles.ToolContainer}
                 edge="end"
-                onClick={() => setSelectedTool(TOOL_ENUM.REVEAL)}
+                onClick={handleFogOfWarButtonClick}
             >
                 <FaEye className={styles.ToolIcon}/>
             </ListItemButton>
+
+            {/* Conditionally render additional buttons */}
+            {isFogOfWarButtonsVisible && (
+                <>
+                    {/* Additional buttons */}
+                    <ListItemButton
+                        sx={{
+                            flexGrow: 0,
+                            display: 'block',
+                            minWidth: 'auto',
+                            backgroundColor: fogOfWarMode === FOW_ENUM.REVEAL ? '#ccc' : 'transparent',
+                        }}
+                        className={styles.ToolContainer}
+                        edge="end"
+                        onClick={() => setFogOfWarMode(FOW_ENUM.REVEAL)}
+                    >
+                        Reveal
+                    </ListItemButton>
+                    <ListItemButton
+                        sx={{
+                            flexGrow: 0,
+                            display: 'block',
+                            minWidth: 'auto',
+                            backgroundColor: fogOfWarMode === FOW_ENUM.HIDE ? '#ccc' : 'transparent',
+                        }}
+                        className={styles.ToolContainer}
+                        edge="end"
+                        onClick={() => setFogOfWarMode(FOW_ENUM.HIDE)}
+                    >
+                        Hide
+                    </ListItemButton>
+                    <ListItemButton
+                        sx={{
+                            flexGrow: 0,
+                            display: 'block',
+                            minWidth: 'auto',
+                            // backgroundColor: fogOfWarMode === FOW_ENUM.HIDE ? '#ccc' : 'transparent',
+                        }}
+                        className={styles.ToolContainer}
+                        edge="end"
+                        onClick={revealAllFOW}
+                    >
+                        Reveal All
+                    </ListItemButton>
+                    <ListItemButton
+                        sx={{
+                            flexGrow: 0,
+                            display: 'block',
+                            minWidth: 'auto',
+                            // backgroundColor: fogOfWarMode === FOW_ENUM.HIDE ? '#ccc' : 'transparent',
+                        }}
+                        className={styles.ToolContainer}
+                        edge="end"
+                        onClick={hideAllFOW}
+                    >
+                        Hide All
+                    </ListItemButton>
+                </>
+            )}
+
             <ListItemButton
                 sx={{
                     flexGrow: 0,
@@ -256,19 +425,6 @@ const ToolBar = () => {
                 onClick={() => setSelectedTool(TOOL_ENUM.RULER)}
             >
                 <FaRuler className={styles.ToolIcon}/>
-            </ListItemButton>
-            <ListItemButton
-                sx={{
-                    flexGrow: 0,
-                    display: 'block',
-                    minWidth: 'auto',
-                    backgroundColor: selectedTool === TOOL_ENUM.TEXT ? '#ccc' : 'transparent',
-                }}
-                className={styles.ToolContainer}
-                edge="end"
-                onClick={() => setSelectedTool(TOOL_ENUM.TEXT)}
-            >
-                <BiText className={styles.ToolIcon}/>
             </ListItemButton>
             <ListItemButton
                 sx={{

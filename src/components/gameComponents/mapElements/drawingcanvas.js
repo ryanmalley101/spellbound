@@ -14,11 +14,12 @@ import {Button} from "@mui/material";
 import Ping from "@/components/gameComponents/mapElements/ping";
 import {onCreatePing} from "@/graphql/subscriptions";
 import Ruler from "@/components/gameComponents/mapElements/ruler";
+import FogOfWarCanvas from "@/components/gameComponents/mapElements/fogofwar";
 
 const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE, mapRulers}) => {
 
     const {
-        zoomLevel, selectedTool, drawTool, activeMap, mapLayer, gameID, playerID
+        zoomLevel, selectedTool, drawTool, activeMap, mapLayer, gameID, playerID, fogOfWarMode
     } = useBattlemapStore();
 
     const [selectionRect, setSelectionRect] = useState(null);
@@ -117,7 +118,6 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
     useEffect(() => {
 
         const handleMouseDown = async (event) => {
-
             console.log("MouseDown")
             initialMousePositionRef.current = {
                 x: (event.clientX),
@@ -443,6 +443,23 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             console.log(newRuler)
             setCurrentShape(null)
             return newRuler.data.createRuler.id
+        } else if (selectedTool === TOOL_ENUM.REVEAL) {
+            setIsDrawing(true);
+            const point = getPoint(e)
+            const newId = uuidv4()
+
+            setCurrentShape({
+                type: DRAW_ENUM.RECTANGLE,
+                id: newId,
+                key: newId,
+                x: point.x,
+                y: point.y,
+                width: 0,
+                height: 0,
+                fill: "blue",
+                layer: "GM"
+            })
+            setInitialPoint(point)
         }
     };
 
@@ -486,6 +503,19 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                 console.log(updatedRuler)
                 setCurrentShape(null)
                 return updatedRuler.data.updateRuler.id
+            }
+            return
+        } else if (selectedTool === TOOL_ENUM.REVEAL) {
+            if (isDrawing) {
+                const point = getPoint(e)
+
+                setCurrentShape({
+                    ...currentShape,
+                    x: Math.min(point.x, initialPoint.x),
+                    y: Math.min(point.y, initialPoint.y),
+                    width: Math.abs(point.x - initialPoint.x),
+                    height: Math.abs(point.y - initialPoint.y),
+                })
             }
             return
         }
@@ -583,6 +613,17 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             return
         }
 
+        if (selectedTool === TOOL_ENUM.REVEAL) {
+            setIsDrawing(false);
+
+            setCurrentShape({
+                ...currentShape,
+                type: TOOL_ENUM.REVEAL,
+                layer: fogOfWarMode
+            })
+            return
+        }
+
         if (selectedTool === TOOL_ENUM.RULER) {
             try {
                 const deletedRuler = await API.graphql({
@@ -635,7 +676,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
     };
 
     const createNewShape = async () => {
-        const input = {...currentShape, mapTokensId: activeMap,}
+        const input = {...currentShape, mapTokensId: activeMap}
         console.log(currentShape)
         const newToken = await API.graphql({
             query: mutations.createToken,
@@ -659,6 +700,13 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             rect.x >= x1 && rect.x + rect.width <= x2 && rect.y >= y1 && rect.y + rect.height <= y2
         );
     };
+
+    useEffect(() => {
+        if (currentShape && currentShape.type === TOOL_ENUM.REVEAL) {
+            createNewShape()
+            setCurrentShape(null)
+        }
+    }, [currentShape]);
 
     const divRef = useRef(null)
     const [dimensions, setDimensions] = useState({
@@ -743,7 +791,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                 position: "absolute",
                 width: "inherit",
                 height: "inherit",
-                pointerEvents: selectedTool === TOOL_ENUM.DRAW || selectedTool === TOOL_ENUM.SELECT || selectedTool === TOOL_ENUM.RULER ? 'auto' : "none"
+                pointerEvents: selectedTool === TOOL_ENUM.DRAW || selectedTool === TOOL_ENUM.SELECT || selectedTool === TOOL_ENUM.RULER || selectedTool === TOOL_ENUM.REVEAL ? 'auto' : "none"
             }}
             ref={divRef}
         >
@@ -867,6 +915,10 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                             dash={[5, 5]}
                         />
                     )}
+                </Layer>
+                <Layer>
+                    <FogOfWarCanvas stageWidth={widthUnits * GRID_SIZE} stageHeight={heightUnits * GRID_SIZE}
+                                    fowShapes={mapTokens}/>
                 </Layer>
             </Stage>
             {/*{editing && (*/}

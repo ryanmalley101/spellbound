@@ -1701,6 +1701,8 @@ export const onCreateMap = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -1804,6 +1806,8 @@ export const onUpdateMap = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -1907,6 +1911,8 @@ export const onDeleteMap = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -2058,6 +2064,8 @@ export const onCreateToken = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -2308,6 +2316,8 @@ export const onCreateToken = /* GraphQL */ `
       radius
       layer
       text
+      fill
+      stroke
       fontSize
       width
       height
@@ -2383,6 +2393,8 @@ export const onUpdateToken = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -2633,6 +2645,8 @@ export const onUpdateToken = /* GraphQL */ `
       radius
       layer
       text
+      fill
+      stroke
       fontSize
       width
       height
@@ -2708,6 +2722,8 @@ export const onDeleteToken = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -2958,6 +2974,8 @@ export const onDeleteToken = /* GraphQL */ `
       radius
       layer
       text
+      fill
+      stroke
       fontSize
       width
       height
@@ -3646,6 +3664,8 @@ export const onCreateCharacterSheet = /* GraphQL */ `
         radius
         layer
         text
+        fill
+        stroke
         fontSize
         width
         height
@@ -4136,6 +4156,8 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
         radius
         layer
         text
+        fill
+        stroke
         fontSize
         width
         height
@@ -4626,6 +4648,8 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
         radius
         layer
         text
+        fill
+        stroke
         fontSize
         width
         height

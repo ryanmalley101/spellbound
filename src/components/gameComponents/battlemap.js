@@ -17,7 +17,7 @@ import DrawingCanvas from "@/components/gameComponents/mapElements/drawingcanvas
 
 const GRID_SIZE = 70
 
-const BattleMap = () => {
+const BattleMap = ({mapTokensRef, mapDimensionsRef}) => {
 
     const [draggingDisabled, setDraggingDisabled] = useState(true);
     const [selectingDisabled, setSelectingDisabled] = useState(false)
@@ -271,7 +271,6 @@ const BattleMap = () => {
             console.log(tokens)
             setMapTokens(tokens.reverse())
 
-
             tokens.map((token) => {
                 if (!token.layer) {
                     addTokenLayer(token)
@@ -370,7 +369,7 @@ const BattleMap = () => {
     const subscribeToTokenDeletion = () => {
         const subscriptionHandler = (data) => {
             const deletedToken = data.value.data.onDeleteToken;
-            console.log("Delete Token Subscription")
+            console.log("Delete Token Subscription", data)
             removeMapToken(deletedToken);
         };
 
@@ -568,6 +567,11 @@ const BattleMap = () => {
         setDraggingDisabled(selectedTool !== TOOL_ENUM.DRAG)
         setSelectingDisabled(selectedTool !== TOOL_ENUM.SELECT)
     }, [selectedTool])
+
+    useEffect(() => {
+        mapTokensRef.current = mapTokens
+        mapDimensionsRef.current = {width: widthUnits * GRID_SIZE, height: heightUnits * GRID_SIZE}
+    }, [mapTokens, widthUnits, heightUnits, GRID_SIZE])
 
     const Controls = () => {
         const {zoomIn, zoomOut, resetTransform} = useControls();

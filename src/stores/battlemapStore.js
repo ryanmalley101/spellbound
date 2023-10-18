@@ -4,9 +4,10 @@ export const TOOL_ENUM = {
     SELECT: "SELECT",
     DRAG: "DRAG",
     DRAW: "DRAW",
-    REVEAL: "REVEAL",
+    REVEAL: "FOW",
     RULER: "RULER",
-    TEXT: "TEXT"
+    TEXT: "TEXT",
+    LAYERS: "LAYERS"
 }
 
 export const DRAW_ENUM = {
@@ -17,6 +18,11 @@ export const DRAW_ENUM = {
     LABEL: "TEXT",
     POLYGON: "POLYGON",
     IMAGE: "IMAGE"
+}
+
+export const FOW_ENUM = {
+    REVEAL: "REVEAL",
+    HIDE: "HIDE"
 }
 
 const useBattlemapStore = create((set) => ({
@@ -112,6 +118,10 @@ const useBattlemapStore = create((set) => ({
     drawTool: "PEN",
     setDrawTool: (tool) =>
         set((state) => ({drawTool: tool})),
+
+    fogOfWarMode: "REVEAL",
+    setFogOfWarMode: (mode) =>
+        set((state) => ({fogOfWarMode: mode})),
 
     gamePlayers: [],
     setGamePlayers: (players) =>

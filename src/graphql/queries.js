@@ -858,6 +858,8 @@ export const getMap = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -1053,6 +1055,8 @@ export const getToken = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height
@@ -1303,6 +1307,8 @@ export const getToken = /* GraphQL */ `
       radius
       layer
       text
+      fill
+      stroke
       fontSize
       width
       height
@@ -1502,6 +1508,8 @@ export const listTokens = /* GraphQL */ `
         radius
         layer
         text
+        fill
+        stroke
         fontSize
         width
         height
@@ -1976,6 +1984,8 @@ export const getCharacterSheet = /* GraphQL */ `
         radius
         layer
         text
+        fill
+        stroke
         fontSize
         width
         height
@@ -2263,6 +2273,8 @@ export const listCharacterSheets = /* GraphQL */ `
           radius
           layer
           text
+          fill
+          stroke
           fontSize
           width
           height

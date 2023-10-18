@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {API, Auth, graphqlOperation, Storage} from "aws-amplify";
 import TabMenu from "@/components/gameComponents/tabmenu";
 import BattleMap from "@/components/gameComponents/battlemap";
@@ -35,6 +35,9 @@ function GameID() {
     const setGameMode = useBattlemapStore(state => state.setGameMode)
     const setPlayerID = useBattlemapStore(state => state.setPlayerID)
     const setGamePlayers = useBattlemapStore(state => state.setGamePlayers)
+
+    const mapTokensRef = useRef([])
+    const mapDimensionsRef = useRef({width: 0, height: 0})
 
     const router = useRouter();
 
@@ -200,8 +203,8 @@ function GameID() {
         return (
             <div className="app">
                 <div className={"appContainer"}>
-                    <ToolBar/>
-                    <BattleMap className="BattleMap"/>
+                    <ToolBar mapTokensRef={mapTokensRef} mapDimensionsRef={mapDimensionsRef}/>
+                    <BattleMap className="BattleMap" mapTokensRef={mapTokensRef} mapDimensionsRef={mapDimensionsRef}/>
                     <TabMenu user={user} messages={messages}/>
                 </div>
                 {characterSheetWindows.map((sheet) => (

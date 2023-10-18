@@ -190,6 +190,8 @@ type Token
     points: [Float]
     radius: Float
     layer: String
+    fill: String
+    stroke: String
     text: String
     fontSize: Float
     width: Float
@@ -208,6 +210,8 @@ input TokenInput {
     radius: Float
     layer: String
     text: String
+    fill: String
+    stroke: String
     fontSize: Float
     width: Float
     height: Float
