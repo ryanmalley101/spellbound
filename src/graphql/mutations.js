@@ -1507,6 +1507,7 @@ export const createMap = /* GraphQL */ `
     createMap(input: $input, condition: $condition) {
       tokens {
         items {
+          owner
           type
           imageURL
           points
@@ -1615,6 +1616,7 @@ export const updateMap = /* GraphQL */ `
     updateMap(input: $input, condition: $condition) {
       tokens {
         items {
+          owner
           type
           imageURL
           points
@@ -1723,6 +1725,7 @@ export const deleteMap = /* GraphQL */ `
     deleteMap(input: $input, condition: $condition) {
       tokens {
         items {
+          owner
           type
           imageURL
           points
@@ -1877,6 +1880,7 @@ export const createToken = /* GraphQL */ `
           __typename
         }
         token {
+          owner
           type
           imageURL
           points
@@ -2129,6 +2133,7 @@ export const createToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      owner
       type
       imageURL
       points
@@ -2207,6 +2212,7 @@ export const updateToken = /* GraphQL */ `
           __typename
         }
         token {
+          owner
           type
           imageURL
           points
@@ -2459,6 +2465,7 @@ export const updateToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      owner
       type
       imageURL
       points
@@ -2537,6 +2544,7 @@ export const deleteToken = /* GraphQL */ `
           __typename
         }
         token {
+          owner
           type
           imageURL
           points
@@ -2789,6 +2797,7 @@ export const deleteToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      owner
       type
       imageURL
       points
@@ -3492,6 +3501,7 @@ export const createCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        owner
         type
         imageURL
         points
@@ -3985,6 +3995,7 @@ export const updateCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        owner
         type
         imageURL
         points
@@ -4478,6 +4489,7 @@ export const deleteCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        owner
         type
         imageURL
         points

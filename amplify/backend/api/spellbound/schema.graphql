@@ -188,6 +188,7 @@ type Token
 {
     map: Map! @belongsTo
     character: CharacterSheet @belongsTo
+    owner: ID
     type: String
     imageURL: String
     points: [Float]

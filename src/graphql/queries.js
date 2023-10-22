@@ -735,6 +735,7 @@ export const getMap = /* GraphQL */ `
     getMap(id: $id) {
       tokens {
         items {
+          owner
           type
           imageURL
           points
@@ -929,6 +930,7 @@ export const getToken = /* GraphQL */ `
           __typename
         }
         token {
+          owner
           type
           imageURL
           points
@@ -1181,6 +1183,7 @@ export const getToken = /* GraphQL */ `
         characterSheetTokenId
         __typename
       }
+      owner
       type
       imageURL
       points
@@ -1382,6 +1385,7 @@ export const listTokens = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        owner
         type
         imageURL
         points
@@ -1855,6 +1859,7 @@ export const getCharacterSheet = /* GraphQL */ `
           characterSheetTokenId
           __typename
         }
+        owner
         type
         imageURL
         points
@@ -2143,6 +2148,7 @@ export const listCharacterSheets = /* GraphQL */ `
           __typename
         }
         token {
+          owner
           type
           imageURL
           points

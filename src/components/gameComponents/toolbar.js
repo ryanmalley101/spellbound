@@ -19,13 +19,16 @@ import {revealAllFOW} from "@/components/gameComponents/mapElements/fogofwar";
 import {API, graphqlOperation} from "aws-amplify";
 import {v4 as uuidv4} from "uuid";
 import * as mutations from "@/graphql/mutations";
+import * as PropTypes from "prop-types";
+import MapLayersTool from "@/components/gameComponents/tools/maplayerstool";
+import FOWTool from "@/components/gameComponents/tools/fowtool";
 
 const ToolBar = ({mapTokensRef, mapDimensionsRef}) => {
     const {selectedTool, setSelectedTool} = useBattlemapStore()
     const {mapLayer, setMapLayer} = useBattlemapStore()
     const {drawTool, setDrawTool} = useBattlemapStore()
-    const {fogOfWarMode, setFogOfWarMode} = useBattlemapStore()
     const {activeMap} = useBattlemapStore()
+    const {playerIsDM} = useBattlemapStore()
     const [isMapButtonsVisible, setIsMapButtonsVisible] = useState(false); // State variable for additional buttons
     const [isDrawButtonsVisible, setIsDrawButtonsVisible] = useState(false); // State variable for additional buttons
     const [isFogOfWarButtonsVisible, setIsFogOfWarButtonsVisible] = useState(false); // State variable for additional buttons
@@ -281,137 +284,17 @@ const ToolBar = ({mapTokensRef, mapDimensionsRef}) => {
                     </ListItemButton>
                 </div>
             )}
-            <ListItemButton
-                sx={{
-                    flexGrow: 0,
-                    display: 'block',
-                    minWidth: 'auto',
-                    backgroundColor: selectedTool === TOOL_ENUM.LAYERS ? '#ccc' : 'transparent',
-                }}
-                className={styles.ToolContainer}
-                edge="end"
-                onClick={handleMapButtonClick} // Use the click handler for the FaBarsStaggered button
-            >
-                <FaBars className={styles.ToolIcon}/>
-            </ListItemButton>
+
+            {playerIsDM ? <MapLayersTool selectedTool={selectedTool} mapButtonsVisible={isMapButtonsVisible}/> : null}
+
 
             {/* Conditionally render additional buttons */}
-            {isMapButtonsVisible && (
-                <>
-                    {/* Additional buttons */}
-                    <ListItemButton
-                        sx={{
-                            flexGrow: 0,
-                            display: 'block',
-                            minWidth: 'auto',
-                            backgroundColor: mapLayer === "GM" ? '#ccc' : 'transparent',
-                        }}
-                        className={styles.ToolContainer}
-                        edge="end"
-                        onClick={() => setMapLayer("GM")} // Set the selected tool when the "GM" button is clicked
-                    >
-                        GM
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            flexGrow: 0,
-                            display: 'block',
-                            minWidth: 'auto',
-                            backgroundColor: mapLayer === "TOKEN" ? '#ccc' : 'transparent',
-                        }}
-                        className={styles.ToolContainer}
-                        edge="end"
-                        onClick={() => setMapLayer("TOKEN")} // Set the selected tool when the "Token" button is clicked
-                    >
-                        Token
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            flexGrow: 0,
-                            display: 'block',
-                            minWidth: 'auto',
-                            backgroundColor: mapLayer === "MAP" ? '#ccc' : 'transparent',
-                        }}
-                        className={styles.ToolContainer}
-                        edge="end"
-                        onClick={() => setMapLayer("MAP")} // Set the selected tool when the "Map" button is clicked
-                    >
-                        Map
-                    </ListItemButton>
-                </>
-            )}
-            <ListItemButton
-                sx={{
-                    flexGrow: 0,
-                    display: 'block',
-                    minWidth: 'auto',
-                    backgroundColor: selectedTool === TOOL_ENUM.REVEAL ? '#ccc' : 'transparent',
-                }}
-                className={styles.ToolContainer}
-                edge="end"
-                onClick={handleFogOfWarButtonClick}
-            >
-                <FaEye className={styles.ToolIcon}/>
-            </ListItemButton>
 
-            {/* Conditionally render additional buttons */}
-            {isFogOfWarButtonsVisible && (
-                <>
-                    {/* Additional buttons */}
-                    <ListItemButton
-                        sx={{
-                            flexGrow: 0,
-                            display: 'block',
-                            minWidth: 'auto',
-                            backgroundColor: fogOfWarMode === FOW_ENUM.REVEAL ? '#ccc' : 'transparent',
-                        }}
-                        className={styles.ToolContainer}
-                        edge="end"
-                        onClick={() => setFogOfWarMode(FOW_ENUM.REVEAL)}
-                    >
-                        Reveal
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            flexGrow: 0,
-                            display: 'block',
-                            minWidth: 'auto',
-                            backgroundColor: fogOfWarMode === FOW_ENUM.HIDE ? '#ccc' : 'transparent',
-                        }}
-                        className={styles.ToolContainer}
-                        edge="end"
-                        onClick={() => setFogOfWarMode(FOW_ENUM.HIDE)}
-                    >
-                        Hide
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            flexGrow: 0,
-                            display: 'block',
-                            minWidth: 'auto',
-                            // backgroundColor: fogOfWarMode === FOW_ENUM.HIDE ? '#ccc' : 'transparent',
-                        }}
-                        className={styles.ToolContainer}
-                        edge="end"
-                        onClick={revealAllFOW}
-                    >
-                        Reveal All
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            flexGrow: 0,
-                            display: 'block',
-                            minWidth: 'auto',
-                            // backgroundColor: fogOfWarMode === FOW_ENUM.HIDE ? '#ccc' : 'transparent',
-                        }}
-                        className={styles.ToolContainer}
-                        edge="end"
-                        onClick={hideAllFOW}
-                    >
-                        Hide All
-                    </ListItemButton>
-                </>
-            )}
+            {playerIsDM ? <FOWTool revealAllFOW={revealAllFOW} hideAllFOW={hideAllFOW}
+                                   isFogOfWarButtonsVisible={isFogOfWarButtonsVisible}
+                                   handleFogOfWarButtonClick={handleFogOfWarButtonClick}
+                                   selectedTool={selectedTool}/> : null}
+
 
             <ListItemButton
                 sx={{

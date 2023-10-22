@@ -8,7 +8,7 @@ import * as mutations from "@/graphql/mutations";
 import {Image, Transformer} from "react-konva";
 import useImage from 'use-image';
 
-const DraggableIcon = ({token, handleDragStop, onDragMove, onClick}) => {
+const DraggableIcon = ({token, handleDragStop, onDragMove, onClick, draggable}) => {
     const zoomLevel = useBattlemapStore(state => state.zoomLevel)
     const [iconPosition, setIconPosition] = useState({x: 0, y: 0});
     const [width, setWidth] = useState(50);
@@ -135,7 +135,7 @@ const DraggableIcon = ({token, handleDragStop, onDragMove, onClick}) => {
                        onClick={onClick}
                        ref={shapeRef}
                        {...shapeProps}
-                       draggable={selectedTool === TOOL_ENUM.SELECT}
+                       draggable={selectedTool === TOOL_ENUM.SELECT && draggable}
                        onDragEnd={handleDragStop}
                        isSelected={isSelected}
                        onTransformEnd={handleResizeStop}

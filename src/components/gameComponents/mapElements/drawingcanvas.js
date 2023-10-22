@@ -19,7 +19,7 @@ import FogOfWarCanvas from "@/components/gameComponents/mapElements/fogofwar";
 const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightUnits, GRID_SIZE, mapRulers}) => {
 
     const {
-        zoomLevel, selectedTool, drawTool, activeMap, mapLayer, gameID, playerID, fogOfWarMode
+        zoomLevel, selectedTool, drawTool, activeMap, mapLayer, gameID, playerId, fogOfWarMode
     } = useBattlemapStore();
 
     const [selectionRect, setSelectionRect] = useState(null);
@@ -431,7 +431,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
             const input = {
                 points: [roundedX, roundedY, roundedX, roundedY],
                 mapRulersId: activeMap,
-                playerRulersId: playerID,
+                playerRulersId: playerId,
                 id: newId
             }
             const newRuler = await API.graphql({
@@ -626,6 +626,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
 
         if (selectedTool === TOOL_ENUM.RULER) {
             try {
+                setIsDrawing(false)
                 const deletedRuler = await API.graphql({
                     query: mutations.deleteRuler,
                     variables: {input: {id: rulerShape.id}},
@@ -676,7 +677,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
     };
 
     const createNewShape = async () => {
-        const input = {...currentShape, mapTokensId: activeMap}
+        const input = {...currentShape, mapTokensId: activeMap, owner: playerId}
         console.log(currentShape)
         const newToken = await API.graphql({
             query: mutations.createToken,
@@ -815,6 +816,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                                 shape={token}
                                 index={index}
                                 editing={editing}
+                                draggable={playerId === token.owner}
                                 handleTextDblClick={handleTextDblClick}
                                 selectedLabelId={selectedLabelId}
                                 selectionRef={selectionRef}
@@ -833,6 +835,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                                 shape={token}
                                 index={index}
                                 editing={editing}
+                                draggable={playerId === token.owner}
                                 handleTextDblClick={handleTextDblClick}
                                 selectedLabelId={selectedLabelId}
                                 selectionRef={selectionRef}
@@ -849,6 +852,7 @@ const DrawingCanvas = ({windowPositionRef, scale, mapTokens, widthUnits, heightU
                                 shape={token}
                                 index={index}
                                 editing={editing}
+                                draggable={playerId === token.owner}
                                 handleTextDblClick={handleTextDblClick}
                                 selectedLabelId={selectedLabelId}
                                 selectionRef={selectionRef}

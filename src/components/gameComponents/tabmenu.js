@@ -19,9 +19,11 @@ import {FaDragon} from "@react-icons/all-files/fa/FaDragon";
 import {BsCompass} from "@react-icons/all-files/bs/BsCompass";
 import {BsCodeSlash} from "@react-icons/all-files/bs/BsCodeSlash";
 import {BsGear} from "@react-icons/all-files/bs/BsGear";
+import useBattlemapStore from "@/stores/battlemapStore";
 
 const TabMenu = ({user, messages}) => {
     const [selectedTab, setSelectedTab] = useState(0);
+    const {playerIsDM} = useBattlemapStore()
 
     const handleTabSelect = (index) => {
         setSelectedTab(index);
@@ -56,11 +58,11 @@ const TabMenu = ({user, messages}) => {
                     {/* Add your journal component here */}
                 </TabPanel>
 
-                <TabPanel className={styles.ReactTabsPanel}>
+                {playerIsDM ? <TabPanel className={styles.ReactTabsPanel}>
                     {/* Content for the Journal */}
                     <MapList/>
                     {/* Add your journal component here */}
-                </TabPanel>
+                </TabPanel> : null}
 
                 <TabPanel className={styles.ReactTabsPanel}>
                     {/* Content for the Compendium */}
@@ -68,9 +70,9 @@ const TabMenu = ({user, messages}) => {
                     {/* Add your compendium component here */}
                 </TabPanel>
 
-                <TabPanel className={styles.ReactTabsPanel}>
+                {playerIsDM ? <TabPanel className={styles.ReactTabsPanel}>
                     <MusicLibrary/>
-                </TabPanel>
+                </TabPanel> : null}
 
                 <TabPanel className={styles.ReactTabsPanel}>
                     {/* Content for the Macros */}

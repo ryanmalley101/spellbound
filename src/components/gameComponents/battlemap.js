@@ -26,7 +26,9 @@ const BattleMap = ({mapTokensRef, mapDimensionsRef}) => {
     const [mapTokens, setMapTokens] = useState(['debug'])
     const [mapRulers, setMapRulers] = useState([])
     const [isDraggingFile, setIsDraggingFile] = useState(false)
-
+    const {
+        playerID
+    } = useBattlemapStore();
     const windowPositionRef = useRef({x: 0, y: 0})
     const scale = useRef(1)
 
@@ -66,7 +68,8 @@ const BattleMap = ({mapTokensRef, mapDimensionsRef}) => {
                     y: 0,
                     rotation: 0,
                     width: 50,
-                    height: 50
+                    height: 50,
+                    owner: playerID
                 };
 
                 console.log(path)

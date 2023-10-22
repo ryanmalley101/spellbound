@@ -95,6 +95,10 @@ const useBattlemapStore = create((set) => ({
     setPlayerID: (id) =>
         set((state) => ({playerID: id})),
 
+    playerIsDM: false,
+    setPlayerIsDM: (dm) =>
+        set((state) => ({playerIsDM: dm})),
+
     activeMap: "",
     setActiveMap: (map) =>
         set((state) => ({activeMap: map})),

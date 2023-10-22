@@ -4,7 +4,7 @@ import {API} from "aws-amplify";
 import * as mutations from "@/graphql/mutations";
 import {BsFillPlayFill} from "@react-icons/all-files/bs/BsFillPlayFill";
 import {BsPauseFill} from "@react-icons/all-files/bs/BsPauseFill";
-import AudioPlayer from "react-h5-audio-player";
+import AudioPlayer, {RHAP_UI} from "react-h5-audio-player";
 import 'react-h5-audio-player/lib/styles.css'
 import H5AudioPlayer from "react-h5-audio-player";
 // import "./AudioPlayer.css"; // Create a separate CSS file for styling
@@ -13,7 +13,7 @@ const GameAudio = ({songUrl}) => {
     const [volume, setVolume] = useState(.5)
     const [isPlaying, setIsPlaying] = useState(false)
     const [looping, isLooping] = useState(false)
-    const {playingSong, gameID, isSongPlaying, songQueue, setSongQueue} = useBattlemapStore();
+    const {playingSong, gameID, isSongPlaying, songQueue, setSongQueue, playerIsDM} = useBattlemapStore();
     const audioRef = useRef(null);
 
     const handlePlay = async (e) => {
@@ -180,22 +180,9 @@ const GameAudio = ({songUrl}) => {
             >
                 <AudioPlayer src={playingSong} onPlay={handlePlay} onPause={handlePause} customAdditionalControls={[]}
                              onVolumeChange={handleVolumeChange} onClickNext={handleNext} onClickPrevious={handleBack}
-                             autoPlayAfterSrcChange={true} showJumpControls={false} showSkipControls={true}/>
-                {/*<button onClick={isPlaying ? handlePause : handlePlay}>*/}
-                {/*    {isPlaying ? <BsPauseFill/> : <BsFillPlayFill/>}*/}
-                {/*</button>*/}
-                {/*<audio ref={audioRef} src={playingSong}*/}
-                {/*       onVolumeChange={handleVolumeChange} controls={true} onPlay={handlePlay}/>*/}
-
-                {/*<ReactAudioPlayer*/}
-                {/*  ref={(element) => {*/}
-                {/*    audioRef.current = element*/}
-                {/*  }}*/}
-                {/*  src={playingSong}*/}
-                {/*  autoPlay={false}*/}
-                {/*  controls*/}
-
-                {/*/>*/}
+                             autoPlayAfterSrcChange={true} showJumpControls={false} showSkipControls={true}
+                             customControlsSection={playerIsDM ? [RHAP_UI.ADDITIONAL_CONTROLS, RHAP_UI.MAIN_CONTROLS, RHAP_UI.VOLUME_CONTROLS]
+                                 : [RHAP_UI.VOLUME_CONTROLS]}/>
             </div>
         );
     }

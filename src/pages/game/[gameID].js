@@ -28,7 +28,8 @@ function GameID() {
         setPlayerID,
         setGamePlayers,
         activeMap,
-        setActiveMap
+        setActiveMap,
+        setPlayerIsDM
     } = useBattlemapStore();
     const {
         characterSheetWindows,
@@ -87,6 +88,11 @@ function GameID() {
             } else {
                 console.log(`PlayerID ${userPlayer[0].id}`)
                 setPlayerID(userPlayer[0].id)
+                gamesReq.data.getGame.dms.map((id) => {
+                    if (userPlayer[0].id === id) {
+                        setPlayerIsDM(true)
+                    }
+                })
             }
 
             const maps = (gamesReq.data.getGame.maps.items)

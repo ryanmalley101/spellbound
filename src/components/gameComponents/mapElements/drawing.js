@@ -13,7 +13,8 @@ const Drawing = ({
                      handleTextDblClick,
                      selectedLabelId,
                      handleShapeSelect,
-                     selectionRef
+                     selectionRef,
+                     draggable
                  }) => {
 
     const {activeMap} = useBattlemapStore()
@@ -164,7 +165,7 @@ const Drawing = ({
                 tension={0.5}
                 lineCap="round"
                 lineJoin="round"
-                draggable
+                draggable={draggable}
                 onTransformEnd={onLineDragEnd}
                 onDragEnd={onLineDragEnd}
                 onClick={(e) => handleShapeSelect(e, shape)}
@@ -185,7 +186,7 @@ const Drawing = ({
                 stroke={shape.stroke ? shape.stroke : 'black'}
                 fill={shape.fill ? shape.fill : null}
                 strokeWidth={4}
-                draggable
+                draggable={draggable}
                 onTransformEnd={handleResizeStop}
                 onDragEnd={(e) => handleDragStop(e, index)}
                 onClick={(e) => handleShapeSelect(e, shape)}
@@ -204,7 +205,7 @@ const Drawing = ({
                 radius={shape.radius}
                 stroke={'black'}
                 strokeWidth={4}
-                draggable
+                draggable={draggable}
                 onTransformEnd={handleResizeStop}
                 onDragEnd={(e) => handleDragStop(e, index)}
                 onClick={(e) => handleShapeSelect(e, shape)}
@@ -222,7 +223,7 @@ const Drawing = ({
                 points={shape.points}
                 stroke={'black'}
                 strokeWidth={4}
-                draggable
+                draggable={draggable}
                 onTransformEnd={handleResizeStop}
                 onDragEnd={(e) => handleDragStop(e, index)}
                 onClick={(e) => handleShapeSelect(e, shape)}
@@ -239,7 +240,7 @@ const Drawing = ({
                 points={shape.points}
                 stroke={'black'}
                 strokeWidth={4}
-                draggable
+                draggable={draggable}
                 onTransformEnd={handleResizeStop}
                 onDragEnd={(e) => onLineDragEnd(e, index)}
                 onClick={(e) => handleShapeSelect(e, shape)}
@@ -256,7 +257,7 @@ const Drawing = ({
                 y={shape.y}
                 text={shape.text}
                 fontSize={shape.fontSize}
-                draggable={!editing}
+                draggable={!editing && draggable}
                 onTransformEnd={handleResizeStop}
                 onDblClick={(e) => handleTextDblClick(e, shape.id)}
                 onClick={(e) => {
@@ -287,7 +288,8 @@ const Drawing = ({
                               handleDragStop={handleDragStop}
                               onDragMove={onMove}
                               onDragEnd={(e) => handleDragStop(e, index)}
-                              onClick={(e) => handleShapeSelect(e, shape)}/>
+                              onClick={(e) => handleShapeSelect(e, shape)}
+                              draggable={draggable}/>
     }
 
 }
