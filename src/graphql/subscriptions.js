@@ -254,35 +254,21 @@ export const onCreateGame = /* GraphQL */ `
         __typename
       }
       gameMode
-      activeSong
-      songPlaying
-      songQueue {
-        game {
-          id
-          name
-          dms
-          activeMap
-          gameMode
-          activeSong
-          songPlaying
-          createdAt
-          updatedAt
-          userGamesId
-          gameSongQueueId
-          __typename
-        }
-        playlistName
-        songs
-        id
-        createdAt
-        updatedAt
-        songQueueGameId
+      activeSong {
+        title
+        url
         __typename
       }
+      songPlaying
+      songQueue {
+        title
+        url
+        __typename
+      }
+      paused
       createdAt
       updatedAt
       userGamesId
-      gameSongQueueId
       __typename
     }
   }
@@ -540,35 +526,21 @@ export const onUpdateGame = /* GraphQL */ `
         __typename
       }
       gameMode
-      activeSong
-      songPlaying
-      songQueue {
-        game {
-          id
-          name
-          dms
-          activeMap
-          gameMode
-          activeSong
-          songPlaying
-          createdAt
-          updatedAt
-          userGamesId
-          gameSongQueueId
-          __typename
-        }
-        playlistName
-        songs
-        id
-        createdAt
-        updatedAt
-        songQueueGameId
+      activeSong {
+        title
+        url
         __typename
       }
+      songPlaying
+      songQueue {
+        title
+        url
+        __typename
+      }
+      paused
       createdAt
       updatedAt
       userGamesId
-      gameSongQueueId
       __typename
     }
   }
@@ -826,233 +798,21 @@ export const onDeleteGame = /* GraphQL */ `
         __typename
       }
       gameMode
-      activeSong
-      songPlaying
-      songQueue {
-        game {
-          id
-          name
-          dms
-          activeMap
-          gameMode
-          activeSong
-          songPlaying
-          createdAt
-          updatedAt
-          userGamesId
-          gameSongQueueId
-          __typename
-        }
-        playlistName
-        songs
-        id
-        createdAt
-        updatedAt
-        songQueueGameId
+      activeSong {
+        title
+        url
         __typename
       }
+      songPlaying
+      songQueue {
+        title
+        url
+        __typename
+      }
+      paused
       createdAt
       updatedAt
       userGamesId
-      gameSongQueueId
-      __typename
-    }
-  }
-`;
-export const onCreateSongQueue = /* GraphQL */ `
-  subscription OnCreateSongQueue(
-    $filter: ModelSubscriptionSongQueueFilterInput
-  ) {
-    onCreateSongQueue(filter: $filter) {
-      game {
-        id
-        name
-        owner {
-          id
-          email
-          username
-          createdAt
-          updatedAt
-          __typename
-        }
-        messageList {
-          nextToken
-          __typename
-        }
-        dms
-        players {
-          nextToken
-          __typename
-        }
-        maps {
-          nextToken
-          __typename
-        }
-        activeMap
-        characterSheets {
-          nextToken
-          __typename
-        }
-        pings {
-          nextToken
-          __typename
-        }
-        gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
-          __typename
-        }
-        createdAt
-        updatedAt
-        userGamesId
-        gameSongQueueId
-        __typename
-      }
-      playlistName
-      songs
-      id
-      createdAt
-      updatedAt
-      songQueueGameId
-      __typename
-    }
-  }
-`;
-export const onUpdateSongQueue = /* GraphQL */ `
-  subscription OnUpdateSongQueue(
-    $filter: ModelSubscriptionSongQueueFilterInput
-  ) {
-    onUpdateSongQueue(filter: $filter) {
-      game {
-        id
-        name
-        owner {
-          id
-          email
-          username
-          createdAt
-          updatedAt
-          __typename
-        }
-        messageList {
-          nextToken
-          __typename
-        }
-        dms
-        players {
-          nextToken
-          __typename
-        }
-        maps {
-          nextToken
-          __typename
-        }
-        activeMap
-        characterSheets {
-          nextToken
-          __typename
-        }
-        pings {
-          nextToken
-          __typename
-        }
-        gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
-          __typename
-        }
-        createdAt
-        updatedAt
-        userGamesId
-        gameSongQueueId
-        __typename
-      }
-      playlistName
-      songs
-      id
-      createdAt
-      updatedAt
-      songQueueGameId
-      __typename
-    }
-  }
-`;
-export const onDeleteSongQueue = /* GraphQL */ `
-  subscription OnDeleteSongQueue(
-    $filter: ModelSubscriptionSongQueueFilterInput
-  ) {
-    onDeleteSongQueue(filter: $filter) {
-      game {
-        id
-        name
-        owner {
-          id
-          email
-          username
-          createdAt
-          updatedAt
-          __typename
-        }
-        messageList {
-          nextToken
-          __typename
-        }
-        dms
-        players {
-          nextToken
-          __typename
-        }
-        maps {
-          nextToken
-          __typename
-        }
-        activeMap
-        characterSheets {
-          nextToken
-          __typename
-        }
-        pings {
-          nextToken
-          __typename
-        }
-        gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
-          __typename
-        }
-        createdAt
-        updatedAt
-        userGamesId
-        gameSongQueueId
-        __typename
-      }
-      playlistName
-      songs
-      id
-      createdAt
-      updatedAt
-      songQueueGameId
       __typename
     }
   }
@@ -1083,12 +843,11 @@ export const onCreateUser = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         nextToken
@@ -1126,12 +885,11 @@ export const onUpdateUser = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         nextToken
@@ -1169,12 +927,11 @@ export const onDeleteUser = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         nextToken
@@ -1224,21 +981,21 @@ export const onCreateMessage = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       gameId
@@ -1299,21 +1056,21 @@ export const onUpdateMessage = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       gameId
@@ -1374,21 +1131,21 @@ export const onDeleteMessage = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       gameId
@@ -1450,21 +1207,21 @@ export const onCreatePlayer = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       user {
@@ -1543,21 +1300,21 @@ export const onUpdatePlayer = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       user {
@@ -1636,21 +1393,21 @@ export const onDeletePlayer = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       user {
@@ -1700,9 +1457,9 @@ export const onCreateMap = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -1770,21 +1527,21 @@ export const onCreateMap = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       id
@@ -1805,9 +1562,9 @@ export const onUpdateMap = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -1875,21 +1632,21 @@ export const onUpdateMap = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       id
@@ -1910,9 +1667,9 @@ export const onDeleteMap = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -1980,21 +1737,21 @@ export const onDeleteMap = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       id
@@ -2026,12 +1783,11 @@ export const onCreateToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -2049,12 +1805,11 @@ export const onCreateToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         token {
@@ -2063,9 +1818,9 @@ export const onCreateToken = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -2315,9 +2070,9 @@ export const onCreateToken = /* GraphQL */ `
       points
       radius
       layer
-      text
       fill
       stroke
+      text
       fontSize
       width
       height
@@ -2355,12 +2110,11 @@ export const onUpdateToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -2378,12 +2132,11 @@ export const onUpdateToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         token {
@@ -2392,9 +2145,9 @@ export const onUpdateToken = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -2644,9 +2397,9 @@ export const onUpdateToken = /* GraphQL */ `
       points
       radius
       layer
-      text
       fill
       stroke
+      text
       fontSize
       width
       height
@@ -2684,12 +2437,11 @@ export const onDeleteToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -2707,12 +2459,11 @@ export const onDeleteToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         token {
@@ -2721,9 +2472,9 @@ export const onDeleteToken = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -2973,9 +2724,9 @@ export const onDeleteToken = /* GraphQL */ `
       points
       radius
       layer
-      text
       fill
       stroke
+      text
       fontSize
       width
       height
@@ -3029,21 +2780,21 @@ export const onCreatePing = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       x
@@ -3095,21 +2846,21 @@ export const onUpdatePing = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       x
@@ -3161,21 +2912,21 @@ export const onDeletePing = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       x
@@ -3213,12 +2964,11 @@ export const onCreateRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -3236,12 +2986,11 @@ export const onCreateRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         user {
@@ -3293,12 +3042,11 @@ export const onUpdateRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -3316,12 +3064,11 @@ export const onUpdateRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         user {
@@ -3373,12 +3120,11 @@ export const onDeleteRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -3396,12 +3142,11 @@ export const onDeleteRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         user {
@@ -3471,21 +3216,21 @@ export const onCreateCharacterSheet = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       token {
@@ -3663,9 +3408,9 @@ export const onCreateCharacterSheet = /* GraphQL */ `
         points
         radius
         layer
-        text
         fill
         stroke
+        text
         fontSize
         width
         height
@@ -3963,21 +3708,21 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       token {
@@ -4155,9 +3900,9 @@ export const onUpdateCharacterSheet = /* GraphQL */ `
         points
         radius
         layer
-        text
         fill
         stroke
+        text
         fontSize
         width
         height
@@ -4455,21 +4200,21 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       token {
@@ -4647,9 +4392,9 @@ export const onDeleteCharacterSheet = /* GraphQL */ `
         points
         radius
         layer
-        text
         fill
         stroke
+        text
         fontSize
         width
         height

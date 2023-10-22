@@ -6,7 +6,7 @@ import styles from "@/styles/TabMenu.module.css"
 import {BsBook} from "@react-icons/all-files/bs/BsBook";
 import {BsChatDotsFill} from "@react-icons/all-files/bs/BsChatDotsFill";
 import {AiOutlinePicture} from '@react-icons/all-files/ai/AiOutlinePicture'
-import AudioPlayer from "@/components/gameComponents/audioplayer";
+import GameAudio from "@/components/gameComponents/gameAudio";
 import ArtLibrary from "@/components/gameComponents/tabs/artlibrary";
 import artDirectory from '../../../public/art_directory.json';
 import JournalList from "@/components/gameComponents/tabs/journallist";
@@ -26,12 +26,6 @@ const TabMenu = ({user, messages}) => {
     const handleTabSelect = (index) => {
         setSelectedTab(index);
     };
-
-    const song = {
-        "url": "music/test.mp3",
-        "title": "Bohemian Rhapsody",
-        "artist": "Queen"
-    }
 
     return (
         <div className={styles.TabMenu}>
@@ -91,7 +85,7 @@ const TabMenu = ({user, messages}) => {
                     {/* Add your settings component here */}
                 </TabPanel>
             </Tabs>
-            {/*<AudioPlayer autoPlay/>*/}
+            <GameAudio autoPlay/>
         </div>
     );
 };

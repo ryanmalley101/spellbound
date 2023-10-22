@@ -96,8 +96,20 @@ const BattleMap = ({mapTokensRef, mapDimensionsRef}) => {
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, noClick: true, disabled: !isDraggingFile})
 
     const {
-        zoomLevel, setZoomLevel, selectedTool, selectedTokenID, setSelectedTokenID,
-        mapLayer, setMapLayer, gameID, activeMap, setActiveMap, playingSong, setPlayingSong, setIsSongPlaying
+        zoomLevel,
+        setZoomLevel,
+        selectedTool,
+        selectedTokenID,
+        setSelectedTokenID,
+        mapLayer,
+        setMapLayer,
+        gameID,
+        activeMap,
+        setActiveMap,
+        playingSong,
+        setPlayingSong,
+        setIsSongPlaying,
+        setSongQueue
     } = useBattlemapStore();
 
     const addMapToken = (newToken) => {
@@ -499,16 +511,18 @@ const BattleMap = ({mapTokensRef, mapDimensionsRef}) => {
             const updatedActiveMap = data.value.data.onUpdateGame.activeMap
             const updatedPlayingSong = data.value.data.onUpdateGame.activeSong
             const isPlayingSong = data.value.data.onUpdateGame.songPlaying
+            const songQueue = data.value.data.onUpdateGame.songQueue
 
             setActiveMap(updatedActiveMap)
             setIsSongPlaying(isPlayingSong)
+            setSongQueue(songQueue)
 
-            if (playingSong !== updatedPlayingSong && data.value.data.onUpdateGame.playingSong) {
-                const newSong = await Storage.get('music/' + updatedPlayingSong, {
+            if (playingSong !== updatedPlayingSong && data.value.data.onUpdateGame.activeSong && !data.value.data.onUpdateGame.paused) {
+                const newSong = await Storage.get('music/' + updatedPlayingSong.url, {
                     level: 'protected',
                     identidyId: '253A4971ef34-3da5-4205-87cc-ca1cbcd4a019'
                 })
-                console.log(playingSong)
+                console.log(`Updated game now playing song ${newSong}`)
                 setPlayingSong(newSong)
             }
         }

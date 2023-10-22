@@ -20,21 +20,28 @@ import * as mutations from "@/graphql/mutations";
 import {onCreateMessage} from "@/graphql/subscriptions";
 
 function GameID() {
-    const {gameID, setGameID, activeMap, setActiveMap} = useBattlemapStore();
-    const characterSheetWindows = useBattlemapStore((state) => state.characterSheetWindows)
-    const monsterBlocks = useBattlemapStore((state) => state.monsterBlocks)
-    const spellCards = useBattlemapStore((state) => state.spellCards)
-    const magicItemCards = useBattlemapStore((state) => state.magicItemCards)
-    const weaponCards = useBattlemapStore((state) => state.weaponCards)
-    const armorCards = useBattlemapStore((state) => state.armorCards)
-    const conditionCards = useBattlemapStore((state) => state.conditionCards)
-    const ashOfWarCards = useBattlemapStore((state) => state.ashOfWarCards)
-    const gameMode = useBattlemapStore((state) => state.gameMode)
-    const playingSong = useBattlemapStore((state) => state.playingSong)
-    const setPlayingSong = useBattlemapStore((state) => state.setPlayingSong)
-    const setGameMode = useBattlemapStore(state => state.setGameMode)
-    const setPlayerID = useBattlemapStore(state => state.setPlayerID)
-    const setGamePlayers = useBattlemapStore(state => state.setGamePlayers)
+    const {
+        gameID,
+        setGameID,
+        gameMode,
+        setGameMode,
+        setPlayerID,
+        setGamePlayers,
+        activeMap,
+        setActiveMap
+    } = useBattlemapStore();
+    const {
+        characterSheetWindows,
+        monsterBlocks,
+        spellCards,
+        magicItemCards,
+        weaponCards,
+        armorCards,
+        conditionCards,
+        ashOfWarCards
+    } = useBattlemapStore()
+
+    const {playingSong, setPlayingSong, setIsSongPlaying, setSongQueue} = useBattlemapStore()
 
     const mapTokensRef = useRef([])
     const mapDimensionsRef = useRef({width: 0, height: 0})
@@ -102,8 +109,20 @@ function GameID() {
                 setActiveMap(gamesReq.data.getGame.activeMap)
             }
 
+            const activeMapDetails = {
+                id: gameID,
+                songQueue: []
+            };
+
+            const updatedGame = await API.graphql({
+                query: mutations.updateGame,
+                variables: {input: activeMapDetails}
+            });
+
             setGameMode(gamesReq.data.getGame.gameMode)
 
+            setIsSongPlaying(gamesReq.data.getGame.songPlaying)
+            setSongQueue(gamesReq.data.getGame.songQueue)
             if (playingSong !== gamesReq.data.getGame.activeSong) {
                 const newSong = await Storage.get('music/' + gamesReq.data.getGame.activeSong, {
                     level: 'protected',
@@ -112,6 +131,8 @@ function GameID() {
                 console.log(playingSong)
                 setPlayingSong(newSong)
             }
+
+
         }
     }
 

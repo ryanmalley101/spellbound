@@ -254,35 +254,21 @@ export const getGame = /* GraphQL */ `
         __typename
       }
       gameMode
-      activeSong
-      songPlaying
-      songQueue {
-        game {
-          id
-          name
-          dms
-          activeMap
-          gameMode
-          activeSong
-          songPlaying
-          createdAt
-          updatedAt
-          userGamesId
-          gameSongQueueId
-          __typename
-        }
-        playlistName
-        songs
-        id
-        createdAt
-        updatedAt
-        songQueueGameId
+      activeSong {
+        title
+        url
         __typename
       }
+      songPlaying
+      songQueue {
+        title
+        url
+        __typename
+      }
+      paused
       createdAt
       updatedAt
       userGamesId
-      gameSongQueueId
       __typename
     }
   }
@@ -328,120 +314,21 @@ export const listGames = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
-export const getSongQueue = /* GraphQL */ `
-  query GetSongQueue($id: ID!) {
-    getSongQueue(id: $id) {
-      game {
-        id
-        name
-        owner {
-          id
-          email
-          username
-          createdAt
-          updatedAt
-          __typename
-        }
-        messageList {
-          nextToken
-          __typename
-        }
-        dms
-        players {
-          nextToken
-          __typename
-        }
-        maps {
-          nextToken
-          __typename
-        }
-        activeMap
-        characterSheets {
-          nextToken
-          __typename
-        }
-        pings {
-          nextToken
-          __typename
-        }
-        gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
-          __typename
-        }
-        createdAt
-        updatedAt
-        userGamesId
-        gameSongQueueId
-        __typename
-      }
-      playlistName
-      songs
-      id
-      createdAt
-      updatedAt
-      songQueueGameId
-      __typename
-    }
-  }
-`;
-export const listSongQueues = /* GraphQL */ `
-  query ListSongQueues(
-    $filter: ModelSongQueueFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listSongQueues(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        game {
-          id
-          name
-          dms
-          activeMap
-          gameMode
-          activeSong
-          songPlaying
-          createdAt
-          updatedAt
-          userGamesId
-          gameSongQueueId
-          __typename
-        }
-        playlistName
-        songs
-        id
-        createdAt
-        updatedAt
-        songQueueGameId
         __typename
       }
       nextToken
@@ -475,12 +362,11 @@ export const getUser = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         nextToken
@@ -558,21 +444,21 @@ export const getMessage = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       gameId
@@ -620,12 +506,11 @@ export const listMessages = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         gameId
@@ -676,12 +561,11 @@ export const messageByGameAndCreatedAt = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         gameId
@@ -746,21 +630,21 @@ export const getPlayer = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       user {
@@ -816,12 +700,11 @@ export const listPlayers = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         user {
@@ -857,9 +740,9 @@ export const getMap = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -927,21 +810,21 @@ export const getMap = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       id
@@ -977,12 +860,11 @@ export const listMaps = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -1017,12 +899,11 @@ export const getToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -1040,12 +921,11 @@ export const getToken = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         token {
@@ -1054,9 +934,9 @@ export const getToken = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height
@@ -1306,9 +1186,9 @@ export const getToken = /* GraphQL */ `
       points
       radius
       layer
-      text
       fill
       stroke
+      text
       fontSize
       width
       height
@@ -1507,9 +1387,9 @@ export const listTokens = /* GraphQL */ `
         points
         radius
         layer
-        text
         fill
         stroke
+        text
         fontSize
         width
         height
@@ -1566,21 +1446,21 @@ export const getPing = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       x
@@ -1609,12 +1489,11 @@ export const listPings = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         x
@@ -1655,12 +1534,11 @@ export const getRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         id
@@ -1678,12 +1556,11 @@ export const getRuler = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         user {
@@ -1791,21 +1668,21 @@ export const getCharacterSheet = /* GraphQL */ `
           __typename
         }
         gameMode
-        activeSong
-        songPlaying
-        songQueue {
-          playlistName
-          songs
-          id
-          createdAt
-          updatedAt
-          songQueueGameId
+        activeSong {
+          title
+          url
           __typename
         }
+        songPlaying
+        songQueue {
+          title
+          url
+          __typename
+        }
+        paused
         createdAt
         updatedAt
         userGamesId
-        gameSongQueueId
         __typename
       }
       token {
@@ -1983,9 +1860,9 @@ export const getCharacterSheet = /* GraphQL */ `
         points
         radius
         layer
-        text
         fill
         stroke
+        text
         fontSize
         width
         height
@@ -2258,12 +2135,11 @@ export const listCharacterSheets = /* GraphQL */ `
           dms
           activeMap
           gameMode
-          activeSong
           songPlaying
+          paused
           createdAt
           updatedAt
           userGamesId
-          gameSongQueueId
           __typename
         }
         token {
@@ -2272,9 +2148,9 @@ export const listCharacterSheets = /* GraphQL */ `
           points
           radius
           layer
-          text
           fill
           stroke
+          text
           fontSize
           width
           height

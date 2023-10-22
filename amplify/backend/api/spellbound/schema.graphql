@@ -23,9 +23,10 @@ type Game
     characterSheets: [CharacterSheet]! @hasMany
     pings: [Ping]! @hasMany
     gameMode: String
-    activeSong: String
+    activeSong: Song
     songPlaying: Boolean
-    songQueue: SongQueue @hasOne
+    songQueue: [Song]
+    paused: Boolean
 }
 
 input GameInput {
@@ -34,12 +35,14 @@ input GameInput {
 }
 
 type SongQueue
-@model
-@auth(rules: [{ allow: private, provider: iam}, { allow: private }])
 {
-    game: Game! @belongsTo
     playlistName: String
-    songs: [String]
+    songs: [Song]
+}
+
+type Song {
+    title: String
+    url: String
 }
 
 type User

@@ -68,7 +68,10 @@ const MusicLibrary = () => {
     const playSong = async (key) => {
         const newSong = {
             id: gameID,
-            activeSong: key
+            activeSong: {title: key, url: key},
+            songQueue: [{title: key, url: key}],
+            songPlaying: true,
+            paused: false
         }
 
         const updatedGame = await API.graphql({
@@ -80,17 +83,24 @@ const MusicLibrary = () => {
     };
 
     const playPlaylist = async (playlistName, songs) => {
-        // const newSong = {
-        //   id: gameID,
-        //   activeSong: key
-        // }
-        //
-        // const updatedGame = await API.graphql({
-        //   query: mutations.updateGame,
-        //   variables: {input: newSong}
-        // })
-        //
-        // console.log(updatedGame)
+        const queue = songs.map((song) => {
+            return {title: song, url: song}
+        })
+
+        const newSong = {
+            id: gameID,
+            activeSong: queue[0],
+            songQueue: queue,
+            songPlaying: true,
+            paused: false
+        }
+
+        const updatedGame = await API.graphql({
+            query: mutations.updateGame,
+            variables: {input: newSong}
+        })
+
+        console.log(updatedGame)
 
     }
 

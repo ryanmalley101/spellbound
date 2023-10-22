@@ -130,6 +130,10 @@ const useBattlemapStore = create((set) => ({
     isSongPlaying: false,
     setIsSongPlaying: (playing) =>
         set((state) => ({isSongPlaying: playing})),
+
+    songQueue: [],
+    setSongQueue: (queue) =>
+        set((state) => ({songQueue: queue})),
 }))
 
 useBattlemapStore.subscribe((state) => console.log('New state:', state));
