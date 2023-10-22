@@ -192,7 +192,7 @@ const AttackRow = ({
                        index,
                        handleInputChange,
                        handleInputBlur,
-                       handleDamageChange,
+                       handleAttackDamageChange,
                        addDamage,
                        removeAttack,
                        playerId,
@@ -282,7 +282,7 @@ const AttackRow = ({
                                                 type="text"
                                                 name={`attacks[${index}].damage[${dIndex}].damage_dice`}
                                                 value={damage.damage_dice}
-                                                onChange={(e) => handleDamageChange("damage_dice", index, dIndex, e.target.value)}
+                                                onChange={(e) => handleAttackDamageChange("damage_dice", index, dIndex, e.target.value)}
                                             />
                                         </td>
                                         <td>
@@ -290,7 +290,7 @@ const AttackRow = ({
                                                 type="text"
                                                 name={`attacks[${index}].damage[${dIndex}].damage_type`}
                                                 value={damage.damage_type}
-                                                onChange={(e) => handleDamageChange("damage_type", index, dIndex, e.target.value)}
+                                                onChange={(e) => handleAttackDamageChange("damage_type", index, dIndex, e.target.value)}
                                             />
                                         </td>
                                     </tr>
@@ -332,7 +332,7 @@ const SpellRow = ({
                       handleCheckboxClick,
                       addDamage,
                       removeSpell,
-                      handleDamageChange
+                      handleSpellDamageChange
                   }) => {
     delete spell.__typename
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -426,8 +426,8 @@ const SpellRow = ({
                         <label><b>Range: </b></label>
                         <input
                             type="text"
-                            name={`spells[${index}].range`}
-                            value={spell.range}
+                            name={`spells[${index}].range_shape`}
+                            value={spell.range_shape}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -494,7 +494,7 @@ const SpellRow = ({
                                                 type="text"
                                                 name={`spells[${index}].damage[${dIndex}].damage_dice`}
                                                 value={damage.damage_dice}
-                                                onChange={handleDamageChange}
+                                                onChange={(e) => handleSpellDamageChange('damage_dice', index, dIndex, e.target.value)}
                                             />
                                         </td>
                                         <td>
@@ -502,7 +502,7 @@ const SpellRow = ({
                                                 type="text"
                                                 name={`spells[${index}].damage[${dIndex}].damage_type`}
                                                 value={damage.damage_type}
-                                                onChange={handleDamageChange}
+                                                onChange={(e) => handleSpellDamageChange('damage_type', index, dIndex, e.target.value)}
                                             />
                                         </td>
                                     </tr>
@@ -1523,11 +1523,20 @@ const CharacterSheet = ({characterSheetInput}) => {
         }
     }
 
-    const handleDamageChange = (field, index, dIndex, value) => {
+    const handleAttackDamageChange = (field, index, dIndex, value) => {
+        console.log(field, index, dIndex, value)
         const attacks = character.attacks
         const damage = attacks[index].damage[dIndex]
         damage[field] = value
         setCharacter({...character, attacks})
+    }
+
+    const handleSpellDamageChange = (field, index, dIndex, value) => {
+        console.log(field, index, dIndex, value)
+        const spells = character.spells
+        const damage = spells[index].damage[dIndex]
+        damage[field] = value
+        setCharacter({...character, spells})
     }
 
     const handleInputBlur = async () => {
@@ -1766,7 +1775,7 @@ const CharacterSheet = ({characterSheetInput}) => {
                         index={index}
                         handleInputChange={handleInputChange}
                         handleInputBlur={handleInputBlur}
-                        handleDamageChange={handleDamageChange}
+                        handleAttackDamageChange={handleAttackDamageChange}
                         addDamage={addAttackDamage}
                         removeAttack={removeAttack}
                         playerId={playerID}
@@ -1782,7 +1791,7 @@ const CharacterSheet = ({characterSheetInput}) => {
                                          handleInputChange={handleInputChange}
                                          handleInputBlur={handleInputBlur} handleCheckboxClick={handleCheckboxClick}
                                          addDamage={addSpellDamage} removeSpell={removeSpell}
-                                         handleDamageChange={handleDamageChange}/>
+                                         handleSpellDamageChange={handleSpellDamageChange}/>
                            )} addSpell={addSpell} onClick1={removeLastRow('spelltable')}/>
                 <hr className={styles.pageborder}/>
                 <InventoryList character={character} onChange={handleInputChange} onBlur={handleInputBlur}
