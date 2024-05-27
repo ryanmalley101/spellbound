@@ -44,7 +44,8 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
 
     useEffect(() => {
         const variables = {
-            filter: {ownerId: {eq: "spellbound"}}, // Use the appropriate filter condition
+            // filter: {ownerId: {eq: "spellbound"}}, // Use the appropriate filter condition
+            filter: {}, // Use the appropriate filter condition
         };
         const getMonsterList = async () => {
             try {
@@ -130,7 +131,7 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
                 try {
                     const existingMonster = await API.graphql({
                         query: getMonsterStatblock,
-                        variables: {id: id, ownerId: "spellbound"},
+                        variables: {id: id},
                     });
                     setMonster(cleanMonster(existingMonster.data.getMonsterStatblock))
                 } catch (e) {
