@@ -43,25 +43,64 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
     )
 
     useEffect(() => {
-        const variables = {
-            // filter: {ownerId: {eq: "spellbound"}}, // Use the appropriate filter condition
-            filter: {}, // Use the appropriate filter condition
-        };
-        const getMonsterList = async () => {
-            try {
-                API.graphql(graphqlOperation(listMonsterStatblocks, variables))
-                    .then((result) => {
-                        console.log(result.data.listMonsterStatblocks.items);
-                        setMonsterList(result.data.listMonsterStatblocks.items)
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            } catch (e) {
-                console.error(e)
-            }
-        }
+        // const variables = {
+        //     // filter: {ownerId: {eq: "spellbound"}}, // Use the appropriate filter condition
+        //     limit: 200, // Use the appropriate filter condition
+        // };
+        // const getMonsterList = async () => {
+        //     try {
+        //         API.graphql(graphqlOperation(listMonsterStatblocks, variables))
+        //             .then((result) => {
+        //                 console.log(result.data.listMonsterStatblocks.items);
+        //                 setMonsterList(result.data.listMonsterStatblocks.items)
+        //             })
+        //             .catch((error) => {
+        //                 console.error(error);
+        //             });
+        //     } catch (e) {
+        //         console.error(e)
+        //     }
+        // }
 
+        const getMonsterList = async () => {
+            const result = await API.graphql({
+                query: `
+                query ListMonsterNames(
+                    $id: ID
+                    $ownerId: ModelStringKeyConditionInput
+                    $filter: ModelMonsterStatblockFilterInput
+                    $limit: Int
+                    $nextToken: String
+                    $sortDirection: ModelSortDirection
+                  ) {
+                    listMonsterStatblocks(
+                      id: $id
+                      ownerId: $ownerId
+                      filter: $filter
+                      limit: $limit
+                      nextToken: $nextToken
+                      sortDirection: $sortDirection
+                    ) {
+                      items {
+                        id
+                        ownerId
+                        name
+                      }
+                    }
+                }`,
+                variables: {limit: 400}
+            });
+
+            const compareNames = (a, b) => {
+                return b.name < a.name
+            }
+
+            console.log(result.data.listMonsterStatblocks.items.sort((a, b) => a.name.localeCompare(b.name)));
+
+            setMonsterList(result.data.listMonsterStatblocks.items.sort((a, b) => a.name.localeCompare(b.name)))
+            // console.log(response)
+        }
+        
         getMonsterList()
     }, []);
 
@@ -124,14 +163,14 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
         setSelectedOption(e.target.value)
     }
 
-    const getMonster = async (id) => {
+    const getMonster = async (id, ownerId) => {
         console.log(id)
         if (window.confirm("Fetching a new monster will overwrite the existing statblock")) {
             if (id) {
                 try {
                     const existingMonster = await API.graphql({
                         query: getMonsterStatblock,
-                        variables: {id: id},
+                        variables: {id: id, ownerId: ownerId},
                     });
                     setMonster(cleanMonster(existingMonster.data.getMonsterStatblock))
                 } catch (e) {
@@ -187,7 +226,7 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
                     />
                 </ListSubheader>
                 {displayedOptions.map((option, i) => (
-                    <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id)}>
+                    <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id, option.ownerId)}>
                         {option.name}
                     </MenuItem>
                 ))}
