@@ -124,12 +124,16 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
         } else {
             console.log("Creating a new monster", input)
             try {
+                if (monster.ownerId == 'wotc-srd') {
+                    console.error("Can't overwrite wizards of the coast creature")
+                } else {
                 // Call the createMap mutation
                 const response = await API.graphql({
                     query: mutations.createMonsterStatblock,
                     variables: {input},
                 });
                 savedMonster = response.data.createMonsterStatblock
+                }
             } catch (e) {
                 console.error("Error creating creature:", e);
             }
