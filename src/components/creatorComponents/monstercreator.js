@@ -23,6 +23,7 @@ import {getMonsterStatblock, listMonsterStatblocks} from "@/graphql/queries";
 import {AiOutlineSearch} from "@react-icons/all-files/ai/AiOutlineSearch";
 import html2canvas from "html2canvas";
 import {BsFillTrashFill} from "@react-icons/all-files/bs/BsFillTrashFill";
+import Image from 'next/image'
 
 const HeaderRow = ({monster, setMonster, downloadFile}) => {
     const containsText = (text, searchText) =>
@@ -1332,6 +1333,17 @@ const CreateMonsterStatblock = (monster) => {
                         </Grid>
                     </Grid>
                     <Button type="submit" className={styles.button}>Create Statblock</Button>
+                    <Grid container spacing={2} marginY={rowSpacing}>
+                        <Grid xs>
+                            <Image
+                              src="/5eCRTable.jpg"
+                              width={500}
+                              height={500}
+                              alt="CR Table"
+                              style={{display:"block", marginLeft:"auto", marginRight:"auto"}}
+                            />
+                        </Grid>
+                    </Grid>
                 </FormControl>
             </div>
         </div>
