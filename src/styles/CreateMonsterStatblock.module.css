@@ -56,3 +56,7 @@
 .abilities button:hover {
     background-color: grey;
 }
+
+.actionRow {
+    height: 100%;
+}

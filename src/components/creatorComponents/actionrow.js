@@ -22,29 +22,37 @@ const ActionRow = ({
                        index,
                        monsterData,
                        handleActionUpdate,
-                       handleActionRemove
+                       handleActionRemove,
+                       moveCreatureItemUp,
+                       moveCreatureItemDown,
                    }) => {
     const [open, setOpen] = useState(false);
 
     if (action.type === "Ability") {
         return (
             <div className={styles.actionRow}>
-                <div style={{display: "inline-block", width: "90%"}}>
-                    <div>
+                <div style={{display: "flex", width: "90%"}}>
+                    <div style={{display: "block", width: "40px"}}>
+                        <div style={{float:"left"}}>
+                            <IconButton type={"button"} onClick={moveCreatureItemUp}>
+                                <BsCaretUp/>
+                            </IconButton>
+                        </div>
+                        <div style={{float:"left"}}>
+                            <IconButton type={"button"} onClick={moveCreatureItemDown}>
+                                <BsCaretDown/>
+                            </IconButton>
+                        </div>
+                    </div>
+                    <div style={{alignContent:"center"}}>
+                        <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
+                            <p><strong>{action.name}&nbsp;</strong></p>
+                            <p>{action.desc}</p>
+                        </button>
                         <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
-                            <BsCaretUp/>
-                        </IconButton>
-                        <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
-                            <BsCaretDown/>
+                            <BsFillTrashFill/>
                         </IconButton>
                     </div>
-                    <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
-                        <p><strong>{action.name}&nbsp;</strong></p>
-                        <p>{action.desc}</p>
-                    </button>
-                    <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
-                        <BsFillTrashFill/>
-                    </IconButton>
                 </div>
                 <ActionDialog open={open} action={action} index={index} onClose={() => setOpen(false)}
                               handleActionUpdate={handleActionUpdate}/>
@@ -56,12 +64,12 @@ const ActionRow = ({
             <div style={{display: "flex", width: "90%"}}>
                 <div style={{display: "block", width: "40px"}}>
                     <div style={{float:"left"}}>
-                        <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                        <IconButton type={"button"} onClick={moveCreatureItemUp}>
                             <BsCaretUp/>
                         </IconButton>
                     </div>
                     <div style={{float:"left"}}>
-                        <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                        <IconButton type={"button"} onClick={moveCreatureItemDown}>
                             <BsCaretDown/>
                         </IconButton>
                     </div>

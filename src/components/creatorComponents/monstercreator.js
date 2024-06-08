@@ -24,6 +24,7 @@ import {AiOutlineSearch} from "@react-icons/all-files/ai/AiOutlineSearch";
 import html2canvas from "html2canvas";
 import {BsFillTrashFill} from "@react-icons/all-files/bs/BsFillTrashFill";
 import Image from 'next/image'
+import { ComponentPropsToStylePropsMapKeys } from '@aws-amplify/ui-react';
 
 const HeaderRow = ({monster, setMonster, downloadFile}) => {
     const containsText = (text, searchText) =>
@@ -422,7 +423,36 @@ const CreateMonsterStatblock = (monster) => {
         return 10 + Number(scoreToMod(monsterStatblock.wisdom))
     }
 
+    const moveCreatureItemUp = (item_type, index, setter) => {
+        console.log(item_type + index + setter)
+        if (index === 0) return
+
+        setter((item_list) => {
+            const item = item_list[index-1]
+            item_list[index-1] = item_list[index]
+            item_list[index] = item
+            console.log(item_list)
+            return [...item_list]
+        })
+    }
+
+    const moveCreatureItemDown = (item_type, index, setter) => {
+        console.log(item_type + index + setter)
+
+        setter((item_list) => {
+            if (index === item_list.length-1) return item_list
+            const item = item_list[index]
+            item_list[index] = item_list[index+1]
+            item_list[index+1] = item
+            console.log(item_list)
+            return [...item_list]
+        })
+
+    }
+
     useEffect(() => {
+        console.log("Creature is updating based on setState hook")
+
         const toUpperCase = (word) => {
             return word.charAt(0).toUpperCase()
                 + word.slice(1)
@@ -581,7 +611,7 @@ const CreateMonsterStatblock = (monster) => {
 
         setActions((oldActions) => {
             return [...oldActions, {
-                name: "New Action",
+                name: "New Action " + monsterStatblock.actions.length.toString(),
                 desc: "Action",
                 type: "Melee Weapon Attack",
                 reach: 5,
@@ -616,7 +646,7 @@ const CreateMonsterStatblock = (monster) => {
         console.log("Adding new bonus action")
 
         setBonusActions((oldBonusActions) => {
-            return [...oldBonusActions, {name: "New Bonus Action", desc: "New Description"}]
+            return [...oldBonusActions, {name: "New Bonus Action " + monsterStatblock.bonus_actions.length.toString(), desc: "New Description"}]
         })
     }
 
@@ -642,7 +672,7 @@ const CreateMonsterStatblock = (monster) => {
         console.log("Adding new reaction")
 
         setReactions((oldReactions) => {
-            return [...oldReactions, {name: "New Reaction", desc: "New Description"}]
+            return [...oldReactions, {name: "New Reaction " + monsterStatblock.reactions.length.toString(), desc: "New Description"}]
         })
     }
 
@@ -668,7 +698,7 @@ const CreateMonsterStatblock = (monster) => {
         console.log("Adding new reaction")
 
         setLegendaryActions((oldLegendaryActions) => {
-            return [...oldLegendaryActions, {name: "New Legendary Action", desc: "New Description"}]
+            return [...oldLegendaryActions, {name: "New Legendary Action " + monsterStatblock.legendary_actions.length.toString(), desc: "New Description"}]
         })
     }
 
@@ -694,7 +724,7 @@ const CreateMonsterStatblock = (monster) => {
         console.log("Adding new mythic action")
 
         setMythicActions((oldMythicActions) => {
-            return [...oldMythicActions, {name: "New Mythic Action", desc: "New Description"}]
+            return [...oldMythicActions, {name: "New Mythic Action " + monsterStatblock.mythic_actions.length.toString(), desc: "New Description"}]
         })
     }
 
@@ -1238,7 +1268,9 @@ const CreateMonsterStatblock = (monster) => {
                         {specialAbilities.map((ability, index) => {
                             return <AbilityRow ability={ability} key={ability.name + index} index={index}
                                                handleAbilityUpdate={handleSpecialAbilityUpdate}
-                                               handleAbilityRemove={() => removeSpecialAbility(index)}/>
+                                               handleAbilityRemove={() => removeSpecialAbility(index)}
+                                               moveCreatureItemUp={() => moveCreatureItemUp("special_abilities", index, setSpecialAbilities)}
+                                               moveCreatureItemDown={() => moveCreatureItemDown("special_abilities", index, setSpecialAbilities)}/>
                         })}
                     </Grid>
                     {/* Actions */}
@@ -1252,7 +1284,9 @@ const CreateMonsterStatblock = (monster) => {
                         return <ActionRow action={action} key={action.name + index} index={index}
                                           monsterData={monsterStatblock}
                                           handleActionUpdate={handleActionUpdate}
-                                          handleActionRemove={() => removeAction(index)}/>
+                                          handleActionRemove={() => removeAction(index)}
+                                          moveCreatureItemUp={() => moveCreatureItemUp("actions", index, setActions)}
+                                          moveCreatureItemDown={() => moveCreatureItemDown("actions", index, setActions)}/>
                     })}
 
                     {/* Bonus Actions */}
@@ -1266,7 +1300,9 @@ const CreateMonsterStatblock = (monster) => {
                         {bonusActions.map((bonus_action, index) => {
                             return <AbilityRow ability={bonus_action} key={bonus_action.name + index} index={index}
                                                handleAbilityUpdate={handleBonusActionUpdate}
-                                               handleAbilityRemove={() => removeBonusAction(index)}/>
+                                               handleAbilityRemove={() => removeBonusAction(index)}
+                                                moveCreatureItemUp={() => moveCreatureItemUp("bonus_actions", index, setBonusActions)}
+                                                moveCreatureItemDown={() => moveCreatureItemDown("bonus_actions", index, setBonusActions)}/>
                         })}
                     </div>
                     {/* Reactions */}
@@ -1280,7 +1316,9 @@ const CreateMonsterStatblock = (monster) => {
                     {reactions.map((reaction, index) => {
                         return <AbilityRow ability={reaction} key={reaction.name + index} index={index}
                                            handleAbilityUpdate={handleReactionUpdate}
-                                           handleAbilityRemove={() => removeReaction(index)}/>
+                                           handleAbilityRemove={() => removeReaction(index)}
+                                           moveCreatureItemUp={() => moveCreatureItemUp("reactions", index, setReactions)}
+                                           moveCreatureItemDown={() => moveCreatureItemDown("reactions", index, setReactions)}/>
                     })}
 
                     <Grid container spacing={2} marginY={rowSpacing}>
@@ -1301,7 +1339,9 @@ const CreateMonsterStatblock = (monster) => {
                     {legendaryActions.map((legendary_action, index) => {
                         return <AbilityRow ability={legendary_action} key={legendary_action.name + index} index={index}
                                            handleAbilityUpdate={handleLegendaryActionUpdate}
-                                           handleAbilityRemove={() => removeLegendaryAction(index)}/>
+                                           handleAbilityRemove={() => removeLegendaryAction(index)}
+                                           moveCreatureItemUp={() => moveCreatureItemUp("legendary_actions", index, setLegendaryActions)}
+                                           moveCreatureItemDown={() => moveCreatureItemDown("legendary_actions", index, setLegendaryActions)}/>
                     })}
 
                     <Grid container spacing={2} marginY={rowSpacing}>
@@ -1322,7 +1362,9 @@ const CreateMonsterStatblock = (monster) => {
                     {mythicActions.map((mythic_action, index) => {
                         return <AbilityRow ability={mythic_action} key={mythic_action.name + index} index={index}
                                            handleAbilityUpdate={handleMythicActionUpdate}
-                                           handleAbilityRemove={() => removeMythicAction(index)}/>
+                                           handleAbilityRemove={() => removeMythicAction(index)}
+                                           moveCreatureItemUp={() => moveCreatureItemUp("mythic_actions", index, setMythicActions)}
+                                           moveCreatureItemDown={() => moveCreatureItemDown("mythic_actions", index, setMythicActions)}/>
                     })}
 
                     <Grid container spacing={2} marginY={rowSpacing}>

@@ -3,8 +3,10 @@ import styles from "@/styles/CreateMonsterStatblock.module.css";
 import IconButton from "@mui/material/IconButton";
 import {BsFillTrashFill} from "@react-icons/all-files/bs/BsFillTrashFill";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
+import { BsCaretUp } from "@react-icons/all-files/bs/BsCaretUp";
+import { BsCaretDown } from "@react-icons/all-files/bs/BsCaretDown";
 
-const AbilityRow = ({ability, index, handleAbilityUpdate, handleAbilityRemove}) => {
+const AbilityRow = ({ability, index, handleAbilityUpdate, handleAbilityRemove, moveCreatureItemUp, moveCreatureItemDown}) => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => {
         setOpen(true);
@@ -15,16 +17,29 @@ const AbilityRow = ({ability, index, handleAbilityUpdate, handleAbilityRemove}) 
     };
 
     return (
-        <div>
-            <div style={{display: "inline-block", width: "100%"}}>
-                <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex", width: "90%"}}
-                        className={styles.abilityButton}>
-                    <p><strong>{ability.name}&nbsp;</strong></p>
-                    <p>{ability.desc}</p>
-                </button>
-                <IconButton type={"button"} onClick={(index) => handleAbilityRemove(index)}>
-                    <BsFillTrashFill/>
-                </IconButton>
+        <div className={styles.actionRow}>
+            <div style={{display: "flex", width: "90%"}}>
+                <div style={{display: "block", width: "40px"}}>
+                    <div style={{float:"left"}}>
+                        <IconButton type={"button"} onClick={moveCreatureItemUp}>
+                            <BsCaretUp/>
+                        </IconButton>
+                    </div>
+                    <div style={{float:"left"}}>
+                        <IconButton type={"button"} onClick={moveCreatureItemDown}>
+                            <BsCaretDown/>
+                        </IconButton>
+                    </div>
+                </div>
+                <div style={{alignContent:"center"}}>
+                        <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
+                            <p><strong>{ability.name}&nbsp;</strong></p>
+                            <p>{ability.desc}</p>
+                        </button>
+                        <IconButton type={"button"} onClick={(index) => handleAbilityRemove(index)}>
+                            <BsFillTrashFill/>
+                        </IconButton>
+                    </div>
             </div>
             <AbilityDialog open={open} ability={ability} index={index} onClose={handleClose}
                            handleAbilityUpdate={handleAbilityUpdate}/>
