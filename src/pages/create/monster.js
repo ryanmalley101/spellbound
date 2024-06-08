@@ -1,11 +1,17 @@
 // pages/LoginPage.js
-import React from 'react';
+import {useEffect, useState} from "react";
 import CreateMonsterStatblock from "@/components/creatorComponents/monstercreator";
+import ErrorBanner from '@/components/statusComponents/errorBanner';
+import useConsoleError from '@/components/statusComponents/useConsoleError';
 
 const MonsterCreator = () => {
+    const errorList = useConsoleError();
+
     return (
         <>
+            <ErrorBanner errors={errorList} />
             <CreateMonsterStatblock/>
+            {/* <button onClick={() => console.error('This is a test error')}>Log Error</button> */}
         </>
     );
 };

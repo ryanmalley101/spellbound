@@ -817,7 +817,7 @@ const CreateMonsterStatblock = (monster) => {
 
         if (typeof link.download === 'string') {
             link.href = data;
-            link.download = 'image.jpg';
+            link.download = monsterStatblock.name + '.jpg';
 
             document.body.appendChild(link);
             link.click();
