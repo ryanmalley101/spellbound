@@ -45,7 +45,7 @@ const ActionRow = ({
                         </div>
                     </div>
                     <div style={{alignContent:"center"}}>
-                        <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
+                        <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex", width: "90%"}}>
                             <p><strong>{action.name}&nbsp;</strong></p>
                             <p>{action.desc}</p>
                         </button>
@@ -75,7 +75,7 @@ const ActionRow = ({
                     </div>
                 </div>
                 <div style={{alignContent:"center"}}>
-                    <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex", fontSize: 16}}>
+                    <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex", fontSize: 16, width: "90%"}}>
                         {descAttack(monsterData, action)}
                     </button>
                     <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>

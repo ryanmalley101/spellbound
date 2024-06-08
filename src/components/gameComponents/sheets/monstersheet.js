@@ -89,9 +89,9 @@ export const descAttack = (monsterData, attack) => {
 
 
   if (attack && monsterData) return <>
-    <em><strong>{attack.name}.&nbsp;</strong>{attack.type}:&nbsp;</em>
-    {getToHit(monsterData, attack)} to hit, {getRange()}, {attack.targets}.&nbsp;
-    <em>Hit:&nbsp;</em> {getDamage()}. {attack.effect}
+    <strong>{attack.name}&nbsp;</strong>{attack.type}:
+    {getToHit(monsterData, attack)} to hit, {getRange()}, {attack.targets}.
+    Hit: {getDamage()}. {attack.effect}
   </>
 }
 

@@ -585,7 +585,7 @@ const CreateMonsterStatblock = (monster) => {
         console.log("Adding new special ability")
 
         setSpecialAbilities((oldAbilities) => {
-            return [...oldAbilities, {name: "New Ability", desc: "New Description"}]
+            return [...oldAbilities, {name: "New Ability " + monsterStatblock.special_abilities.length.toString(), desc: "New Description"}]
         })
     }
 

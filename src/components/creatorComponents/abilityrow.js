@@ -32,7 +32,7 @@ const AbilityRow = ({ability, index, handleAbilityUpdate, handleAbilityRemove, m
                     </div>
                 </div>
                 <div style={{alignContent:"center"}}>
-                        <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
+                        <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex", width: "90%"}}>
                             <p><strong>{ability.name}&nbsp;</strong></p>
                             <p>{ability.desc}</p>
                         </button>
