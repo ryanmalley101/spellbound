@@ -65,6 +65,9 @@ const AbilityDialog = ({open, ability, index, onClose, handleAbilityUpdate}) => 
                 <TextField
                     label="Description"
                     variant="outlined"
+                    multiline
+                    rows={4}
+                    maxRows={6}
                     fullWidth
                     value={abilityDesc}
                     onChange={(e) => setAbilityDesc(e.target.value)}

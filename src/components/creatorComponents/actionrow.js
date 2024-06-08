@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import styles from "@/styles/CreateMonsterStatblock.module.css";
 import IconButton from "@mui/material/IconButton";
 import {BsFillTrashFill} from "@react-icons/all-files/bs/BsFillTrashFill";
+import { BsCaretUp } from "@react-icons/all-files/bs/BsCaretUp";
+import { BsCaretDown } from "@react-icons/all-files/bs/BsCaretDown";
 import {
     Button,
     Dialog,
@@ -28,6 +30,14 @@ const ActionRow = ({
         return (
             <div className={styles.actionRow}>
                 <div style={{display: "inline-block", width: "90%"}}>
+                    <div>
+                        <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                            <BsCaretUp/>
+                        </IconButton>
+                        <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                            <BsCaretDown/>
+                        </IconButton>
+                    </div>
                     <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
                         <p><strong>{action.name}&nbsp;</strong></p>
                         <p>{action.desc}</p>
@@ -43,13 +53,27 @@ const ActionRow = ({
     }
     return (
         <div className={styles.actionRow}>
-            <div style={{display: "inline-block", width: "90%"}}>
-                <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex"}}>
-                    {descAttack(monsterData, action)}
-                </button>
-                <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
-                    <BsFillTrashFill/>
-                </IconButton>
+            <div style={{display: "flex", width: "90%"}}>
+                <div style={{display: "block", width: "40px"}}>
+                    <div style={{float:"left"}}>
+                        <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                            <BsCaretUp/>
+                        </IconButton>
+                    </div>
+                    <div style={{float:"left"}}>
+                        <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                            <BsCaretDown/>
+                        </IconButton>
+                    </div>
+                </div>
+                <div style={{alignContent:"center"}}>
+                    <button type={"button"} onClick={() => setOpen(true)} style={{display: "inline-flex", fontSize: 16}}>
+                        {descAttack(monsterData, action)}
+                    </button>
+                    <IconButton type={"button"} onClick={(index) => handleActionRemove(index)}>
+                        <BsFillTrashFill/>
+                    </IconButton>
+                </div>
             </div>
             <ActionDialog open={open} action={action} index={index} onClose={() => setOpen(false)}
                           handleActionUpdate={handleActionUpdate}/>
@@ -210,6 +234,9 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                 <TextField
                     label="Description"
                     variant="outlined"
+                    multiline
+                    rows={4}
+                    maxRows={6}
                     fullWidth
                     value={effect}
                     onChange={(e) => setEffect(e.target.value)}
@@ -252,6 +279,9 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                 <TextField
                     label="Effect"
                     variant="outlined"
+                    multiline
+                    rows={4}
+                    maxRows={6}
                     fullWidth
                     value={effect}
                     onChange={(e) => setEffect(e.target.value)}

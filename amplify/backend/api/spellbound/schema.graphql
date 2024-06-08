@@ -448,6 +448,7 @@ type DamageDice {
 input DamageDiceInput {
     damage_dice: String
     damage_type: String
+    __typename: String
 }
 
 type Spell {
