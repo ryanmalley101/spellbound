@@ -243,7 +243,7 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                     label="Description"
                     variant="outlined"
                     multiline
-                    rows={4}
+                    minRows={4}
                     maxRows={6}
                     fullWidth
                     value={effect}
@@ -288,7 +288,7 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                     label="Effect"
                     variant="outlined"
                     multiline
-                    rows={4}
+                    minRows={4}
                     maxRows={6}
                     fullWidth
                     value={effect}

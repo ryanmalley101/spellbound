@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState, useCallback} from 'react';
 import styles from '@/styles/CreateMonsterStatblock.module.css';
 import {
     Button,
@@ -25,14 +25,32 @@ import html2canvas from "html2canvas";
 import {BsFillTrashFill} from "@react-icons/all-files/bs/BsFillTrashFill";
 import Image from 'next/image'
 import { ComponentPropsToStylePropsMapKeys } from '@aws-amplify/ui-react';
+import _ from 'lodash'
 
 const HeaderRow = ({monster, setMonster, downloadFile}) => {
     const containsText = (text, searchText) =>
         text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || searchText === '';
 
-    const newMonster = () => {
-        if (window.confirm("Creating a new monster will reset the current statblock")) {
-            setMonster(newMonsterStats)
+    const newMonster = async () => {
+        const newMonsterName = window.prompt("Enter Creature Name: NOTE - Creating a new monster will reset the current statblock")
+        if (!newMonsterName) {
+            console.error("No monster name provided")
+            return
+        }
+        if (!(monsterList.filter((m) => m.name === newMonsterName).length === 0)) {
+            console.error("Creature's name is already in the database")
+        }
+        try {
+            const input = {...newMonsterStats, ownerId: 'spellbound', name: newMonsterName}
+            // Call the createMap mutation
+            const response = await API.graphql({
+                query: mutations.createMonsterStatblock,
+                variables: {input},
+            });
+            console.log("New Monster Response", response)
+            setMonster({...cleanMonster({...response.data.createMonsterStatblock})})
+        } catch (e) {
+            console.error("Error creating creature:", e);
         }
     }
 
@@ -106,46 +124,10 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
         getMonsterList()
     }, []);
 
-    const saveMonster = async () => {
-        const input = {...monster, ownerId: "spellbound"};
-        delete input.__typename
-        let savedMonster = null
-
-        if (monster.id) {
-            console.log("Updating a monster", input)
-            try {
-                // Call the createMap mutation
-                const response = await API.graphql({
-                    query: mutations.updateMonsterStatblock,
-                    variables: {input: input},
-                });
-                savedMonster = response.data.updateMonsterStatblock
-            } catch (e) {
-                console.error("Error update creature:", e);
-            }
-        } else {
-            console.log("Creating a new monster", input)
-            try {
-                if (monster.ownerId == 'wotc-srd') {
-                    console.error("Can't overwrite wizards of the coast creature")
-                } else {
-                // Call the createMap mutation
-                const response = await API.graphql({
-                    query: mutations.createMonsterStatblock,
-                    variables: {input},
-                });
-                savedMonster = response.data.createMonsterStatblock
-                }
-            } catch (e) {
-                console.error("Error creating creature:", e);
-            }
-        }
-
-        if (savedMonster) {
-            console.log("Saved monster", savedMonster)
-            setMonster(cleanMonster(savedMonster))
-        }
-    }
+    useEffect(() => {
+        console.log("MONSTER GOT CHANGED", monster)
+        throt_saveMonster()
+    }, [monster]);
 
     const exportJSON = (name) => {
         const fileName = name ? name : "spellboundmonster";
@@ -178,7 +160,7 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
                         query: getMonsterStatblock,
                         variables: {id: id, ownerId: ownerId},
                     });
-                    setMonster(cleanMonster(existingMonster.data.getMonsterStatblock))
+                    setMonster({...cleanMonster(existingMonster.data.getMonsterStatblock)})
                 } catch (e) {
                     console.error(e)
                 }
@@ -186,9 +168,42 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
         }
     }
 
+    const saveMonster = async () => {
+        const input = {...monster};
+        delete input.__typename
+        let savedMonster = null
+        console.log("TRYING TO SAVE MONSTER", input)
+        if (input.ownerId === 'wotc-srd') {
+            console.error("Can't overwrite wizards of the coast creature")
+            return
+        }
+        
+        if (!input.id) {
+            console.error("Attempting to update creature with no id")
+            return
+        }
+        console.log("Updating a monster", input)
+        try {
+            // Call the createMap mutation
+            const response = await API.graphql({
+                query: mutations.updateMonsterStatblock,
+                variables: {input: input},
+            });
+            savedMonster = response.data.updateMonsterStatblock
+        } catch (e) {
+            console.error("Error update creature:", e);
+        }
+        if (savedMonster) {
+            console.log("Saved monster", savedMonster)
+        }
+    }
+
+    const throt_saveMonster = useCallback(_.throttle(() => saveMonster(), 5000), [])
+
+
     return <div className={styles.stickyHeader}>
         <Button variant={"contained"} style={{marginRight: "10px"}} onClick={newMonster}>New</Button>
-        <Button variant={"contained"} onClick={saveMonster}>Save</Button>
+        <Button variant={"contained"} onClick={() => saveMonster(monster)}>Save</Button>
         <FormControl style={{left: "30%", minWidth: "200px"}}>
             <InputLabel id="search-select-label" style={{color: "white"}}>Monster Name</InputLabel>
             <Select
@@ -251,6 +266,7 @@ const newMonsterStats = {
     desc: '',
     size: 'medium',
     type: 'humanoid',
+    ownerId: 'wotc-srd',
     group: "",
     subtype: '',
     alignment: 'lawful good',
@@ -310,7 +326,8 @@ const newMonsterStats = {
     mythic_actions: [],
 }
 
-const CreateMonsterStatblock = (monster) => {
+
+const CreateMonsterStatblock = () => {
     const [monsterStatblock, setMonsterStatblock] = useState(newMonsterStats);
 
     const [selectedSave, setSelectedSave] = useState("strength")
@@ -536,6 +553,7 @@ const CreateMonsterStatblock = (monster) => {
                 intelligence_save: intSave,
                 wisdom_save: wisSave,
                 charisma_save: chaSave,
+                perception: getPassivePerception(),
                 condition_immunities: conditionImmunityList.length > 0 ? conditionImmunityList.join(", ") : "",
                 condition_immunity_list: conditionImmunityList,
                 damage_vulnerabilities: damageVulnerabilityList.length > 0 ? damageVulnerabilityList.join(", ") : "",
@@ -557,10 +575,10 @@ const CreateMonsterStatblock = (monster) => {
         )
     }, [saveList, skillList, damageVulnerabilityList, damageResistanceList, damageImmunityList,
         conditionImmunityList, specialAbilities, actions, bonusActions, reactions, legendaryActions, mythicActions]);
-
-    useEffect(() => {
-        setMonsterStatblock({...monsterStatblock, perception: getPassivePerception()})
-    }, [monsterStatblock.wisdom, monsterStatblock.skill_proficiencies]);
+    
+    // useEffect(() => {
+    //     setMonsterStatblock({...monsterStatblock, })
+    // }, [monsterStatblock.wisdom, monsterStatblock.skill_proficiencies]);
 
     const removeSkillProficiency = () => {
         setSkillList({...skillList, [selectedSkill]: null})
@@ -790,7 +808,8 @@ const CreateMonsterStatblock = (monster) => {
     }, [monsterStatblock.hit_dice_num, monsterStatblock.constitution])
 
     useEffect(() => {
-        if (monster) {
+
+        if (monsterStatblock) {
             setSaveList(monsterStatblock.save_proficiencies)
             setSkillList(monsterStatblock.skill_proficiencies)
             setDamageVulnerabilityList(monsterStatblock.damage_vulnerability_list)
@@ -1176,11 +1195,13 @@ const CreateMonsterStatblock = (monster) => {
                                 onChange={(e) => setSelectedCondition(e.target.value)}
                                 style={{width: 157}}
                             >
+                                <MenuItem value="bleed">Bleed</MenuItem>
                                 <MenuItem value="blinded">Blinded</MenuItem>
                                 <MenuItem value="charmed">Charmed</MenuItem>
                                 <MenuItem value="deafened">Deafened</MenuItem>
                                 <MenuItem value="exhaustion">Exhaustion</MenuItem>
                                 <MenuItem value="frightened">Frightened</MenuItem>
+                                <MenuItem value="frostbitten">Frostbitten</MenuItem>
                                 <MenuItem value="grappled">Grappled</MenuItem>
                                 <MenuItem value="incapacitated">Incapacitated</MenuItem>
                                 <MenuItem value="invisible">Invisible</MenuItem>

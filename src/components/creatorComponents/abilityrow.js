@@ -81,7 +81,7 @@ const AbilityDialog = ({open, ability, index, onClose, handleAbilityUpdate}) => 
                     label="Description"
                     variant="outlined"
                     multiline
-                    rows={4}
+                    minRows={4}
                     maxRows={6}
                     fullWidth
                     value={abilityDesc}
@@ -91,7 +91,7 @@ const AbilityDialog = ({open, ability, index, onClose, handleAbilityUpdate}) => 
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
-                <Button onClick={confirm} color="primary">
+                <Button onClick={() => confirm()} color="primary">
                     Update
                 </Button>
             </DialogActions>
