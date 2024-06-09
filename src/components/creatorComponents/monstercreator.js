@@ -28,6 +28,11 @@ import { ComponentPropsToStylePropsMapKeys } from '@aws-amplify/ui-react';
 import _ from 'lodash'
 
 const HeaderRow = ({monster, setMonster, downloadFile}) => {
+    const [monsterStatblock, setMonsterStatblock] = useState(monster)
+
+    useEffect(() => setMonsterStatblock(monster), [monster])
+    const [saveThrottleTime, setSaveThrottleTime] = useState(Date.now())
+
     const containsText = (text, searchText) =>
         text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || searchText === '';
 
@@ -125,9 +130,44 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
     }, []);
 
     useEffect(() => {
-        console.log("MONSTER GOT CHANGED", monster)
-        throt_saveMonster()
-    }, [monster]);
+        console.log("MONSTER GOT CHANGED", monsterStatblock)
+        const currentTime = Date.now()
+        // console.log(saveThrottleTime, currentTime)
+        if (currentTime - saveThrottleTime > 5000) {
+            setSaveThrottleTime(currentTime)
+            saveMonster(monsterStatblock)
+        }
+    }, [monsterStatblock]);
+
+    const saveMonster = async (monsterToSave) => {
+        const input = {...monsterToSave};
+        delete input.__typename
+        let savedMonster = null
+        console.log("TRYING TO SAVE MONSTER", input)
+        if (input.ownerId === 'wotc-srd') {
+            console.error("Can't overwrite wizards of the coast creature")
+            return
+        }
+        
+        if (!input.id) {
+            console.error("Attempting to update creature with no id")
+            return
+        }
+        console.log("Updating a monster", input)
+        try {
+            // Call the createMap mutation
+            const response = await API.graphql({
+                query: mutations.updateMonsterStatblock,
+                variables: {input: input},
+            });
+            savedMonster = response.data.updateMonsterStatblock
+        } catch (e) {
+            console.error("Error update creature:", e);
+        }
+        if (savedMonster) {
+            console.log("Saved monster", savedMonster)
+        }
+    }
 
     const exportJSON = (name) => {
         const fileName = name ? name : "spellboundmonster";
@@ -168,42 +208,9 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
         }
     }
 
-    const saveMonster = async () => {
-        const input = {...monster};
-        delete input.__typename
-        let savedMonster = null
-        console.log("TRYING TO SAVE MONSTER", input)
-        if (input.ownerId === 'wotc-srd') {
-            console.error("Can't overwrite wizards of the coast creature")
-            return
-        }
-        
-        if (!input.id) {
-            console.error("Attempting to update creature with no id")
-            return
-        }
-        console.log("Updating a monster", input)
-        try {
-            // Call the createMap mutation
-            const response = await API.graphql({
-                query: mutations.updateMonsterStatblock,
-                variables: {input: input},
-            });
-            savedMonster = response.data.updateMonsterStatblock
-        } catch (e) {
-            console.error("Error update creature:", e);
-        }
-        if (savedMonster) {
-            console.log("Saved monster", savedMonster)
-        }
-    }
-
-    const throt_saveMonster = useCallback(_.throttle(() => saveMonster(), 5000), [])
-
-
     return <div className={styles.stickyHeader}>
         <Button variant={"contained"} style={{marginRight: "10px"}} onClick={newMonster}>New</Button>
-        <Button variant={"contained"} onClick={() => saveMonster(monster)}>Save</Button>
+        <Button variant={"contained"} onClick={() => saveMonster(monsterStatblock)}>Save</Button>
         <FormControl style={{left: "30%", minWidth: "200px"}}>
             <InputLabel id="search-select-label" style={{color: "white"}}>Monster Name</InputLabel>
             <Select
@@ -363,8 +370,8 @@ const CreateMonsterStatblock = () => {
                 ...monsterStatblock.speed,
                 [name]: parseInt(value, 10),
             },
-        });
-    };
+        })
+    }
 
     const addSaveProficiency = () => {
         console.log(`Adding save ${selectedSave}`)
@@ -791,10 +798,11 @@ const CreateMonsterStatblock = () => {
     }
 
     const handleHitDiceChange = (dieNum) => {
+        console.log("HITDICE CHANGE", dieNum, parseInt(scoreToMod(monsterStatblock.constitution)))
         setMonsterStatblock({
             ...monsterStatblock,
             hit_dice_num: dieNum,
-            hit_dice: `${dieNum}${hitDieSize}+${dieNum * scoreToMod(monsterStatblock.constitution)}`
+            hit_dice: `${dieNum}${hitDieSize}+${dieNum * parseInt(scoreToMod(monsterStatblock.constitution))}`
         })
     }
 
