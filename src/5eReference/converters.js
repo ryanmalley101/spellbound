@@ -68,13 +68,20 @@ const getToHit = (monsterData, attack) => {
     }
 
     const prof = monsterData.proficiency_bonus ? monsterData.proficiency_bonus : getMonsterProf(monsterData.cr)
+    const additional_bonus_patterns = /\]\+\s*(\d+)/
+    const bonus_match = attack.attack_bonus.toString().match(additional_bonus_patterns)
+    let hit_bonus = 0
+ 
+    if (bonus_match) {
+        console.log(bonus_match)
+        hit_bonus = hit_bonus + Number(bonus_match[1])
+    }
 
     const bracket_pattern = /\[(.*?)\]/
     const match = attack.attack_bonus.toString().match(bracket_pattern)
     console.log(match)
     if (match) {
         const values = match[1].split(/\s+/)
-        const hit_bonus = 0
         return plusMinus(values.reduce((accumulator, currentValue) => {
             switch (currentValue) {
                 case "STR":
@@ -95,6 +102,7 @@ const getToHit = (monsterData, attack) => {
                     console.error("Invalid to hit identifier ")
             }
         }, hit_bonus))
+
     }
 
     // console.error("Attack bonus is neither an integer nor a valid shorthand like [STR ATK]")

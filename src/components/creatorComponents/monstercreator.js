@@ -798,7 +798,7 @@ const CreateMonsterStatblock = () => {
     }
 
     const handleHitDiceChange = (dieNum) => {
-        console.log("HITDICE CHANGE", dieNum, parseInt(scoreToMod(monsterStatblock.constitution)))
+        // console.log("HITDICE CHANGE", dieNum, parseInt(scoreToMod(monsterStatblock.constitution)))
         setMonsterStatblock({
             ...monsterStatblock,
             hit_dice_num: dieNum,
