@@ -993,7 +993,7 @@ const CreateMonsterStatblock = () => {
                                 onChange={(e) => setMonsterStatblock({...monsterStatblock, cr: e.target.value})}
                             >
                                 <MenuItem value={0}>0 (0 XP)</MenuItem>
-                                <MenuItem value={.25}>1/8 (25 XP)</MenuItem>
+                                <MenuItem value={.125}>1/8 (25 XP)</MenuItem>
                                 <MenuItem value={1 / 4}>1/4 (50 XP)</MenuItem>
                                 <MenuItem value={1 / 2}>1/2 (100 XP)</MenuItem>
                                 <MenuItem value={1}>1 (200 XP)</MenuItem>
