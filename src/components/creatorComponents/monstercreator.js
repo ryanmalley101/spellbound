@@ -279,8 +279,8 @@ const newMonsterStats = {
     alignment: 'lawful good',
     armor_class: 10,
     armor_desc: '',
-    hit_points: 10,
-    hit_dice: '1d10',
+    hit_points: 8,
+    hit_dice: '1d8',
     hit_dice_num: 1,
     speed: {
         walk: 30,
