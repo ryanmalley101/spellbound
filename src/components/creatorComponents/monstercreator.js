@@ -782,6 +782,10 @@ const CreateMonsterStatblock = () => {
         console.log("Changing hit dice size", e)
         const size = e.target.value
         setMonsterStatblock({...monsterStatblock, size: size})
+        changeSize(size)
+    }
+
+    const changeSize = (size) => {
         if (size === "tiny") {
             setHitDieSize("d4")
         } else if (size === "small") {
@@ -818,6 +822,7 @@ const CreateMonsterStatblock = () => {
     useEffect(() => {
 
         if (monsterStatblock) {
+            changeSize(monsterStatblock.size)
             setSaveList(monsterStatblock.save_proficiencies)
             setSkillList(monsterStatblock.skill_proficiencies)
             setDamageVulnerabilityList(monsterStatblock.damage_vulnerability_list)
