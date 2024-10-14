@@ -1223,6 +1223,7 @@ const CreateMonsterStatblock = () => {
                                 <MenuItem value="poisoned">Poisoned</MenuItem>
                                 <MenuItem value="prone">Prone</MenuItem>
                                 <MenuItem value="restrained">Restrained</MenuItem>
+                                <MenuItem value="rotting">Rotting</MenuItem>
                                 <MenuItem value="stunned">Stunned</MenuItem>
                                 <MenuItem value="unconscious">Unconscious</MenuItem>
                             </Select>
