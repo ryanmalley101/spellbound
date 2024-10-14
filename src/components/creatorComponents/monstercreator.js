@@ -543,7 +543,7 @@ const CreateMonsterStatblock = () => {
                 sensesString += `tremorsense ${monsterStatblock.tremorsense} ft.,`
             }
             if (monsterStatblock.truesight !== 0) {
-                sensesString += `truesight ${monsterStatblock.tremorsense}`
+                sensesString += `truesight ${monsterStatblock.truesight}`
             }
             sensesString += `passive Perception ${getPassivePerception()}`
             return sensesString
