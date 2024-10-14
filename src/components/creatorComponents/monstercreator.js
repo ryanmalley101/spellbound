@@ -113,7 +113,7 @@ const HeaderRow = ({monster, setMonster, downloadFile}) => {
                       }
                     }
                 }`,
-                variables: {limit: 400}
+                variables: {limit: 1000}
             });
 
             const compareNames = (a, b) => {
